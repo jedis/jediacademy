@@ -242,9 +242,10 @@ void CG_RegisterWeapon( int weaponNum ) {
 		theFxScheduler.RegisterEffect( "force/force_touch" );
 		theFxScheduler.RegisterEffect( "saber/saber_block" );
 		theFxScheduler.RegisterEffect( "saber/saber_cut" );
-		theFxScheduler.RegisterEffect( "blaster/smoke_bolton" );
+		theFxScheduler.RegisterEffect( "saber/limb_bolton" );
 		theFxScheduler.RegisterEffect( "saber/fizz" );
 		theFxScheduler.RegisterEffect( "saber/boil" );
+		theFxScheduler.RegisterEffect( "saber/fire" );//was "sparks/spark"
 
 		cgs.effects.forceHeal			= theFxScheduler.RegisterEffect( "force/heal" );
 		//cgs.effects.forceInvincibility	= theFxScheduler.RegisterEffect( "force/invin" );
@@ -2609,11 +2610,6 @@ void CG_Weapon_f( void )
 		return;
 	}
 
-	if (!CG_WeaponSelectable(num, cg.snap->ps.weapon, qfalse))
-	{
-		return;
-	}
-
 	if ( num == WP_SABER )
 	{//lightsaber
 		if ( ! ( cg.snap->ps.stats[STAT_WEAPONS] & ( 1 << num ) ) )
@@ -2700,8 +2696,9 @@ void CG_Weapon_f( void )
 		}
 	}
 
-	if ( ! ( cg.snap->ps.stats[STAT_WEAPONS] & ( 1 << num ) ) ) {
-		return;		// don't have the weapon
+	if (!CG_WeaponSelectable(num, cg.snap->ps.weapon, qfalse))
+	{
+		return;
 	}
 
 	SetWeaponSelectTime();

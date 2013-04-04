@@ -26,9 +26,12 @@ extern	cvar_t	*g_debugDamage;
 extern qboolean	stop_icarus;
 extern cvar_t	*g_dismemberment;
 extern cvar_t	*g_saberRealisticCombat;
+extern cvar_t	*g_saberPickuppableDroppedSabers;
 extern cvar_t		*g_timescale;
 extern cvar_t		*d_slowmodeath;
 extern gentity_t *player;
+extern cvar_t	*debug_subdivision;
+extern cvar_t	*g_dismemberProbabilities;
 
 gentity_t *g_lastClientDamaged;
 
@@ -76,6 +79,7 @@ static int G_PickDeathAnim( gentity_t *self, vec3_t point, int damage, int mod, 
 static void G_TrackWeaponUsage( gentity_t *self, gentity_t *inflictor, int add, int mod );
 static qboolean G_Dismemberable( gentity_t *self, int hitLoc );
 extern gitem_t	*FindItemForAmmo( ammo_t ammo );
+extern void WP_RemoveSaber( gentity_t *ent, int saberNum );
 
 
 qboolean G_GetRootSurfNameWithVariant( gentity_t *ent, const char *rootSurfName, char *returnSurfName, int returnSize );
@@ -124,9 +128,37 @@ gentity_t *TossClientItems( gentity_t *self )
 	weapon = self->s.weapon;
 	if ( weapon == WP_SABER )
 	{
-		if ( self->weaponModel[0] < 0 || (self->client->ps.saber[0].disarmable && WP_SaberLose( self, NULL )) )
-		{
+		if ( self->weaponModel[0] < 0 )
+		{//don't have one in right hand
 			self->s.weapon = WP_NONE;
+		}
+		else if ( !(self->client->ps.saber[0].saberFlags&SFL_NOT_DISARMABLE) 
+			|| g_saberPickuppableDroppedSabers->integer )
+		{//okay to drop it
+			if ( WP_SaberLose( self, NULL ) )
+			{
+				self->s.weapon = WP_NONE;
+			}
+		}
+		if ( g_saberPickuppableDroppedSabers->integer )
+		{//drop your left one, too
+			if ( self->weaponModel[1] >= 0 )
+			{//have one in left
+				if ( !(self->client->ps.saber[0].saberFlags&SFL_NOT_DISARMABLE) 
+					|| g_saberPickuppableDroppedSabers->integer )
+				{//okay to drop it
+					//just drop an item
+					if ( self->client->ps.saber[1].name
+						&& self->client->ps.saber[1].name[0] )
+					{//have a valid string to use for saberType
+						//turn it into a pick-uppable item!
+						if ( G_DropSaberItem( self->client->ps.saber[1].name, self->client->ps.saber[1].blade[0].color, self->client->renderInfo.handLPoint, self->client->ps.velocity, self->currentAngles ) != NULL )
+						{//dropped it
+							WP_RemoveSaber( self, 1 );
+						}
+					}
+				}
+			}
 		}
 	}
 	else if ( weapon == WP_BLASTER_PISTOL )
@@ -1215,7 +1247,8 @@ qboolean G_GetHitLocFromSurfName( gentity_t *ent, const char *surfName, int *hit
 	}
 #endif //_DEBUG
 
-	if ( g_saberRealisticCombat->integer > 1 )
+	if ( g_saberRealisticCombat->integer > 1
+		|| debug_subdivision->integer )
 	{
 		dismember = qtrue;
 	}
@@ -1231,12 +1264,12 @@ qboolean G_GetHitLocFromSurfName( gentity_t *ent, const char *surfName, int *hit
 	{
 		dismember = qtrue;
 	}
-	else if ( g_dismemberment->integer == 113811381138 || !ent->client->dismembered )
+	else if ( debug_subdivision->integer || !ent->client->dismembered )
 	{
 		if ( dir && (dir[0] || dir[1] || dir[2]) &&
 			bladeDir && (bladeDir[0] || bladeDir[1] || bladeDir[2]) )
 		{//we care about direction (presumably for dismemberment)
-			if ( G_Dismemberable( ent, *hitLoc ) )
+			if (  g_dismemberProbabilities->value<=0.0f||G_Dismemberable( ent, *hitLoc ) )
 			{//the probability let us continue
 				char *tagName = NULL;
 				float	aoa = 0.5f;
@@ -2019,7 +2052,7 @@ static qboolean G_Dismember( gentity_t *ent, vec3_t point,
 		newBolt = gi.G2API_AddBolt( &limb->ghoul2[limb->playerModel], limbTagName );
 		if ( newBolt != -1 )
 		{
-			G_PlayEffect( G_EffectIndex("blaster/smoke_bolton"), limb->playerModel, newBolt, limb->s.number, newPoint);
+			G_PlayEffect( G_EffectIndex("saber/limb_bolton"), limb->playerModel, newBolt, limb->s.number, newPoint);
 		}
 	}
 	/*
@@ -2241,9 +2274,9 @@ static qboolean G_Dismemberable( gentity_t *self, int hitLoc )
 	{//cannot dismember me right now
 		return qfalse;
 	}
-	if ( g_dismemberment->integer != 113811381138 && g_saberRealisticCombat->integer < 2 )
+	if ( !debug_subdivision->integer && g_saberRealisticCombat->integer < 2 )
 	{
-		if ( 1 ) //g_dismemberProbabilities->value > 0.0f == it always is now, no cheating and changing the game from what was approved.
+		if ( g_dismemberProbabilities->value > 0.0f ) 
 		{//use the ent-specific dismemberProbabilities
 			float dismemberProb = 0;
 			// check which part of the body it is. Then check the npc's probability
@@ -2278,8 +2311,27 @@ static qboolean G_Dismemberable( gentity_t *self, int hitLoc )
 			}
 
 			//check probability of this happening on this npc
-			if ( Q_flrand( 1, 100 ) > dismemberProb*2.0f )//probabilities seemed really really low, had to crank them up
+			if ( floor((Q_flrand( 1, 100 )*g_dismemberProbabilities->value)) > dismemberProb*2.0f )//probabilities seemed really really low, had to crank them up
 			{	
+				return qfalse;
+			}
+		}
+	}
+	return qtrue;
+}
+
+static qboolean G_Dismemberable2( gentity_t *self, int hitLoc )
+{
+	if ( self->client->dismembered )
+	{//cannot dismember me right now
+		return qfalse;
+	}
+	if ( !debug_subdivision->integer && g_saberRealisticCombat->integer < 2 )
+	{
+		if ( g_dismemberProbabilities->value <= 0.0f )
+		{//add the passed-in damage to the locationDamage array, check to see if it's taken enough damage to actually dismember
+			if ( self->locationDamage[hitLoc] < (self->client->ps.stats[STAT_MAX_HEALTH]*hitLocHealthPercentage[hitLoc]) )
+			{//this location has not taken enough damage to dismember
 				return qfalse;
 			}
 		}
@@ -2317,15 +2369,16 @@ qboolean G_DoDismemberment( gentity_t *self, vec3_t point, int mod, int damage, 
 //extern cvar_t	*g_iscensored;
 	// dismemberment -- FIXME: should have a check for how long npc has been dead so people can't
 	// continue to dismember a dead body long after it's been dead
-	//NOTE that you can only cut one thing off unless the dismemberment is == 113811381138
+	//NOTE that you can only cut one thing off unless the debug_subdivisions is on
 #ifdef GERMAN_CENSORED
 	if ( 0 ) //germany == censorship
 #else
 	if ( /*!g_iscensored->integer &&*/ ( g_dismemberment->integer || g_saberRealisticCombat->integer > 1 ) && mod == MOD_SABER )//only lightsaber
 #endif
 	{//FIXME: don't do strcmps here
-		if ( G_StandardHumanoid( self ) )
-		{//we're using probabilities
+		if ( G_StandardHumanoid( self ) 
+			&& (force||g_dismemberProbabilities->value>0.0f||G_Dismemberable2( self, hitLoc )) )
+		{//either it's a forced dismemberment or we're using probabilities (which are checked before this) or we've done enough damage to this location
 			//FIXME: check the hitLoc and hitDir against the cap tag for the place 
 			//where the split will be- if the hit dir is roughly perpendicular to 
 			//the direction of the cap, then the split is allowed, otherwise we
@@ -3868,7 +3921,12 @@ extern void RunEmplacedWeapon( gentity_t *ent, usercmd_t **ucmd );
 		}
 		else
 		{
-			if ( (  
+			if ( g_saberPickuppableDroppedSabers->integer )
+			{//always drop your sabers
+				TossClientItems( self );
+				self->client->ps.weapon = self->s.weapon = WP_NONE;
+			}
+			else if ( (  
 					(hitLoc != HL_HAND_RT&&hitLoc !=HL_CHEST_RT&&hitLoc!=HL_ARM_RT&&hitLoc!=HL_BACK_LT)
 					|| self->client->dismembered
 					|| meansOfDeath != MOD_SABER 
@@ -6017,6 +6075,35 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, const
 	else if ( dflags & DAMAGE_NO_KNOCKBACK )
 	{
 		knockback = 0;
+	}
+
+	if ( (dflags&DAMAGE_SABER_KNOCKBACK1) )
+	{
+		if ( attacker && attacker->client )
+		{
+			knockback *= attacker->client->ps.saber[0].knockbackScale;
+		}
+	}
+	if ( (dflags&DAMAGE_SABER_KNOCKBACK1_B2) )
+	{
+		if ( attacker && attacker->client )
+		{
+			knockback *= attacker->client->ps.saber[0].knockbackScale2;
+		}
+	}
+	if ( (dflags&DAMAGE_SABER_KNOCKBACK2) )
+	{
+		if ( attacker && attacker->client )
+		{
+			knockback *= attacker->client->ps.saber[1].knockbackScale;
+		}
+	}
+	if ( (dflags&DAMAGE_SABER_KNOCKBACK2_B2) )
+	{
+		if ( attacker && attacker->client )
+		{
+			knockback *= attacker->client->ps.saber[1].knockbackScale2;
+		}
 	}
 	// figure momentum add, even if the damage won't be taken
 	if ( knockback && !(dflags&DAMAGE_DEATH_KNOCKBACK) ) //&& targ->client 

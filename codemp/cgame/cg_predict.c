@@ -1477,7 +1477,7 @@ void CG_PredictPlayerState( void ) {
 		!CG_Piloting(cg.predictedPlayerState.m_iVehicleNum))
 	{ //a passenger on this vehicle, bolt them in
 		centity_t *veh = &cg_entities[cg.predictedPlayerState.m_iVehicleNum];
-		VectorCopy(veh->lerpAngles, cg.predictedPlayerState.viewangles);
+		//VectorCopy(veh->lerpAngles, cg.predictedPlayerState.viewangles);
 		VectorCopy(veh->lerpOrigin, cg.predictedPlayerState.origin);
 	}
 

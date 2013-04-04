@@ -2112,26 +2112,23 @@ static void UI_DrawForceMastery(rectDef_t *rect, float scale, vec4_t color, int 
 	char *s;
 
 	i = val;
-	if (i < min || i > max) 
+	if (i < min)
 	{
 		i = min;
 	}
+	if (i > max)
+	{
+		i = max;
+	}
 
-	s = (char *)UI_GetStringEdString("MP_INGAME", forceMasteryLevels[val]);
+	s = (char *)UI_GetStringEdString("MP_INGAME", forceMasteryLevels[i]);
 	Text_Paint(rect->x, rect->y, scale, color, s, 0, 0, textStyle, iMenuFont);
 }
 
 
 static void UI_DrawSkinColor(rectDef_t *rect, float scale, vec4_t color, int textStyle, int val, int min, int max, int iMenuFont)
 {
-	int i;
 	char s[256];
-
-	i = val;
-	if (i < min || i > max) 
-	{
-		i = min;
-	}
 
 	switch(val)
 	{
@@ -2154,17 +2151,10 @@ static void UI_DrawSkinColor(rectDef_t *rect, float scale, vec4_t color, int tex
 
 static void UI_DrawForceSide(rectDef_t *rect, float scale, vec4_t color, int textStyle, int val, int min, int max, int iMenuFont)
 {
-	int i;
 	char s[256];
 	menuDef_t *menu;
 	
 	char info[MAX_INFO_VALUE];
-
-	i = val;
-	if (i < min || i > max) 
-	{
-		i = min;
-	}
 
 	info[0] = '\0';
 	trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
@@ -5213,8 +5203,8 @@ static void UI_StartSkirmish(qboolean next) {
 	trap_Cvar_Set("g_warmup", "15");
 	trap_Cvar_Set("sv_pure", "0");
 	trap_Cvar_Set("g_friendlyFire", "0");
-	trap_Cvar_Set("g_redTeam", UI_Cvar_VariableString("ui_teamName"));
-	trap_Cvar_Set("g_blueTeam", UI_Cvar_VariableString("ui_opponentName"));
+//	trap_Cvar_Set("g_redTeam", UI_Cvar_VariableString("ui_teamName"));
+//	trap_Cvar_Set("g_blueTeam", UI_Cvar_VariableString("ui_opponentName"));
 
 	if (trap_Cvar_VariableValue("ui_recordSPDemo")) {
 		Com_sprintf(buff, MAX_STRING_CHARS, "%s_%i", uiInfo.mapList[ui_currentMap.integer].mapLoadName, g);
@@ -6227,8 +6217,8 @@ static void UI_RunMenuScript(char **args)
 				trap_Cvar_SetValue( "dedicated", Com_Clamp( 0, 2, ui_dedicated.integer ) );
 			}
 			trap_Cvar_SetValue( "g_gametype", Com_Clamp( 0, 8, uiInfo.gameTypes[ui_netGameType.integer].gtEnum ) );
-			trap_Cvar_Set("g_redTeam", UI_Cvar_VariableString("ui_teamName"));
-			trap_Cvar_Set("g_blueTeam", UI_Cvar_VariableString("ui_opponentName"));
+			//trap_Cvar_Set("g_redTeam", UI_Cvar_VariableString("ui_teamName"));
+			//trap_Cvar_Set("g_blueTeam", UI_Cvar_VariableString("ui_opponentName"));
 			trap_Cmd_ExecuteText( EXEC_APPEND, va( "wait ; wait ; map %s\n", uiInfo.mapList[ui_currentNetMap.integer].mapLoadName ) );
 			skill = trap_Cvar_VariableValue( "g_spSkill" );
 
@@ -6253,6 +6243,7 @@ static void UI_RunMenuScript(char **args)
 				trap_Cvar_VariableValue( "g_gametype" ) == GT_POWERDUEL)
 			{ //always set fraglimit 1 when starting a duel game
 				trap_Cvar_Set("fraglimit", "1");
+				trap_Cvar_Set("timelimit", "0");
 			}
 
 			for (i = 0; i < PLAYERS_PER_TEAM; i++) 
@@ -6524,6 +6515,10 @@ static void UI_RunMenuScript(char **args)
 		} else if (Q_stricmp(name, "voteLeader") == 0) {
 			if (uiInfo.teamIndex >= 0 && uiInfo.teamIndex < uiInfo.myTeamCount) {
 				trap_Cmd_ExecuteText( EXEC_APPEND, va("callteamvote leader \"%s\"\n",uiInfo.teamNames[uiInfo.teamIndex]) );
+			}
+		} else if (Q_stricmp(name, "voteTeamKick") == 0) {
+			if (uiInfo.teamIndex >= 0 && uiInfo.teamIndex < uiInfo.myTeamCount) {
+				trap_Cmd_ExecuteText( EXEC_APPEND, va("callteamvote kick \"%s\"\n",uiInfo.teamNames[uiInfo.teamIndex]) );
 			}
 		} else if (Q_stricmp(name, "addBot") == 0) {
 			if (trap_Cvar_VariableValue("g_gametype") >= GT_TEAM) {
@@ -7868,11 +7863,6 @@ static void UI_BuildServerDisplayList(qboolean force) {
 				trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 				numinvisible++;
 			}
-		}
-		else
-		{
-			trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-//			visible = qfalse;
 		}
 	}
 
@@ -9663,7 +9653,10 @@ qboolean UI_FeederSelection(float feederFloat, int index, itemDef_t *item)
 		index = actual;
 		if (index >= 0 && index < uiInfo.q3HeadCount) 
 		{
-			trap_Cvar_Set( "model", uiInfo.q3HeadNames[index]);
+			trap_Cvar_Set( "model", uiInfo.q3HeadNames[index]);	//standard model
+			trap_Cvar_Set ( "char_color_red", "255" );			//standard colors
+			trap_Cvar_Set ( "char_color_green", "255" );
+			trap_Cvar_Set ( "char_color_blue", "255" );
 		}
 	} 
 	else if (feederID == FEEDER_MOVES) 
@@ -11293,9 +11286,6 @@ typedef struct {
 vmCvar_t	ui_ffa_fraglimit;
 vmCvar_t	ui_ffa_timelimit;
 
-vmCvar_t	ui_tourney_fraglimit;
-vmCvar_t	ui_tourney_timelimit;
-
 vmCvar_t	ui_selectedModelIndex;
 vmCvar_t	ui_char_model;
 vmCvar_t	ui_char_skin_head;
@@ -11329,23 +11319,6 @@ vmCvar_t	ui_browserShowEmpty;
 vmCvar_t	ui_drawCrosshair;
 vmCvar_t	ui_drawCrosshairNames;
 vmCvar_t	ui_marks;
-
-vmCvar_t	ui_server1;
-vmCvar_t	ui_server2;
-vmCvar_t	ui_server3;
-vmCvar_t	ui_server4;
-vmCvar_t	ui_server5;
-vmCvar_t	ui_server6;
-vmCvar_t	ui_server7;
-vmCvar_t	ui_server8;
-vmCvar_t	ui_server9;
-vmCvar_t	ui_server10;
-vmCvar_t	ui_server11;
-vmCvar_t	ui_server12;
-vmCvar_t	ui_server13;
-vmCvar_t	ui_server14;
-vmCvar_t	ui_server15;
-vmCvar_t	ui_server16;
 
 vmCvar_t	ui_redteam;
 vmCvar_t	ui_redteam1;
@@ -11427,9 +11400,6 @@ static cvarTable_t		cvarTable[] = {
 	{ &ui_ffa_fraglimit, "ui_ffa_fraglimit", "20", CVAR_ARCHIVE|CVAR_INTERNAL },
 	{ &ui_ffa_timelimit, "ui_ffa_timelimit", "0", CVAR_ARCHIVE|CVAR_INTERNAL },
 
-	{ &ui_tourney_fraglimit, "ui_tourney_fraglimit", "0", CVAR_ARCHIVE|CVAR_INTERNAL },
-	{ &ui_tourney_timelimit, "ui_tourney_timelimit", "15", CVAR_ARCHIVE|CVAR_INTERNAL },
-
 	{ &ui_selectedModelIndex, "ui_selectedModelIndex", "16", CVAR_ARCHIVE|CVAR_INTERNAL },
 
 	{ &ui_char_model,			"ui_char_model",		"jedi_tf",CVAR_ROM|CVAR_INTERNAL},
@@ -11468,29 +11438,13 @@ static cvarTable_t		cvarTable[] = {
 	{ &ui_browserShowFull, "ui_browserShowFull", "1", CVAR_ARCHIVE|CVAR_INTERNAL },
 	{ &ui_browserShowEmpty, "ui_browserShowEmpty", "1", CVAR_ARCHIVE|CVAR_INTERNAL },
 
-	{ &ui_drawCrosshair, "cg_drawCrosshair", "1", CVAR_ARCHIVE|CVAR_INTERNAL },
-	{ &ui_drawCrosshairNames, "cg_drawCrosshairNames", "1", CVAR_ARCHIVE|CVAR_INTERNAL },
-	{ &ui_marks, "cg_marks", "1", CVAR_ARCHIVE|CVAR_INTERNAL },
+	{ &ui_drawCrosshair, "cg_drawCrosshair", "1", CVAR_ARCHIVE },
+	{ &ui_drawCrosshairNames, "cg_drawCrosshairNames", "1", CVAR_ARCHIVE },
+	{ &ui_marks, "cg_marks", "1", CVAR_ARCHIVE },
 
-	{ &ui_server1, "server1", "", CVAR_ARCHIVE|CVAR_INTERNAL },
-	{ &ui_server2, "server2", "", CVAR_ARCHIVE|CVAR_INTERNAL },
-	{ &ui_server3, "server3", "", CVAR_ARCHIVE|CVAR_INTERNAL },
-	{ &ui_server4, "server4", "", CVAR_ARCHIVE|CVAR_INTERNAL },
-	{ &ui_server5, "server5", "", CVAR_ARCHIVE|CVAR_INTERNAL },
-	{ &ui_server6, "server6", "", CVAR_ARCHIVE|CVAR_INTERNAL },
-	{ &ui_server7, "server7", "", CVAR_ARCHIVE|CVAR_INTERNAL },
-	{ &ui_server8, "server8", "", CVAR_ARCHIVE|CVAR_INTERNAL },
-	{ &ui_server9, "server9", "", CVAR_ARCHIVE|CVAR_INTERNAL },
-	{ &ui_server10, "server10", "", CVAR_ARCHIVE|CVAR_INTERNAL },
-	{ &ui_server11, "server11", "", CVAR_ARCHIVE|CVAR_INTERNAL },
-	{ &ui_server12, "server12", "", CVAR_ARCHIVE|CVAR_INTERNAL },
-	{ &ui_server13, "server13", "", CVAR_ARCHIVE|CVAR_INTERNAL },
-	{ &ui_server14, "server14", "", CVAR_ARCHIVE|CVAR_INTERNAL },
-	{ &ui_server15, "server15", "", CVAR_ARCHIVE|CVAR_INTERNAL },
-	{ &ui_server16, "server16", "", CVAR_ARCHIVE|CVAR_INTERNAL },
 	{ &ui_debug, "ui_debug", "0", CVAR_TEMP|CVAR_INTERNAL },
 	{ &ui_initialized, "ui_initialized", "0", CVAR_TEMP|CVAR_INTERNAL },
-	{ &ui_teamName, "ui_teamName", "Empire", CVAR_ARCHIVE|CVAR_INTERNAL },
+	//{ &ui_teamName, "ui_teamName", "Empire", CVAR_ARCHIVE|CVAR_INTERNAL },
 	{ &ui_opponentName, "ui_opponentName", "Rebellion", CVAR_ARCHIVE|CVAR_INTERNAL },
 	{ &ui_rankChange, "ui_rankChange", "0", CVAR_ARCHIVE|CVAR_INTERNAL },
 	{ &ui_freeSaber, "ui_freeSaber", "0", CVAR_ARCHIVE|CVAR_INTERNAL },
@@ -11559,8 +11513,8 @@ static cvarTable_t		cvarTable[] = {
 	{ &ui_captureLimit, "ui_captureLimit", "5", CVAR_INTERNAL},
 	{ &ui_findPlayer, "ui_findPlayer", "Kyle", CVAR_ARCHIVE|CVAR_INTERNAL},
 	{ &ui_recordSPDemo, "ui_recordSPDemo", "0", CVAR_ARCHIVE|CVAR_INTERNAL},
-	{ &ui_realWarmUp, "g_warmup", "20", CVAR_ARCHIVE|CVAR_INTERNAL},
-	{ &ui_realCaptureLimit, "capturelimit", "8", CVAR_SERVERINFO | CVAR_ARCHIVE| CVAR_INTERNAL | CVAR_NORESTART},
+	{ &ui_realWarmUp, "g_warmup", "20", CVAR_ARCHIVE},
+	{ &ui_realCaptureLimit, "capturelimit", "0", CVAR_SERVERINFO | CVAR_ARCHIVE| CVAR_NORESTART},
 	{ &ui_serverStatusTimeOut, "ui_serverStatusTimeOut", "7000", CVAR_ARCHIVE|CVAR_INTERNAL},
 	{ &se_language, "se_language","english", CVAR_ARCHIVE | CVAR_NORESTART},	//text (string ed)
 
@@ -11626,7 +11580,7 @@ static void UI_StopServerRefresh( void )
 					uiInfo.serverStatus.numPlayersOnServers);
 	count = trap_LAN_GetServerCount(ui_netSource.integer);
 	if (count - uiInfo.serverStatus.numDisplayServers > 0) {
-		Com_Printf("%d servers not listed due to packet loss or pings higher than %d\n",
+		Com_Printf("%d servers not listed due to filters, packet loss, or pings higher than %d\n",
 						count - uiInfo.serverStatus.numDisplayServers,
 						(int) trap_Cvar_VariableValue("cl_maxPing"));
 	}

@@ -263,6 +263,7 @@ Ghoul2 Insert Start
 	CG_G2_INITGHOUL2MODEL,
 	CG_G2_SETSKIN,
 	CG_G2_COLLISIONDETECT,
+	CG_G2_COLLISIONDETECTCACHE,
 	CG_G2_CLEANMODELS,
 	CG_G2_ANGLEOVERRIDE,
 	CG_G2_PLAYANIM,
@@ -434,6 +435,8 @@ typedef enum {
 	CG_MISC_ENT, //rwwRMG - added
 
 	CG_GET_SORTED_FORCE_POWER,
+
+	CG_FX_CAMERASHAKE,//mcg post-gold added
 } cgameExport_t;
 
 typedef struct

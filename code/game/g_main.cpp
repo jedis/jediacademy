@@ -161,6 +161,7 @@ cvar_t	*g_numEntities;
 
 cvar_t	*g_saberAutoBlocking;
 cvar_t	*g_saberRealisticCombat;
+cvar_t	*debug_subdivision;
 cvar_t	*g_saberDamageCapping;
 cvar_t	*g_saberMoveSpeed;
 cvar_t	*g_saberAnimSpeed;
@@ -170,6 +171,8 @@ cvar_t	*g_debugSaberLock;
 cvar_t	*g_saberLockRandomNess;
 cvar_t	*g_debugMelee;
 cvar_t	*g_saberRestrictForce;
+cvar_t	*g_saberPickuppableDroppedSabers;
+cvar_t	*g_dismemberProbabilities;
 
 cvar_t	*g_speederControlScheme;
 
@@ -596,7 +599,7 @@ void G_InitCvars( void ) {
 	g_sex = gi.cvar ("sex", "f", CVAR_USERINFO | CVAR_ARCHIVE|CVAR_SAVEGAME|CVAR_NORESTART );
 	g_spskill = gi.cvar ("g_spskill", "0", CVAR_ARCHIVE | CVAR_SAVEGAME|CVAR_NORESTART);
 	g_knockback = gi.cvar( "g_knockback", "1000", CVAR_CHEAT );
-	g_dismemberment = gi.cvar ( "g_dismemberment", "3", CVAR_ARCHIVE );//0 = none, 1 = arms and hands, 2 = legs, 3 = waist and head, 4 = mega dismemberment
+	g_dismemberment = gi.cvar ( "g_dismemberment", "3", CVAR_ARCHIVE );//0 = none, 1 = arms and hands, 2 = legs, 3 = waist and head
 	// for now I'm making default 10 seconds
 	g_corpseRemovalTime = gi.cvar ( "g_corpseRemovalTime", "10", CVAR_ARCHIVE );//number of seconds bodies stick around for, at least... 0 = never go away
 	g_synchSplitAnims = gi.cvar ( "g_synchSplitAnims", "1", 0 );
@@ -631,6 +634,8 @@ void G_InitCvars( void ) {
 
 	g_saberAutoBlocking = gi.cvar( "g_saberAutoBlocking", "1", CVAR_CHEAT );//must press +block button to do any blocking
 	g_saberRealisticCombat = gi.cvar( "g_saberMoreRealistic", "0", CVAR_CHEAT|CVAR_INIT );//makes collision more precise, increases damage
+	debug_subdivision = gi.cvar( "debug_subdivision", "0", CVAR_CHEAT|CVAR_INIT );//debug for dismemberment
+	g_dismemberProbabilities = gi.cvar ( "g_dismemberProbabilities", "1", CVAR_CHEAT|CVAR_INIT );//0 = ignore probabilities, 1 = use probabilities
 	g_saberDamageCapping = gi.cvar( "g_saberDamageCapping", "1", CVAR_CHEAT );//caps damage of sabers vs players and NPC who use sabers
 	g_saberMoveSpeed = gi.cvar( "g_saberMoveSpeed", "1", CVAR_CHEAT );//how fast you run while attacking with a saber
 	g_saberAnimSpeed = gi.cvar( "g_saberAnimSpeed", "1", CVAR_CHEAT );//how fast saber animations run
@@ -640,6 +645,7 @@ void G_InitCvars( void ) {
 	g_saberLockRandomNess = gi.cvar( "g_saberLockRandomNess", "2", CVAR_ARCHIVE );//just for debugging/development, controls frequency of saberlocks
 	g_debugMelee = gi.cvar( "g_debugMelee", "0", CVAR_CHEAT );//just for debugging/development, test kicks and grabs
 	g_saberRestrictForce = gi.cvar( "g_saberRestrictForce", "0", CVAR_ARCHIVE );//restricts certain force powers when using a 2-handed saber or 2 sabers
+	g_saberPickuppableDroppedSabers = gi.cvar( "g_saberPickuppableDroppedSabers", "0", CVAR_CHEAT );//lets you pick up sabers that are dropped
 
 	g_AIsurrender = gi.cvar( "g_AIsurrender", "0", CVAR_CHEAT );
 	g_numEntities = gi.cvar( "g_numEntities", "0", 0 );
@@ -1473,7 +1479,7 @@ qboolean G_RagDoll(gentity_t *ent, vec3_t forcedAngles)
 	}
 
 	VectorCopy(forcedAngles, G2Angles);
-	forcedAngles[0] = forcedAngles[2] = 0;
+	//forcedAngles[0] = forcedAngles[2] = 0;
 
 	if (ent->client->ps.heldByClient <= ENTITYNUM_WORLD)
 	{

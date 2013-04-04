@@ -1365,14 +1365,6 @@ void Info_SetValueForKey_Big( char *s, const char *key, const char *value ) {
 	strcat (s, newi);
 }
 
-
-//rww - convience function..
-int Q_irand(int value1, int value2)
-{
-	value2++; //so it can round down
-	return ((rand() * (value2 - value1)) >> 15) + value1;
-}
-
 //====================================================================
 
 

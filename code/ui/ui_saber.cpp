@@ -14,7 +14,7 @@ USER INTERFACE SABER LOADING & DISPLAY CODE
 #include "ui_shared.h"
 #include "../ghoul2/G2.h"
 
-#define MAX_SABER_DATA_SIZE 0x8000
+#define MAX_SABER_DATA_SIZE 0x80000
 // On Xbox, static linking lets us steal the buffer from wp_saberLoad
 // Just make sure that the saber data size is the same
 #ifdef _XBOX
@@ -179,6 +179,39 @@ int UI_SaberNumBladesForSaber( const char *saberName )
 		numBlades = 8;
 	}
 	return numBlades;
+}
+
+qboolean UI_SaberShouldDrawBlade( const char *saberName, int bladeNum )
+{
+	int bladeStyle2Start = 0, noBlade = 0;
+	char	bladeStyle2StartString[8]={0};
+	char	noBladeString[8]={0};
+	UI_SaberParseParm( saberName, "bladeStyle2Start", bladeStyle2StartString );
+	if ( bladeStyle2StartString
+		&& bladeStyle2StartString[0] )
+	{
+		bladeStyle2Start = atoi( bladeStyle2StartString );
+	}
+	if ( bladeStyle2Start
+		&& bladeNum >= bladeStyle2Start )
+	{//use second blade style
+		UI_SaberParseParm( saberName, "noBlade2", noBladeString );
+		if ( noBladeString
+			&& noBladeString[0] )
+		{
+			noBlade = atoi( noBladeString );
+		}
+	}
+	else
+	{//use first blade style
+		UI_SaberParseParm( saberName, "noBlade", noBladeString );
+		if ( noBladeString
+			&& noBladeString[0] )
+		{
+			noBlade = atoi( noBladeString );
+		}
+	}
+	return ((qboolean)(noBlade==0));
 }
 
 float UI_SaberBladeLengthForSaber( const char *saberName, int bladeNum )
@@ -795,7 +828,10 @@ void UI_SaberDrawBlades( itemDef_t *item, vec3_t origin, float curYaw )
 				saberType_t saberType = TranslateSaberType( saberTypeString );
 				for ( int curBlade = 0; curBlade < numBlades; curBlade++ )
 				{
-					UI_SaberDrawBlade( item, saber, saberModel, saberType, origin, curYaw, curBlade );
+					if ( UI_SaberShouldDrawBlade( saber, curBlade ) )
+					{
+						UI_SaberDrawBlade( item, saber, saberModel, saberType, origin, curYaw, curBlade );
+					}
 				}
 			}
 		}

@@ -1505,11 +1505,7 @@ void CL_KeyEvent (int key, qboolean down, unsigned time) {
 
 	// kg.keys can still be used for bound actions
 	if ( down && /*( key < 128 || key == A_MOUSE1 ) && */
-#ifdef _XBOX	// No demos on Xbox
 		( cls.state == CA_CINEMATIC ) &&
-#else
-		( clc.demoplaying || cls.state == CA_CINEMATIC ) &&
-#endif
 		!cls.keyCatchers) {
 
 		if (Cvar_VariableValue ("com_cameraMode") == 0) {

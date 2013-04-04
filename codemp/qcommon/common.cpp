@@ -50,6 +50,8 @@ cvar_t	*com_cl_running;
 cvar_t	*com_logfile;		// 1 = buffer log, 2 = flush after each print
 cvar_t	*com_showtrace;
 
+cvar_t	*com_optvehtrace;
+
 #ifdef G2_PERFORMANCE_ANALYSIS
 cvar_t	*com_G2Report;
 #endif
@@ -1317,6 +1319,8 @@ void Com_Init( char *commandLine ) {
 		com_speeds = Cvar_Get ("com_speeds", "0", 0);
 		com_timedemo = Cvar_Get ("timedemo", "0", 0);
 		com_cameraMode = Cvar_Get ("com_cameraMode", "0", CVAR_CHEAT);
+
+		com_optvehtrace = Cvar_Get("com_optvehtrace", "0", 0);
 
 		cl_paused = Cvar_Get ("cl_paused", "0", CVAR_ROM);
 		sv_paused = Cvar_Get ("sv_paused", "0", CVAR_ROM);

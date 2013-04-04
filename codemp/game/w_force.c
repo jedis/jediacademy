@@ -161,6 +161,11 @@ void WP_InitForcePowers( gentity_t *ent )
 	{ //if server has no max rank, default to max (50)
 		maxRank = FORCE_MASTERY_JEDI_MASTER;
 	}
+	else if (maxRank >= NUM_FORCE_MASTERY_LEVELS)
+	{//ack, prevent user from being dumb
+		maxRank = FORCE_MASTERY_JEDI_MASTER;
+		trap_Cvar_Set( "g_maxForceRank", va("%i", maxRank) );
+	}
 
 	/*
 	if (g_forcePowerDisable.integer)
@@ -462,7 +467,7 @@ void WP_InitForcePowers( gentity_t *ent )
 	{
 		if (warnClient || !ent->client->sess.setForce)
 		{ //the client's rank is too high for the server and has been autocapped, so tell them
-			if (g_gametype.integer != GT_HOLOCRON && g_gametype.integer != GT_JEDIMASTER)
+			if (g_gametype.integer != GT_HOLOCRON && g_gametype.integer != GT_JEDIMASTER )
 			{
 #ifdef EVENT_FORCE_RANK
 				gentity_t *te = G_TempEntity( vec3_origin, EV_GIVE_NEW_RANK );
@@ -501,7 +506,7 @@ void WP_InitForcePowers( gentity_t *ent )
 			ent->client->sess.setForce = qtrue;
 		}
 
-		if (!didEvent)
+		if (!didEvent )
 		{
 #ifdef EVENT_FORCE_RANK
 			gentity_t *te = G_TempEntity( vec3_origin, EV_GIVE_NEW_RANK );
@@ -879,7 +884,7 @@ qboolean WP_ForcePowerUsable( gentity_t *self, forcePowers_t forcePower )
 
 	if ( !self->client->ps.saberHolstered )
 	{
-		if ( self->client->saber[0].twoHanded )
+		if ( (self->client->saber[0].saberFlags&SFL_TWO_HANDED) )
 		{
 			if ( g_saberRestrictForce.integer )
 			{
@@ -897,7 +902,7 @@ qboolean WP_ForcePowerUsable( gentity_t *self, forcePowers_t forcePower )
 			}
 		}
 
-		if ( self->client->saber[0].twoHanded 
+		if ( (self->client->saber[0].saberFlags&SFL_TWO_HANDED)
 			|| (self->client->saber[0].model && self->client->saber[0].model[0]) )
 		{//this saber requires the use of two hands OR our other hand is using an active saber too
 			if ( (self->client->saber[0].forceRestrictions&(1<<forcePower)) )
@@ -3667,6 +3672,9 @@ void ForceThrow( gentity_t *self, qboolean pull )
 					push_list[x]->client->ps.otherKiller = self->s.number;
 					push_list[x]->client->ps.otherKillerTime = level.time + 5000;
 					push_list[x]->client->ps.otherKillerDebounceTime = level.time + 100;
+					push_list[x]->client->otherKillerMOD = MOD_UNKNOWN;
+					push_list[x]->client->otherKillerVehWeapon = 0;
+					push_list[x]->client->otherKillerWeaponType = WP_NONE;
 
 					pushPowerMod -= (dirLen*0.7);
 					if (pushPowerMod < 16)
@@ -4034,6 +4042,9 @@ void DoGripAction(gentity_t *self, forcePowers_t forcePower)
 		gripEnt->client->ps.otherKiller = self->s.number;
 		gripEnt->client->ps.otherKillerTime = level.time + 5000;
 		gripEnt->client->ps.otherKillerDebounceTime = level.time + 100;
+		gripEnt->client->otherKillerMOD = MOD_UNKNOWN;
+		gripEnt->client->otherKillerVehWeapon = 0;
+		gripEnt->client->otherKillerWeaponType = WP_NONE;
 
 		gripEnt->client->ps.forceGripChangeMovetype = PM_FLOAT;
 
@@ -4067,6 +4078,9 @@ void DoGripAction(gentity_t *self, forcePowers_t forcePower)
 		gripEnt->client->ps.otherKiller = self->s.number;
 		gripEnt->client->ps.otherKillerTime = level.time + 5000;
 		gripEnt->client->ps.otherKillerDebounceTime = level.time + 100;
+		gripEnt->client->otherKillerMOD = MOD_UNKNOWN;
+		gripEnt->client->otherKillerVehWeapon = 0;
+		gripEnt->client->otherKillerWeaponType = WP_NONE;
 
 		gripEnt->client->ps.forceGripChangeMovetype = PM_FLOAT;
 

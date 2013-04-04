@@ -1270,6 +1270,7 @@ Ghoul2 Insert Start
 
 
 	case UI_G2_COLLISIONDETECT:
+	case UI_G2_COLLISIONDETECTCACHE:
 		return 0; //not supported for ui
 
 	case UI_G2_ANGLEOVERRIDE:

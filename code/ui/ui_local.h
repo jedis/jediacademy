@@ -165,6 +165,8 @@ typedef struct {
 	int			moveAnimTime;
 	int			languageCount;
 	int			languageCountIndex;
+
+	int			forcePowerLevel[NUM_FORCE_POWERS];
 }	uiInfo_t;
 
 extern uiInfo_t uiInfo;

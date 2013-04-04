@@ -74,6 +74,8 @@ vmCvar_t	d_projectileGhoul2Collision;
 
 vmCvar_t	g_g2TraceLod;
 
+vmCvar_t	g_optvehtrace;
+
 vmCvar_t	g_locationBasedDamage;
 
 vmCvar_t	g_allowHighPingDuelist;
@@ -140,6 +142,7 @@ vmCvar_t	g_blood;
 vmCvar_t	g_podiumDist;
 vmCvar_t	g_podiumDrop;
 vmCvar_t	g_allowVote;
+vmCvar_t	g_allowTeamVote;
 vmCvar_t	g_teamAutoJoin;
 vmCvar_t	g_teamForceBalance;
 vmCvar_t	g_banIPs;
@@ -154,12 +157,10 @@ vmCvar_t	pmove_fixed;
 vmCvar_t	pmove_msec;
 #include "../namespace_end.h"
 
-vmCvar_t	g_rankings;
 vmCvar_t	g_listEntity;
-vmCvar_t	g_redteam;
-vmCvar_t	g_blueteam;
+//vmCvar_t	g_redteam;
+//vmCvar_t	g_blueteam;
 vmCvar_t	g_singlePlayer;
-vmCvar_t	g_enableDust;
 vmCvar_t	g_enableBreath;
 vmCvar_t	g_dismember;
 vmCvar_t	g_forceDodge;
@@ -174,6 +175,11 @@ vmCvar_t	g_saberDebugPrint;
 vmCvar_t	g_siegeTeamSwitch;
 
 vmCvar_t	bg_fighterAltControl;
+vmCvar_t	g_vehAutoAimLead;
+vmCvar_t	g_autoKickKillSpammers;
+vmCvar_t	g_autoBanKillSpammers;
+vmCvar_t	g_autoKickTKSpammers;
+vmCvar_t	g_autoBanTKSpammers;
 
 #ifdef DEBUG_SABER_BOX
 vmCvar_t	g_saberDebugBox;
@@ -237,22 +243,22 @@ static cvarTable_t		gameCvarTable[] = {
 	{ NULL, "sv_mapname", "", CVAR_SERVERINFO | CVAR_ROM, 0, qfalse  },
 
 	// latched vars
-	{ &g_gametype, "g_gametype", "0", CVAR_SERVERINFO | CVAR_USERINFO | CVAR_LATCH, 0, qfalse  },
-	{ &g_MaxHolocronCarry, "g_MaxHolocronCarry", "3", CVAR_SERVERINFO | CVAR_USERINFO | CVAR_LATCH, 0, qfalse  },
+	{ &g_gametype, "g_gametype", "0", CVAR_SERVERINFO | CVAR_LATCH, 0, qfalse  },
+	{ &g_MaxHolocronCarry, "g_MaxHolocronCarry", "3", CVAR_SERVERINFO | CVAR_LATCH, 0, qfalse  },
 
 	{ &g_maxclients, "sv_maxclients", "8", CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE, 0, qfalse  },
 	{ &g_maxGameClients, "g_maxGameClients", "0", CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE, 0, qfalse  },
 
+	{ &g_trueJedi, "g_jediVmerc", "0", CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE, 0, qtrue },
+
 	// change anytime vars
 	{ &g_ff_objectives, "g_ff_objectives", "0", /*CVAR_SERVERINFO |*/ CVAR_CHEAT | CVAR_NORESTART, 0, qtrue },
-
-	{ &g_trueJedi, "g_jediVmerc", "0", CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE, 0, qtrue },
 
 	{ &g_autoMapCycle, "g_autoMapCycle", "0", CVAR_ARCHIVE | CVAR_NORESTART, 0, qtrue },
 	{ &g_dmflags, "dmflags", "0", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue  },
 	
-	{ &g_maxForceRank, "g_maxForceRank", "6", CVAR_SERVERINFO | CVAR_ARCHIVE | CVAR_USERINFO | CVAR_LATCH, 0, qfalse  },
-	{ &g_forceBasedTeams, "g_forceBasedTeams", "0", CVAR_SERVERINFO | CVAR_ARCHIVE | CVAR_USERINFO | CVAR_LATCH, 0, qfalse  },
+	{ &g_maxForceRank, "g_maxForceRank", "6", CVAR_SERVERINFO | CVAR_ARCHIVE | CVAR_LATCH, 0, qfalse  },
+	{ &g_forceBasedTeams, "g_forceBasedTeams", "0", CVAR_SERVERINFO | CVAR_ARCHIVE | CVAR_LATCH, 0, qfalse  },
 	{ &g_privateDuel, "g_privateDuel", "1", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue  },
 
 	{ &g_allowNPC, "g_allowNPC", "1", CVAR_SERVERINFO | CVAR_CHEAT, 0, qtrue  },
@@ -284,6 +290,8 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &d_projectileGhoul2Collision, "d_projectileGhoul2Collision", "1", CVAR_CHEAT, 0, qtrue  },
 
 	{ &g_g2TraceLod, "g_g2TraceLod", "3", 0, 0, qtrue  },
+
+	{ &g_optvehtrace, "com_optvehtrace", "0", 0, 0, qtrue  },
 
 	{ &g_locationBasedDamage, "g_locationBasedDamage", "1", 0, 0, qtrue },
 
@@ -370,6 +378,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_podiumDrop, "g_podiumDrop", "70", 0, 0, qfalse },
 
 	{ &g_allowVote, "g_allowVote", "1", CVAR_ARCHIVE, 0, qfalse },
+	{ &g_allowTeamVote, "g_allowTeamVote", "1", CVAR_ARCHIVE, 0, qfalse },
 	{ &g_listEntity, "g_listEntity", "0", 0, 0, qfalse },
 
 #if 0
@@ -378,17 +387,14 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_debugUp, "g_debugUp", "0", 0, 0, qfalse },
 #endif
 
-	{ &g_redteam, "g_redteam", "Empire", CVAR_ARCHIVE | CVAR_SERVERINFO | CVAR_USERINFO , 0, qtrue, qtrue },
-	{ &g_blueteam, "g_blueteam", "Rebellion", CVAR_ARCHIVE | CVAR_SERVERINFO | CVAR_USERINFO , 0, qtrue, qtrue  },
+//	{ &g_redteam, "g_redteam", "Empire", CVAR_ARCHIVE | CVAR_SERVERINFO | CVAR_USERINFO , 0, qtrue, qtrue },
+//	{ &g_blueteam, "g_blueteam", "Rebellion", CVAR_ARCHIVE | CVAR_SERVERINFO | CVAR_USERINFO , 0, qtrue, qtrue  },
 	{ &g_singlePlayer, "ui_singlePlayerActive", "", 0, 0, qfalse, qfalse  },
 
-	{ &g_enableDust, "g_enableDust", "0", 0, 0, qtrue, qfalse },
 	{ &g_enableBreath, "g_enableBreath", "0", 0, 0, qtrue, qfalse },
 	{ &g_smoothClients, "g_smoothClients", "1", 0, 0, qfalse},
 	{ &pmove_fixed, "pmove_fixed", "0", CVAR_SYSTEMINFO, 0, qfalse},
 	{ &pmove_msec, "pmove_msec", "8", CVAR_SYSTEMINFO, 0, qfalse},
-
-	{ &g_rankings, "g_rankings", "0", 0, 0, qfalse},
 
 	{ &g_dismember, "g_dismember", "0", CVAR_ARCHIVE, 0, qtrue  },
 	{ &g_forceDodge, "g_forceDodge", "1", 0, 0, qtrue  },
@@ -412,6 +418,11 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_siegeTeamSwitch, "g_siegeTeamSwitch", "1", CVAR_SERVERINFO|CVAR_ARCHIVE, qfalse },
 
 	{ &bg_fighterAltControl, "bg_fighterAltControl", "0", CVAR_SERVERINFO, 0, qtrue },
+	{ &g_vehAutoAimLead, "g_vehAutoAimLead", "0", CVAR_ARCHIVE },
+	{ &g_autoKickKillSpammers, "g_autoKickKillSpammers", "0", CVAR_ARCHIVE, 0, qtrue  },
+	{ &g_autoBanKillSpammers, "g_autoBanKillSpammers", "0", CVAR_ARCHIVE, 0, qtrue  },
+	{ &g_autoKickTKSpammers, "g_autoKickTKSpammers", "0", CVAR_ARCHIVE, 0, qtrue  },
+	{ &g_autoBanTKSpammers, "g_autoBanTKSpammers", "0", CVAR_ARCHIVE, 0, qtrue  },
 
 #ifdef DEBUG_SABER_BOX
 	{ &g_saberDebugBox, "g_saberDebugBox", "0", CVAR_CHEAT, 0, qfalse },
@@ -445,7 +456,7 @@ static cvarTable_t		gameCvarTable[] = {
 
 	{ &d_saberCombat, "d_saberCombat", "0", CVAR_CHEAT },
 
-	{ &g_spskill, "g_npcspskill", "0", CVAR_ARCHIVE | CVAR_USERINFO },
+	{ &g_spskill, "g_npcspskill", "0", CVAR_ARCHIVE | CVAR_INTERNAL },
 
 	//for overriding the level defaults
 	{ &g_siegeTeam1, "g_siegeTeam1", "none", CVAR_ARCHIVE|CVAR_SERVERINFO, 0, qfalse  },
@@ -498,6 +509,9 @@ This must be the very first function compiled into the .q3vm file
 ================
 */
 #include "../namespace_begin.h"
+#ifdef __linux__
+extern "C" {
+#endif
 int vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9, int arg10, int arg11  ) {
 	switch ( command ) {
 	case GAME_INIT:
@@ -680,6 +694,9 @@ int vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int a
 
 	return -1;
 }
+#ifdef __linux__
+}
+#endif
 #include "../namespace_end.h"
 
 
@@ -876,6 +893,7 @@ G_InitGame
 */
 extern void RemoveAllWP(void);
 extern void BG_ClearVehicleParseParms(void);
+extern void G_LoadIPBans(void);
 void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	int					i;
 	vmCvar_t	mapname;
@@ -912,7 +930,8 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 
 	G_RegisterCvars();
 
-	G_ProcessIPBans();
+	//G_ProcessIPBans();
+	G_LoadIPBans();
 
 	G_InitMemory();
 
@@ -1105,12 +1124,14 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 G_ShutdownGame
 =================
 */
+extern void G_SaveBanIP( void );
 void G_ShutdownGame( int restart ) {
 	int i = 0;
 	gentity_t *ent;
 
 //	G_Printf ("==== ShutdownGame ====\n");
 
+	G_SaveBanIP();
 	G_CleanAllFakeClients(); //get rid of dynamically allocated fake client structs.
 
 	BG_ClearAnimsets(); //free all dynamic allocations made through the engine
@@ -1952,14 +1973,43 @@ FindIntermissionPoint
 This is also used for spectator spawns
 ==================
 */
+extern qboolean	gSiegeRoundBegun;
+extern qboolean	gSiegeRoundEnded;
+extern qboolean	gSiegeRoundWinningTeam;
 void FindIntermissionPoint( void ) {
-	gentity_t	*ent, *target;
+	gentity_t	*ent = NULL;
+	gentity_t	*target;
 	vec3_t		dir;
 
 	// find the intermission spot
-	ent = G_Find (NULL, FOFS(classname), "info_player_intermission");
+	if ( g_gametype.integer == GT_SIEGE
+		&& level.intermissiontime
+		&& level.intermissiontime <= level.time
+		&& gSiegeRoundEnded )
+	{
+	   	if (gSiegeRoundWinningTeam == SIEGETEAM_TEAM1)
+		{
+			ent = G_Find (NULL, FOFS(classname), "info_player_intermission_red");
+			if ( ent && ent->target2 ) 
+			{
+				G_UseTargets2( ent, ent, ent->target2 );
+			}
+		}
+	   	else if (gSiegeRoundWinningTeam == SIEGETEAM_TEAM2)
+		{
+			ent = G_Find (NULL, FOFS(classname), "info_player_intermission_blue");
+			if ( ent && ent->target2 ) 
+			{
+				G_UseTargets2( ent, ent, ent->target2 );
+			}
+		}
+	}
+	if ( !ent )
+	{
+		ent = G_Find (NULL, FOFS(classname), "info_player_intermission");
+	}
 	if ( !ent ) {	// the map creator forgot to put in an intermission point...
-		SelectSpawnPoint ( vec3_origin, level.intermission_origin, level.intermission_angle );
+		SelectSpawnPoint ( vec3_origin, level.intermission_origin, level.intermission_angle, TEAM_SPECTATOR );
 	} else {
 		VectorCopy (ent->s.origin, level.intermission_origin);
 		VectorCopy (ent->s.angles, level.intermission_angle);
@@ -3223,14 +3273,19 @@ void CheckVote( void ) {
 
 			if (g_fraglimitVoteCorrection.integer)
 			{ //This means to auto-correct fraglimit when voting to and from duel.
-				int currentGT = trap_Cvar_VariableIntegerValue("g_gametype");
-				int currentFL = trap_Cvar_VariableIntegerValue("fraglimit");
+				const int currentGT = trap_Cvar_VariableIntegerValue("g_gametype");
+				const int currentFL = trap_Cvar_VariableIntegerValue("fraglimit");
+				const int currentTL = trap_Cvar_VariableIntegerValue("timelimit");
 
 				if ((level.votingGametypeTo == GT_DUEL || level.votingGametypeTo == GT_POWERDUEL) && currentGT != GT_DUEL && currentGT != GT_POWERDUEL)
 				{
 					if (currentFL > 3 || !currentFL)
 					{ //if voting to duel, and fraglimit is more than 3 (or unlimited), then set it down to 3
 						trap_SendConsoleCommand(EXEC_APPEND, "fraglimit 3\n");
+					}
+					if (currentTL)
+					{ //if voting to duel, and timelimit is set, make it unlimited
+						trap_SendConsoleCommand(EXEC_APPEND, "timelimit 0\n");
 					}
 				}
 				else if ((level.votingGametypeTo != GT_DUEL && level.votingGametypeTo != GT_POWERDUEL) &&

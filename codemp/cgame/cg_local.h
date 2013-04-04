@@ -245,8 +245,8 @@ typedef struct {
 //	char			headModelName[MAX_QPATH];
 //	char			headSkinName[MAX_QPATH];
 	char			forcePowers[MAX_QPATH];
-	char			redTeam[MAX_TEAMNAME];
-	char			blueTeam[MAX_TEAMNAME];
+//	char			redTeam[MAX_TEAMNAME];
+//	char			blueTeam[MAX_TEAMNAME];
 
 	char			teamName[MAX_TEAMNAME];
 
@@ -1130,6 +1130,7 @@ typedef struct {
 	qhandle_t	purpleSaberGlowShader;
 	qhandle_t	purpleSaberCoreShader;
 	qhandle_t	saberBlurShader;
+	qhandle_t	swordTrailShader;
 
 	qhandle_t	yellowDroppedSaberShader;
 
@@ -1544,8 +1545,8 @@ typedef struct {
 	int				fDisable;
 
 	char			mapname[MAX_QPATH];
-	char			redTeam[MAX_QPATH];
-	char			blueTeam[MAX_QPATH];
+//	char			redTeam[MAX_QPATH];
+//	char			blueTeam[MAX_QPATH];
 
 	int				voteTime;
 	int				voteYes;
@@ -1650,6 +1651,7 @@ extern	vmCvar_t		cg_drawAmmoWarning;
 extern	vmCvar_t		cg_drawCrosshair;
 extern	vmCvar_t		cg_drawCrosshairNames;
 extern	vmCvar_t		cg_drawRadar;
+extern	vmCvar_t		cg_drawVehLeadIndicator;
 extern	vmCvar_t		cg_drawAutomap;
 extern	vmCvar_t		cg_drawScores;
 extern	vmCvar_t		cg_dynamicCrosshair;
@@ -1714,6 +1716,8 @@ extern	vmCvar_t		cg_g2TraceLod;
 extern	vmCvar_t		cg_fpls;
 
 extern	vmCvar_t		cg_ghoul2Marks;
+
+extern	vmCvar_t		cg_optvehtrace;
 
 extern	vmCvar_t		cg_saberDynamicMarks;
 extern	vmCvar_t		cg_saberDynamicMarkTime;
@@ -1780,16 +1784,13 @@ extern  vmCvar_t		cg_smallFont;
 extern  vmCvar_t		cg_bigFont;
 extern	vmCvar_t		cg_noTaunt;
 extern	vmCvar_t		cg_noProjectileTrail;
-extern	vmCvar_t		cg_trueLightning;
+//extern	vmCvar_t		cg_trueLightning;
 
-extern	vmCvar_t		cg_redTeamName;
-extern	vmCvar_t		cg_blueTeamName;
+//extern	vmCvar_t		cg_redTeamName;
+//extern	vmCvar_t		cg_blueTeamName;
 extern	vmCvar_t		cg_currentSelectedPlayer;
 extern	vmCvar_t		cg_currentSelectedPlayerName;
-extern	vmCvar_t		cg_singlePlayer;
-extern	vmCvar_t		cg_enableDust;
-extern	vmCvar_t		cg_enableBreath;
-extern	vmCvar_t		cg_singlePlayerActive;
+//extern	vmCvar_t		cg_singlePlayerActive;
 extern  vmCvar_t		cg_recordSPDemo;
 extern  vmCvar_t		cg_recordSPDemoName;
 
@@ -2505,6 +2506,7 @@ void FX_BlasterWeaponHitPlayer( vec3_t origin, vec3_t normal, qboolean humanoid 
 #include "../namespace_begin.h"
 
 void		trap_G2API_CollisionDetect		( CollisionRecord_t *collRecMap, void* ghoul2, const vec3_t angles, const vec3_t position,int frameNumber, int entNum, const vec3_t rayStart, const vec3_t rayEnd, const vec3_t scale, int traceFlags, int useLod, float fRadius );
+void		trap_G2API_CollisionDetectCache		( CollisionRecord_t *collRecMap, void* ghoul2, const vec3_t angles, const vec3_t position,int frameNumber, int entNum, const vec3_t rayStart, const vec3_t rayEnd, const vec3_t scale, int traceFlags, int useLod, float fRadius );
 
 /*
 Ghoul2 Insert Start

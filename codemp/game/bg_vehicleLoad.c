@@ -69,8 +69,8 @@ extern stringID_table_t animTable [MAX_ANIMATIONS+1];
 
 // These buffers are filled in with the same contents and then just read from in
 // a few places. We only need one copy on Xbox.
-#define MAX_VEH_WEAPON_DATA_SIZE 0x4000
-#define MAX_VEHICLE_DATA_SIZE 0x10000
+#define MAX_VEH_WEAPON_DATA_SIZE 0x20000
+#define MAX_VEHICLE_DATA_SIZE 0x80000
 
 #if !defined(_XBOX) || defined(QAGAME)
 	char	VehWeaponParms[MAX_VEH_WEAPON_DATA_SIZE];
@@ -151,6 +151,7 @@ vehField_t vehWeaponFields[NUM_VWEAP_PARMS] =
 	{"loopSound", VWFOFS(iLoopSound), VF_SOUND_CLIENT},	//index of loopSound
 	{"speed", VWFOFS(fSpeed), VF_FLOAT},		//speed of projectile/range of traceline
 	{"homing", VWFOFS(fHoming), VF_FLOAT},		//0.0 = not homing, 0.5 = half vel to targ, half cur vel, 1.0 = all vel to targ
+	{"homingFOV", VWFOFS(fHomingFOV), VF_FLOAT},//missile will lose lock on if DotProduct of missile direction and direction to target ever drops below this (-1 to 1, -1 = never lose target, 0 = lose if ship gets behind missile, 1 = pretty much will lose it's target right away)
 	{"lockOnTime", VWFOFS(iLockOnTime), VF_INT},	//0 = no lock time needed, else # of ms needed to lock on
 	{"damage", VWFOFS(iDamage), VF_INT},		//damage done when traceline or projectile directly hits target
 	{"splashDamage", VWFOFS(iSplashDamage), VF_INT},//damage done to ents in splashRadius of end of traceline or projectile origin on impact
@@ -1338,6 +1339,7 @@ int VEH_LoadVehicle( const char *vehicleName )
 	G_SoundIndex( "sound/vehicles/common/release.wav" );
 #elif CGAME
 	trap_R_RegisterShader( "gfx/menus/radar/bracket" );
+	trap_R_RegisterShader( "gfx/menus/radar/lead" );
 	trap_R_RegisterShaderNoMip( "gfx/menus/radar/asteroid" );
 	trap_S_RegisterSound( "sound/vehicles/common/impactalarm.wav" );
 	trap_S_RegisterSound( "sound/vehicles/common/linkweaps.wav" );

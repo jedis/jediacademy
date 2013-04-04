@@ -1351,6 +1351,21 @@ Ghoul2 Insert Start
 								   VMF(12) );
 		return 0;
 
+	case CG_G2_COLLISIONDETECTCACHE:
+		G2API_CollisionDetectCache ( (CollisionRecord_t*)VMA(1), *((CGhoul2Info_v *)args[2]), 
+								   (const float*)VMA(3),
+								   (const float*)VMA(4),
+								   args[5],
+								   args[6],
+								   (float*)VMA(7),
+								   (float*)VMA(8),
+								   (float*)VMA(9),
+								   G2VertSpaceClient,
+								   args[10],
+								   args[11],
+								   VMF(12) );
+		return 0;
+
 	case CG_G2_ANGLEOVERRIDE:
 		return G2API_SetBoneAngles(*((CGhoul2Info_v *)args[1]), args[2], (const char *)VMA(3), (float *)VMA(4), args[5],
 							 (const Eorientations) args[6], (const Eorientations) args[7], (const Eorientations) args[8],

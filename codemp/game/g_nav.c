@@ -917,6 +917,10 @@ qboolean NAV_AvoidCollision( gentity_t *self, gentity_t *goal, navInfo_t *info )
 	VectorMA( self->r.currentOrigin, info->distance, info->direction, movepos );
 	VectorCopy( info->direction, movedir );
 
+	if ( self && self->NPC && (self->NPC->aiFlags&NPCAI_NO_COLL_AVOID) )
+	{//pretend there's no-one in the way
+		return qtrue;
+	}
 	//Now test against entities
 	if ( NAV_CheckAhead( self, movepos, &info->trace, CONTENTS_BODY ) == qfalse )
 	{

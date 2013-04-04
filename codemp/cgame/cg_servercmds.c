@@ -139,10 +139,10 @@ void CG_ParseServerinfo( void ) {
 	trap_Cvar_Set ( "ui_about_mapname", mapname );
 
 	Com_sprintf( cgs.mapname, sizeof( cgs.mapname ), "maps/%s.bsp", mapname );
-	Q_strncpyz( cgs.redTeam, Info_ValueForKey( info, "g_redTeam" ), sizeof(cgs.redTeam) );
-	trap_Cvar_Set("g_redTeam", cgs.redTeam);
-	Q_strncpyz( cgs.blueTeam, Info_ValueForKey( info, "g_blueTeam" ), sizeof(cgs.blueTeam) );
-	trap_Cvar_Set("g_blueTeam", cgs.blueTeam);
+//	Q_strncpyz( cgs.redTeam, Info_ValueForKey( info, "g_redTeam" ), sizeof(cgs.redTeam) );
+//	trap_Cvar_Set("g_redTeam", cgs.redTeam);
+//	Q_strncpyz( cgs.blueTeam, Info_ValueForKey( info, "g_blueTeam" ), sizeof(cgs.blueTeam) );
+//	trap_Cvar_Set("g_blueTeam", cgs.blueTeam);
 
 	trap_Cvar_Set ( "ui_about_gametype", va("%i", cgs.gametype ) );
 	trap_Cvar_Set ( "ui_about_fraglimit", va("%i", cgs.fraglimit ) );
@@ -1532,7 +1532,7 @@ static void CG_ServerCommand( void ) {
 			x++;
 		}
 		trap_SP_GetStringTextString(x, strEd, MAX_STRINGED_SV_STRING);
-		CG_CenterPrint( strEd, SCREEN_HEIGHT * 0.30, BIGCHAR_WIDTH );
+		CG_CenterPrint( strEd, SCREEN_HEIGHT * 0.20, BIGCHAR_WIDTH );
 		return;
 	}
 

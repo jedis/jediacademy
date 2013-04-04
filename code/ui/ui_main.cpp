@@ -128,6 +128,9 @@ static void		UI_DecrementForcePowerLevel( void );
 static void		UI_DecrementCurrentForcePower ( void );
 static void		UI_ShutdownForceHelp( void );
 static void		UI_ForceHelpActive( void );
+static void		UI_DemoSetForceLevels( void );
+static void		UI_RecordForceLevels( void );
+static void		UI_RecordWeapons( void );
 static void		UI_ResetCharacterListBoxes( void );
 
 
@@ -1226,6 +1229,18 @@ static qboolean UI_RunMenuScript ( const char **args )
 		{
 			UI_ForceHelpActive();
 		}
+		else if (Q_stricmp(name, "demosetforcelevels") == 0) 
+		{
+			UI_DemoSetForceLevels();
+		}
+		else if (Q_stricmp(name, "recordforcelevels") == 0) 
+		{
+			UI_RecordForceLevels();
+		}
+		else if (Q_stricmp(name, "recordweapons") == 0) 
+		{
+			UI_RecordWeapons();
+		}
 		else if (Q_stricmp(name, "showforceleveldesc") == 0) 
 		{
 			const char *forceName;
@@ -1807,8 +1822,6 @@ UI_FeederSelection
 */
 static void UI_FeederSelection(float feederID, int index, itemDef_t *item) 
 {
-	static char info[MAX_STRING_CHARS];
-
 	if (feederID == FEEDER_SAVEGAMES) 
 	{
 		s_savegame.currentLine = index;
@@ -2574,9 +2587,21 @@ void _UI_Init( qboolean inGameLoad )
 	{
 		menuSet = "ui/menus.txt";
 	}
+	if ( Cvar_VariableIntegerValue("com_demo") )
+	{
+		menuSet = "ui/demo_menus.txt";
+	}
+
 	if (inGameLoad)
 	{
-		UI_LoadMenus("ui/ingame.txt", qtrue);
+		if ( Cvar_VariableIntegerValue("com_demo") )
+		{
+			UI_LoadMenus("ui/demo_ingame.txt", qtrue);
+		}
+		else
+		{
+			UI_LoadMenus("ui/ingame.txt", qtrue);
+		}
 	}
 	else 
 	{
@@ -2886,6 +2911,12 @@ void UI_Load(void)
 	{
 		menuSet = "ui/menus.txt";
 	}
+
+	if ( Cvar_VariableIntegerValue("com_demo") )
+	{
+		menuSet = "ui/demo_menus.txt";
+	}
+
 
 	String_Init();
 
@@ -4273,12 +4304,12 @@ static void UI_UpdateFightingStyleChoices ( void )
 	if (!strcmpi("staff",Cvar_VariableString ( "ui_saber_type" )))
 	{
 		Cvar_Set ( "ui_fightingstylesallowed", "0" );
-		Cvar_Set ( "ui_newfightingstyle", "1" );		// Default, MEDIUM
+		Cvar_Set ( "ui_newfightingstyle", "4" );		// SS_STAFF
 	}
 	else if (!strcmpi("dual",Cvar_VariableString ( "ui_saber_type" )))
 	{
 		Cvar_Set ( "ui_fightingstylesallowed", "0" );
-		Cvar_Set ( "ui_newfightingstyle", "1" );		// Default, MEDIUM
+		Cvar_Set ( "ui_newfightingstyle", "3" );		// SS_DUAL
 	}
 	else
 	{
@@ -4424,6 +4455,7 @@ static void UI_InitAllocForcePowers ( const char *forceName )
 	menuDef_t	*menu;
 	itemDef_t	*item;
 	short		forcePowerI=0;
+	int			forcelevel;
 
 	menu = Menu_GetFocused();	// Get current menu
 
@@ -4437,14 +4469,22 @@ static void UI_InitAllocForcePowers ( const char *forceName )
 		return;
 	}
 
+	int com_demo = Cvar_VariableIntegerValue( "com_demo" );
+
 	client_t* cl = &svs.clients[0];	// 0 because only ever us as a player	
 
-	if (!cl)
+	// NOTE: this UIScript can be called outside the running game now, so handle that case
+	// by getting info frim UIInfo instead of PlayerState
+	if( cl && !com_demo )
 	{
-		return;
+		playerState_t*		pState = cl->gentity->client;
+		forcelevel = pState->forcePowerLevel[powerEnums[forcePowerI].powerEnum];
 	}
-	playerState_t*		pState = cl->gentity->client;
-
+	else
+	{	// always want this to happen in demo mode
+		forcelevel = uiInfo.forcePowerLevel[powerEnums[forcePowerI].powerEnum];
+	}
+	
 	char itemName[128];
 	Com_sprintf (itemName, sizeof(itemName), "%s_hexpic", powerEnums[forcePowerI].title);
 	item = (itemDef_s *) Menu_FindItemByName(menu, itemName);
@@ -4452,19 +4492,20 @@ static void UI_InitAllocForcePowers ( const char *forceName )
 	if (item)
 	{
 		char itemGraphic[128];
-		Com_sprintf (itemGraphic, sizeof(itemGraphic), "gfx/menus/hex_pattern_%d",pState->forcePowerLevel[powerEnums[forcePowerI].powerEnum]);
+		Com_sprintf (itemGraphic, sizeof(itemGraphic), "gfx/menus/hex_pattern_%d",forcelevel);
 		item->window.background = ui.R_RegisterShaderNoMip(itemGraphic);
 
 		// If maxed out on power - don't allow update
-/*		if (pState->forcePowerLevel[powerEnums[forcePowerI].powerEnum]>=3)
+		if (forcelevel>=3)
 		{
 			Com_sprintf (itemName, sizeof(itemName), "%s_fbutton", powerEnums[forcePowerI].title);
 			item = (itemDef_s *) Menu_FindItemByName(menu, itemName);
-			if (item)		// This is okay, because core powers don't have a hex button
+			if (item)
 			{
-				item->window.flags &= ~WINDOW_VISIBLE;
+				item->action = 0;	//you are bad, no action for you!
+				item->descText = 0; //no desc either!
 			}
-		} */
+		}
 	}
 
 	// Set weapons button to inactive
@@ -4605,6 +4646,141 @@ static void	UI_ForceHelpActive( void )
 	}
 }
 
+// Set the force levels depending on the level chosen
+static void	UI_DemoSetForceLevels( void )
+{
+	menuDef_t	*menu;
+
+	menu = Menu_GetFocused();	// Get current menu
+
+	if (!menu)
+	{
+		return;
+	}
+
+	char	buffer[MAX_STRING_CHARS];
+
+	client_t* cl = &svs.clients[0];	// 0 because only ever us as a player	
+	playerState_t*		pState = NULL;
+	if( cl )
+	{
+		pState = cl->gentity->client;
+	}
+
+	ui.Cvar_VariableStringBuffer( "ui_demo_level", buffer, sizeof(buffer));
+	if( Q_stricmp( buffer, "t1_sour")==0 )
+	{// NOTE : always set the uiInfo powers
+		// level 1 in all core powers
+		uiInfo.forcePowerLevel[FP_LEVITATION]=1; 
+		uiInfo.forcePowerLevel[FP_SPEED]=1;		 
+		uiInfo.forcePowerLevel[FP_PUSH]=1;		
+		uiInfo.forcePowerLevel[FP_PULL]=1;
+		uiInfo.forcePowerLevel[FP_SEE]=1;
+		uiInfo.forcePowerLevel[FP_SABER_OFFENSE]=1;
+		uiInfo.forcePowerLevel[FP_SABER_DEFENSE]=1;
+		uiInfo.forcePowerLevel[FP_SABERTHROW]=1;
+		// plus these extras
+		uiInfo.forcePowerLevel[FP_HEAL]=1;
+		uiInfo.forcePowerLevel[FP_TELEPATHY]=1;
+		uiInfo.forcePowerLevel[FP_GRIP]=1;
+
+		// and set the rest to zero
+		uiInfo.forcePowerLevel[FP_ABSORB]=0;
+		uiInfo.forcePowerLevel[FP_PROTECT]=0;
+		uiInfo.forcePowerLevel[FP_DRAIN]=0;
+		uiInfo.forcePowerLevel[FP_LIGHTNING]=0;
+		uiInfo.forcePowerLevel[FP_RAGE]=0;
+	}
+	else
+	{
+		// level 3 in all core powers
+		uiInfo.forcePowerLevel[FP_LEVITATION]=3; 
+		uiInfo.forcePowerLevel[FP_SPEED]=3;		 
+		uiInfo.forcePowerLevel[FP_PUSH]=3;		
+		uiInfo.forcePowerLevel[FP_PULL]=3;
+		uiInfo.forcePowerLevel[FP_SEE]=3;
+		uiInfo.forcePowerLevel[FP_SABER_OFFENSE]=3;
+		uiInfo.forcePowerLevel[FP_SABER_DEFENSE]=3;
+		uiInfo.forcePowerLevel[FP_SABERTHROW]=3;
+
+		// plus these extras
+		uiInfo.forcePowerLevel[FP_HEAL]=1;
+		uiInfo.forcePowerLevel[FP_TELEPATHY]=1;
+		uiInfo.forcePowerLevel[FP_GRIP]=2;
+		uiInfo.forcePowerLevel[FP_LIGHTNING]=1;
+		uiInfo.forcePowerLevel[FP_PROTECT]=1;
+				
+		// and set the rest to zero
+		
+		uiInfo.forcePowerLevel[FP_ABSORB]=0;
+		uiInfo.forcePowerLevel[FP_DRAIN]=0;
+		uiInfo.forcePowerLevel[FP_RAGE]=0;	
+	}
+
+	if (pState)
+	{//i am carrying over from a previous level, so get the increased power! (non-core only)
+		uiInfo.forcePowerLevel[FP_HEAL] = max(pState->forcePowerLevel[FP_HEAL], uiInfo.forcePowerLevel[FP_HEAL]);
+		uiInfo.forcePowerLevel[FP_TELEPATHY]=max(pState->forcePowerLevel[FP_TELEPATHY], uiInfo.forcePowerLevel[FP_TELEPATHY]);
+		uiInfo.forcePowerLevel[FP_GRIP]=max(pState->forcePowerLevel[FP_GRIP], uiInfo.forcePowerLevel[FP_GRIP]);
+		uiInfo.forcePowerLevel[FP_LIGHTNING]=max(pState->forcePowerLevel[FP_LIGHTNING], uiInfo.forcePowerLevel[FP_LIGHTNING]);
+		uiInfo.forcePowerLevel[FP_PROTECT]=max(pState->forcePowerLevel[FP_PROTECT], uiInfo.forcePowerLevel[FP_PROTECT]);
+				
+		uiInfo.forcePowerLevel[FP_ABSORB]=max(pState->forcePowerLevel[FP_ABSORB], uiInfo.forcePowerLevel[FP_ABSORB]);
+		uiInfo.forcePowerLevel[FP_DRAIN]=max(pState->forcePowerLevel[FP_DRAIN], uiInfo.forcePowerLevel[FP_DRAIN]);
+		uiInfo.forcePowerLevel[FP_RAGE]=max(pState->forcePowerLevel[FP_RAGE], uiInfo.forcePowerLevel[FP_RAGE]);
+	}
+}
+
+// record the force levels into a cvar so when restoring player from map transition
+// the force levels are set up correctly
+static void	UI_RecordForceLevels( void )
+{
+	menuDef_t	*menu;
+
+	menu = Menu_GetFocused();	// Get current menu
+
+	if (!menu)
+	{
+		return;
+	}
+
+	const char *s2 = "";
+	int i;
+	for (i=0;i< NUM_FORCE_POWERS; i++)
+	{
+		s2 = va("%s %i",s2, uiInfo.forcePowerLevel[i]);
+	}
+	Cvar_Set( "demo_playerfplvl", s2 );
+
+}
+
+// record the weapons into a cvar so when restoring player from map transition
+// the force levels are set up correctly
+static void	UI_RecordWeapons( void )
+{
+	menuDef_t	*menu;
+
+	menu = Menu_GetFocused();	// Get current menu
+
+	if (!menu)
+	{
+		return;
+	}
+
+	const char *s2 = "";
+	
+	int wpns = 0;
+	// always add blaster and saber
+	wpns |= (1<<WP_SABER);
+	wpns |= (1<<WP_BLASTER_PISTOL);
+	wpns |= (1<< uiInfo.selectedWeapon1);
+	wpns |= (1<< uiInfo.selectedWeapon2);
+	wpns |= (1<< uiInfo.selectedThrowWeapon);
+	s2 = va("%i", wpns );
+	
+	Cvar_Set( "demo_playerwpns", s2 );
+
+}
 
 // Shut down the help screen in the force power allocation screen
 static void UI_ShutdownForceHelp( void )
@@ -4734,16 +4910,22 @@ static void UI_DecrementCurrentForcePower ( void )
 		return;
 	}
 
+	int com_demo = Cvar_VariableIntegerValue( "com_demo" );
+
 	// Get player state
 	client_t* cl = &svs.clients[0];	// 0 because only ever us as a player	
+	playerState_t*		pState = NULL;
+	int forcelevel;
 
-	if (!cl)	// No client, get out
+	if( cl && !com_demo )
 	{
-		return;
+		pState = cl->gentity->client;
+		forcelevel = pState->forcePowerLevel[powerEnums[uiInfo.forcePowerUpdated].powerEnum];
 	}
-
-	playerState_t*		pState = cl->gentity->client;
-
+	else
+	{	// always want this to happen in demo mode
+		forcelevel = uiInfo.forcePowerLevel[powerEnums[uiInfo.forcePowerUpdated].powerEnum];
+	}
 
 	if (uiInfo.forcePowerUpdated == FP_UPDATED_NONE)
 	{
@@ -4752,17 +4934,26 @@ static void UI_DecrementCurrentForcePower ( void )
 
 	DC->startLocalSound(uiInfo.uiDC.Assets.forceUnchosenSound, CHAN_AUTO );
 
-	if (pState->forcePowerLevel[powerEnums[uiInfo.forcePowerUpdated].powerEnum]>0)
+	if (forcelevel>0)
 	{
-		pState->forcePowerLevel[powerEnums[uiInfo.forcePowerUpdated].powerEnum]--;	// Decrement it
-		// Turn off power if level is 0
-		if (pState->forcePowerLevel[powerEnums[uiInfo.forcePowerUpdated].powerEnum]<1)
+		if( pState && !com_demo )
 		{
-			pState->forcePowersKnown &= ~( 1 << powerEnums[uiInfo.forcePowerUpdated].powerEnum );
+			pState->forcePowerLevel[powerEnums[uiInfo.forcePowerUpdated].powerEnum]--;	// Decrement it
+			forcelevel = pState->forcePowerLevel[powerEnums[uiInfo.forcePowerUpdated].powerEnum];
+			// Turn off power if level is 0
+			if (pState->forcePowerLevel[powerEnums[uiInfo.forcePowerUpdated].powerEnum]<1)
+			{
+				pState->forcePowersKnown &= ~( 1 << powerEnums[uiInfo.forcePowerUpdated].powerEnum );
+			}
+		}
+		else
+		{	// always want this to happen in demo mode
+			uiInfo.forcePowerLevel[powerEnums[uiInfo.forcePowerUpdated].powerEnum]--;	// Decrement it
+			forcelevel = uiInfo.forcePowerLevel[powerEnums[uiInfo.forcePowerUpdated].powerEnum];
 		}
 	}
 
-	UI_SetHexPicLevel( menu,uiInfo.forcePowerUpdated,pState->forcePowerLevel[powerEnums[uiInfo.forcePowerUpdated].powerEnum],qfalse );
+	UI_SetHexPicLevel( menu,uiInfo.forcePowerUpdated,forcelevel,qfalse );
 	
 	UI_ShowForceLevelDesc ( powerEnums[uiInfo.forcePowerUpdated].title );
 
@@ -4781,7 +4972,7 @@ static void UI_DecrementCurrentForcePower ( void )
 	// Show point has not been allocated
 	UI_SetPowerTitleText( qfalse);
 
-	// Make weapons button active
+	// Make weapons button inactive
 	UI_ForcePowerWeaponsButton(qfalse);
 
 	// Hide the deallocate button
@@ -4808,6 +4999,7 @@ static void UI_DecrementCurrentForcePower ( void )
 	uiInfo.forcePowerUpdated = FP_UPDATED_NONE;			// It's as if nothing happened.
 }
 
+
 void Item_MouseEnter(itemDef_t *item, float x, float y);
 
 // Try to increment force power level (Used by Force Power Allocation screen) 
@@ -4829,16 +5021,23 @@ static void UI_AffectForcePowerLevel ( const char *forceName )
 		return;
 	}
 
+	int com_demo = Cvar_VariableIntegerValue( "com_demo" );
 	// Get player state
 	client_t* cl = &svs.clients[0];	// 0 because only ever us as a player	
-
-	if (!cl)	// No client, get out
+	playerState_t*		pState = NULL;
+	int	forcelevel;
+	if( cl && !com_demo)
 	{
-		return;
+		pState = cl->gentity->client;
+		forcelevel = pState->forcePowerLevel[powerEnums[forcePowerI].powerEnum];
 	}
-	playerState_t*		pState = cl->gentity->client;
+	else
+	{	// always want this to happen in demo mode
+		forcelevel = uiInfo.forcePowerLevel[powerEnums[forcePowerI].powerEnum];
+	}
+	
 
-	if (pState->forcePowerLevel[powerEnums[forcePowerI].powerEnum]>2)
+	if (forcelevel>2)
 	{	// Too big, can't be incremented
 		return;
 	}
@@ -4848,10 +5047,19 @@ static void UI_AffectForcePowerLevel ( const char *forceName )
 
 	uiInfo.forcePowerUpdated = forcePowerI;	// Remember which power was updated
 
-	pState->forcePowerLevel[powerEnums[forcePowerI].powerEnum]++;	// Increment it
-	pState->forcePowersKnown |= ( 1 << powerEnums[forcePowerI].powerEnum );
+	if( pState && !com_demo )
+	{
+		pState->forcePowerLevel[powerEnums[forcePowerI].powerEnum]++;	// Increment it
+		pState->forcePowersKnown |= ( 1 << powerEnums[forcePowerI].powerEnum );
+		forcelevel = pState->forcePowerLevel[powerEnums[forcePowerI].powerEnum];
+	}
+	else
+	{	// always want this to happen in demo mode
+		uiInfo.forcePowerLevel[powerEnums[forcePowerI].powerEnum]++;	// Increment it
+		forcelevel = uiInfo.forcePowerLevel[powerEnums[forcePowerI].powerEnum];
+	}
 
-	UI_SetHexPicLevel( menu,uiInfo.forcePowerUpdated,pState->forcePowerLevel[powerEnums[forcePowerI].powerEnum],qtrue );
+	UI_SetHexPicLevel( menu,uiInfo.forcePowerUpdated,forcelevel,qtrue );
 
 	UI_ShowForceLevelDesc ( forceName );
 
@@ -4888,7 +5096,6 @@ static void UI_AffectForcePowerLevel ( const char *forceName )
 
 		// Just grab an item to hand it to the function.
 		item = (itemDef_s *) Menu_FindItemByName(menu, "deallocate_fbutton");
-
 		if (item)
 		{
 			// Show all icons as greyed-out
@@ -5045,6 +5252,14 @@ static void UI_UpdateFightingStyle ( void )
 	else if (fightingStyle == 2)
 	{
 		saberStyle = SS_STRONG;
+	}
+	else if (fightingStyle == 3)
+	{
+		saberStyle = SS_DUAL;
+	}
+	else if (fightingStyle == 4)
+	{
+		saberStyle = SS_STAFF;
 	}
 	else // 0 is Fast
 	{
@@ -5445,25 +5660,25 @@ static void	UI_AddWeaponSelection ( const int weaponIndex, const int ammoIndex, 
 	// Get player state
 	client_t* cl = &svs.clients[0];	// 0 because only ever us as a player	
 
-	if (!cl)	// No client, get out
+	// NOTE : this UIScript can now be run from outside the game, so don't
+	// return out here, just skip this part
+	if (cl)	
 	{
-		return;
-	}
-
-	// Add weapon
-	if (cl->gentity && cl->gentity->client)
-	{
-		playerState_t*	pState = cl->gentity->client;
-
-		if ((weaponIndex>0) && (weaponIndex<WP_NUM_WEAPONS))
+		// Add weapon
+		if (cl->gentity && cl->gentity->client)
 		{
-			pState->stats[ STAT_WEAPONS ] |= ( 1 << weaponIndex );
-		}
+			playerState_t*	pState = cl->gentity->client;
 
-		// Give them ammo too
-		if ((ammoIndex>0) && (ammoIndex<AMMO_MAX))
-		{
-			pState->ammo[ ammoIndex ] = ammoAmount;
+			if ((weaponIndex>0) && (weaponIndex<WP_NUM_WEAPONS))
+			{
+				pState->stats[ STAT_WEAPONS ] |= ( 1 << weaponIndex );
+			}
+
+			// Give them ammo too
+			if ((ammoIndex>0) && (ammoIndex<AMMO_MAX))
+			{
+				pState->ammo[ ammoIndex ] = ammoAmount;
+			}
 		}
 	}
 
@@ -5549,29 +5764,31 @@ static void UI_RemoveWeaponSelection ( const int weaponSelectionIndex )
 	// Get player state
 	client_t* cl = &svs.clients[0];	// 0 because only ever us as a player	
 
-	if (!cl)	// No client, get out
+	// NOTE : this UIScript can now be run from outside the game, so don't
+	// return out here, just skip this part
+	if (cl)	// No client, get out
 	{
-		return;
-	}
 
-	// Remove weapon
-	if (cl->gentity && cl->gentity->client)
-	{
-		playerState_t*	pState = cl->gentity->client;
-
-		if ((weaponIndex>0) && (weaponIndex<WP_NUM_WEAPONS))
+		// Remove weapon
+		if (cl->gentity && cl->gentity->client)
 		{
-			pState->stats[ STAT_WEAPONS ]  &= ~( 1 << weaponIndex );
-		}
+			playerState_t*	pState = cl->gentity->client;
 
-		// Remove ammo too
-		if ((ammoIndex>0) && (ammoIndex<AMMO_MAX))
-		{	// But don't take it away if the other weapon is using that ammo
-			if ( uiInfo.selectedWeapon1AmmoIndex != uiInfo.selectedWeapon2AmmoIndex )
+			if ((weaponIndex>0) && (weaponIndex<WP_NUM_WEAPONS))
 			{
-				pState->ammo[ ammoIndex ] = 0;
+				pState->stats[ STAT_WEAPONS ]  &= ~( 1 << weaponIndex );
+			}
+
+			// Remove ammo too
+			if ((ammoIndex>0) && (ammoIndex<AMMO_MAX))
+			{	// But don't take it away if the other weapon is using that ammo
+				if ( uiInfo.selectedWeapon1AmmoIndex != uiInfo.selectedWeapon2AmmoIndex )
+				{
+					pState->ammo[ ammoIndex ] = 0;
+				}
 			}
 		}
+
 	}
 
 	// Now do a little clean up
@@ -5731,25 +5948,25 @@ static void	UI_AddThrowWeaponSelection ( const int weaponIndex, const int ammoIn
 
 	client_t* cl = &svs.clients[0];	// 0 because only ever us as a player	
 
-	if (!cl)	// No client, get out
+	// NOTE : this UIScript can now be run from outside the game, so don't
+	// return out here, just skip this part
+	if (cl)	// No client, get out
 	{
-		return;
-	}
-
-	// Add weapon
-	if (cl->gentity && cl->gentity->client)
-	{
-		playerState_t*	pState = cl->gentity->client;
-
-		if ((weaponIndex>0) && (weaponIndex<WP_NUM_WEAPONS))
+		// Add weapon
+		if (cl->gentity && cl->gentity->client)
 		{
-			pState->stats[ STAT_WEAPONS ] |= ( 1 << weaponIndex );
-		}
+			playerState_t*	pState = cl->gentity->client;
 
-		// Give them ammo too
-		if ((ammoIndex>0) && (ammoIndex<AMMO_MAX))
-		{
-			pState->ammo[ ammoIndex ] = ammoAmount;
+			if ((weaponIndex>0) && (weaponIndex<WP_NUM_WEAPONS))
+			{
+				pState->stats[ STAT_WEAPONS ] |= ( 1 << weaponIndex );
+			}
+
+			// Give them ammo too
+			if ((ammoIndex>0) && (ammoIndex<AMMO_MAX))
+			{
+				pState->ammo[ ammoIndex ] = ammoAmount;
+			}
 		}
 	}
 
@@ -5810,27 +6027,27 @@ static void UI_RemoveThrowWeaponSelection ( void )
 
 	client_t* cl = &svs.clients[0];	// 0 because only ever us as a player	
 
-	if (!cl)	// No client, get out
+	// NOTE : this UIScript can now be run from outside the game, so don't
+	// return out here, just skip this part
+	if (cl)	// No client, get out
 	{
-		return;
-	}
-
-	// Remove weapon
-	if (cl->gentity && cl->gentity->client)
-	{
-		playerState_t*	pState = cl->gentity->client;
-
-		if ((uiInfo.selectedThrowWeapon>0) && (uiInfo.selectedThrowWeapon<WP_NUM_WEAPONS))
+		// Remove weapon
+		if (cl->gentity && cl->gentity->client)
 		{
-			pState->stats[ STAT_WEAPONS ]  &= ~( 1 << uiInfo.selectedThrowWeapon );
-		}
+			playerState_t*	pState = cl->gentity->client;
 
-		// Remove ammo too
-		if ((uiInfo.selectedThrowWeaponAmmoIndex>0) && (uiInfo.selectedThrowWeaponAmmoIndex<AMMO_MAX))
-		{
-			pState->ammo[ uiInfo.selectedThrowWeaponAmmoIndex ] = 0;
-		}
+			if ((uiInfo.selectedThrowWeapon>0) && (uiInfo.selectedThrowWeapon<WP_NUM_WEAPONS))
+			{
+				pState->stats[ STAT_WEAPONS ]  &= ~( 1 << uiInfo.selectedThrowWeapon );
+			}
 
+			// Remove ammo too
+			if ((uiInfo.selectedThrowWeaponAmmoIndex>0) && (uiInfo.selectedThrowWeaponAmmoIndex<AMMO_MAX))
+			{
+				pState->ammo[ uiInfo.selectedThrowWeaponAmmoIndex ] = 0;
+			}
+
+		}
 	}
 
 	// Now do a little clean up

@@ -259,9 +259,10 @@ extern	cvar_t	*sv_maxPing;
 extern	cvar_t	*sv_gametype;
 extern	cvar_t	*sv_pure;
 extern	cvar_t	*sv_floodProtect;
-extern	cvar_t	*sv_allowAnonymous;
 extern	cvar_t	*sv_needpass;
-
+#ifdef USE_CD_KEY
+extern	cvar_t	*sv_allowAnonymous;
+#endif
 
 //===========================================================
 

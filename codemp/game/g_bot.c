@@ -135,6 +135,9 @@ int G_GetMapTypeBits(char *type)
 			typeBits |= (1 << GT_FFA);
 			typeBits |= (1 << GT_TEAM);
 		}
+		if( strstr( type, "team" ) ) {
+			typeBits |= (1 << GT_TEAM);
+		}
 		if( strstr( type, "holocron" ) ) {
 			typeBits |= (1 << GT_HOLOCRON);
 		}

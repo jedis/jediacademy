@@ -44,7 +44,10 @@
 #ifdef _JK2MP
 extern gentity_t *NPC_Spawn_Do( gentity_t *ent );
 extern void NPC_SetAnim(gentity_t	*ent,int setAnimParts,int anim,int setAnimFlags);
+extern void G_DamageFromKiller( gentity_t *pEnt, gentity_t *pVehEnt, gentity_t *attacker, vec3_t org, int damage, int dflags, int mod );
+
 #else
+
 extern gentity_t *NPC_Spawn_Do( gentity_t *pEnt, qboolean fullSpawnNow );
 extern qboolean G_ClearLineOfSight(const vec3_t point1, const vec3_t point2, int ignore, int clipmask);
 
@@ -590,6 +593,7 @@ bool ValidateBoard( Vehicle_t *pVeh, bgEntity_t *pEnt )
 	return true;
 }
 
+#ifdef VEH_CONTROL_SCHEME_4
 void FighterStorePilotViewAngles( Vehicle_t *pVeh, bgEntity_t *parent )
 {
 	playerState_t *riderPS;
@@ -620,6 +624,7 @@ void FighterStorePilotViewAngles( Vehicle_t *pVeh, bgEntity_t *parent )
 	VectorClear( pVeh->m_vPrevRiderViewAngles );
 	pVeh->m_vPrevRiderViewAngles[YAW] = AngleNormalize180(riderPS->viewangles[YAW]);
 }
+#endif// VEH_CONTROL_SCHEME_4
 
 // Board this Vehicle (get on). The first entity to board an empty vehicle becomes the Pilot.
 bool Board( Vehicle_t *pVeh, bgEntity_t *pEnt )
@@ -852,10 +857,13 @@ bool Board( Vehicle_t *pVeh, bgEntity_t *pEnt )
 #endif
 	}
 
+#ifdef VEH_CONTROL_SCHEME_4
 	if ( pVeh->m_pVehicleInfo->type == VH_FIGHTER )
 	{//clear their angles
 		FighterStorePilotViewAngles( pVeh, (bgEntity_t *)parent );
 	}
+#endif //VEH_CONTROL_SCHEME_4
+
 	VectorCopy( pVeh->m_vOrientation, vPlayerDir );
 	vPlayerDir[ROLL] = 0;
 	SetClientViewAngle( ent, vPlayerDir );
@@ -1581,7 +1589,7 @@ static void DeathUpdate( Vehicle_t *pVeh )
 				bottom[2] += parent->mins[2] - 32;
 				G_VehicleTrace( &trace, parent->currentOrigin, lMins, lMaxs, bottom, parent->s.number, CONTENTS_SOLID );
 #ifdef _JK2MP
-				G_RadiusDamage( trace.endpos, NULL, pVeh->m_pVehicleInfo->explosionDamage, pVeh->m_pVehicleInfo->explosionRadius, NULL, NULL, MOD_EXPLOSIVE );//FIXME: extern damage and radius or base on fuel
+				G_RadiusDamage( trace.endpos, parent, pVeh->m_pVehicleInfo->explosionDamage, pVeh->m_pVehicleInfo->explosionRadius, NULL, NULL, MOD_VEH_EXPLOSION );//FIXME: extern damage and radius or base on fuel
 #else
 				G_RadiusDamage( trace.endpos, NULL, pVeh->m_pVehicleInfo->explosionDamage, pVeh->m_pVehicleInfo->explosionRadius, NULL, MOD_EXPLOSIVE );//FIXME: extern damage and radius or base on fuel
 #endif
@@ -2285,26 +2293,15 @@ maintainSelfDuringBoarding:
 	{
 		if (pVeh->m_iRemovedSurfaces)
 		{
-			gentity_t *killer = parent;
 			float	   dmg;
 			G_VehicleDamageBoxSizing(pVeh);
 
 			//damage him constantly if any chunks are currently taken off
-			if (parent->client->ps.otherKiller < ENTITYNUM_WORLD &&
-				parent->client->ps.otherKillerTime > level.time)
-			{
-				gentity_t *potentialKiller = &g_entities[parent->client->ps.otherKiller];
-
-				if (potentialKiller->inuse && potentialKiller->client)
-				{ //he's valid I guess
-					killer = potentialKiller;
-				}
-			}
-			//FIXME: aside from bypassing shields, maybe set m_iShields to 0, too... ?
 			
 			// 3 seconds max on death.
 			dmg = (float)parent->client->ps.stats[STAT_MAX_HEALTH] * pVeh->m_fTimeModifier / 180.0f;			
-			G_Damage(parent, killer, killer, NULL, parent->client->ps.origin, dmg, DAMAGE_NO_SELF_PROTECTION|DAMAGE_NO_HIT_LOC|DAMAGE_NO_PROTECTION|DAMAGE_NO_ARMOR, MOD_SUICIDE);
+			//FIXME: aside from bypassing shields, maybe set m_iShields to 0, too... ?
+			G_DamageFromKiller( parent, parent, parent, parent->client->ps.origin, dmg, DAMAGE_NO_SELF_PROTECTION|DAMAGE_NO_HIT_LOC|DAMAGE_NO_PROTECTION|DAMAGE_NO_ARMOR, MOD_SUICIDE );
 		}
 		
 		//make sure playerstate value stays in sync
@@ -3078,8 +3075,8 @@ void G_VehicleSetDamageLocFlags( gentity_t *veh, int impactDir, int deathPoint )
 			{
 				perc = 0.99f;
 			}
-			heavyDamagePoint = ceil( deathPoint*perc*0.25f );
-			lightDamagePoint = ceil( deathPoint*perc );
+			lightDamagePoint = ceil( deathPoint*perc*0.25f );
+			heavyDamagePoint = ceil( deathPoint*perc );
 		}
 		else
 		{
@@ -3091,13 +3088,13 @@ void G_VehicleSetDamageLocFlags( gentity_t *veh, int impactDir, int deathPoint )
 		{//destroyed
 			G_SetVehDamageFlags( veh, impactDir, 3 );
 		}
-		else if ( veh->locationDamage[impactDir] <= heavyDamagePoint )
-		{//heavy only
-			G_SetVehDamageFlags( veh, impactDir, 2 );
-		}
 		else if ( veh->locationDamage[impactDir] <= lightDamagePoint )
 		{//light only
 			G_SetVehDamageFlags( veh, impactDir, 1 );
+		}
+		else if ( veh->locationDamage[impactDir] <= heavyDamagePoint )
+		{//heavy only
+			G_SetVehDamageFlags( veh, impactDir, 2 );
 		}
 	}
 }
@@ -3182,7 +3179,7 @@ qboolean G_FlyVehicleDestroySurface( gentity_t *veh, int surface )
 	veh->m_pVehicle->m_iRemovedSurfaces |= smashedBits;
 
 	//do some explosive damage, but don't damage this ship with it
-	G_RadiusDamage(veh->client->ps.origin, veh, 100, 500, veh, NULL, MOD_SUICIDE);
+	G_RadiusDamage(veh->client->ps.origin, veh, 100, 500, veh, NULL, MOD_VEH_EXPLOSION);
 
 	//when spiraling to your death, do the electical shader
 	veh->client->ps.electrifyTime = level.time + 10000;

@@ -40,6 +40,7 @@ extern void trap_FX_PlayEffectID( int id, vec3_t org, vec3_t fwd, int vol, int r
 
 #ifdef QAGAME
 extern qboolean FighterIsLanded( Vehicle_t *pVeh, playerState_t *parentPS );
+extern void G_DamageFromKiller( gentity_t *pEnt, gentity_t *pVehEnt, gentity_t *attacker, vec3_t org, int damage, int dflags, int mod );
 #endif
 
 extern void PM_SetPMViewAngle(playerState_t *ps, vec3_t angle, usercmd_t *ucmd);
@@ -54,12 +55,12 @@ void PM_VehicleImpact(bgEntity_t *pEnt, trace_t *trace)
 #ifdef QAGAME
 	gentity_t *hitEnt = trace!=NULL?&g_entities[trace->entityNum]:NULL;
 
-	if (!hitEnt || 
-		(pSelfVeh && pSelfVeh->m_pPilot &&
-		hitEnt && hitEnt->s.eType == ET_MISSILE && hitEnt->inuse &&
-		hitEnt->r.ownerNum == pSelfVeh->m_pPilot->s.number)
+	if (!hitEnt || //nothing to hit
+		(pSelfVeh && pSelfVeh->m_pPilot &&//I'm a piloted vehicle
+		hitEnt && hitEnt->s.eType == ET_MISSILE && hitEnt->inuse &&//that hit a missile
+		hitEnt->r.ownerNum == pSelfVeh->m_pPilot->s.number)//and the missile is owned by my pilot
 		)
-	{ 
+	{//don't hit it
 		return;
 	}
 
@@ -69,20 +70,7 @@ void PM_VehicleImpact(bgEntity_t *pEnt, trace_t *trace)
 		if ( hitEnt->s.NPC_class == CLASS_VEHICLE )
 		{//hit another vehicle, explode!
 			//Give credit to whoever got me into this death spiral state
-			gentity_t *parent = (gentity_t *)pSelfVeh->m_pParentEntity;
-			gentity_t *killer = NULL;
-			if (parent->client->ps.otherKiller < ENTITYNUM_WORLD &&
-				parent->client->ps.otherKillerTime > level.time)
-			{
-				gentity_t *potentialKiller = &g_entities[parent->client->ps.otherKiller];
-
-				if (potentialKiller->inuse && potentialKiller->client)
-				{ //he's valid I guess
-					killer = potentialKiller;
-				}
-			}
-			//FIXME: damage hitEnt, some, too?  Our explosion should hurt them some, but...
-			G_Damage( (gentity_t *)pEnt, killer, killer, NULL, pm->ps->origin, 999999, DAMAGE_NO_ARMOR, MOD_FALLING );//FIXME: MOD_IMPACT
+			G_DamageFromKiller( (gentity_t *)pEnt, (gentity_t *)pSelfVeh->m_pParentEntity, (gentity_t *)hitEnt, pm->ps->origin, 999999, DAMAGE_NO_ARMOR, MOD_COLLISION );
 			return;
 		}
 		else if ( !VectorCompare( trace->plane.normal, vec3_origin )
@@ -96,19 +84,7 @@ void PM_VehicleImpact(bgEntity_t *pEnt, trace_t *trace)
 			if ( impactDot <= -0.7f )//hit rather head-on and hard
 			{// Just DIE now
 				//Give credit to whoever got me into this death spiral state
-				gentity_t *parent = (gentity_t *)pSelfVeh->m_pParentEntity;
-				gentity_t *killer = NULL;
-				if (parent->client->ps.otherKiller < ENTITYNUM_WORLD &&
-					parent->client->ps.otherKillerTime > level.time)
-				{
-					gentity_t *potentialKiller = &g_entities[parent->client->ps.otherKiller];
-
-					if (potentialKiller->inuse && potentialKiller->client)
-					{ //he's valid I guess
-						killer = potentialKiller;
-					}
-				}
-				G_Damage( (gentity_t *)pEnt, killer, killer, NULL, pm->ps->origin, 999999, DAMAGE_NO_ARMOR, MOD_FALLING );//FIXME: MOD_IMPACT
+				G_DamageFromKiller( (gentity_t *)pEnt, (gentity_t *)pSelfVeh->m_pParentEntity, (gentity_t *)hitEnt, pm->ps->origin, 999999, DAMAGE_NO_ARMOR, MOD_FALLING );
 				return;
 			}
 		}
@@ -169,7 +145,9 @@ void PM_VehicleImpact(bgEntity_t *pEnt, trace_t *trace)
 			//FIXME: impact sound and effect should be gotten from g_vehicleInfo...?
 			//FIXME: should pass in trace.endpos and trace.plane.normal
 			vec3_t	vehUp;
-#ifndef QAGAME
+#ifdef QAGAME
+			qboolean noDamage = qfalse;
+#else
 			bgEntity_t *hitEnt;
 #endif
 
@@ -437,8 +415,10 @@ void PM_VehicleImpact(bgEntity_t *pEnt, trace_t *trace)
 			pEnt->m_pVehicle->m_iHitDebounce = pm->cmd.serverTime + 200;
 			magnitude /= pSelfVeh->m_pVehicleInfo->toughness * 50.0f; 
 
-			if (hitEnt && (hitEnt->s.eType != ET_TERRAIN || !(hitEnt->spawnflags & 1) || pSelfVeh->m_pVehicleInfo->type == VH_FIGHTER))
+			if (hitEnt 
+				&& (hitEnt->s.eType != ET_TERRAIN || !(hitEnt->spawnflags & 1) || pSelfVeh->m_pVehicleInfo->type == VH_FIGHTER))
 			{ //don't damage the vehicle from terrain that doesn't want to damage vehicles
+				gentity_t *killer = NULL;
 				if (pSelfVeh->m_pVehicleInfo->type == VH_FIGHTER)
 				{ //increase the damage...
 					float mult = (pSelfVeh->m_vOrientation[PITCH]*0.1f);
@@ -466,7 +446,26 @@ void PM_VehicleImpact(bgEntity_t *pEnt, trace_t *trace)
 				pSelfVeh->m_iLastImpactDmg = magnitude;
 				//FIXME: what about proper death credit to the guy who shot you down?
 				//FIXME: actually damage part of the ship that impacted?
-				G_Damage( (gentity_t *)pEnt, NULL, NULL, NULL, pm->ps->origin, magnitude*5, DAMAGE_NO_ARMOR, MOD_FALLING );//FIXME: MOD_IMPACT
+				if ( hitEnt->s.eType == ET_MISSILE )//missile
+				{
+					//FIX: NEVER do or take impact damage from a missile...
+					noDamage = qtrue;
+					if ( (hitEnt->s.eFlags&EF_JETPACK_ACTIVE)//vehicle missile
+						&& ((gentity_t *)hitEnt)->r.ownerNum < MAX_CLIENTS )//valid client owner
+					{//I ran into a missile and died because of the impact, give credit to the missile's owner (PROBLEM: might this ever accidently give improper credit to client 0?)
+						/*
+						if ( ((gentity_t *)hitEnt)->r.ownerNum == pEnt->s.number )
+						{//hit our own missile?  Don't damage ourselves or it... (so we don't kill ourselves!) if it hits *us*, then fine, but not here
+							noDamage = qtrue;
+						}
+						*/
+						killer = &g_entities[((gentity_t *)hitEnt)->r.ownerNum];
+					}
+				}
+				if ( !noDamage )
+				{
+					G_Damage( (gentity_t *)pEnt, ((gentity_t*)hitEnt), killer!=NULL?killer:((gentity_t *)hitEnt), NULL, pm->ps->origin, magnitude*5, DAMAGE_NO_ARMOR, (hitEnt->s.NPC_class==CLASS_VEHICLE?MOD_COLLISION:MOD_FALLING) );//FIXME: MOD_IMPACT
+				}
 
 				if (pSelfVeh->m_pVehicleInfo->surfDestruction)
 				{
@@ -510,6 +509,9 @@ void PM_VehicleImpact(bgEntity_t *pEnt, trace_t *trace)
 						hitEnt->client->ps.otherKiller = pEnt->s.number;
 						hitEnt->client->ps.otherKillerTime = pm->cmd.serverTime + 5000;
 						hitEnt->client->ps.otherKillerDebounceTime = pm->cmd.serverTime + 100;
+						hitEnt->client->otherKillerMOD = MOD_COLLISION;
+						hitEnt->client->otherKillerVehWeapon = 0;
+						hitEnt->client->otherKillerWeaponType = WP_NONE;
 
 						//add my velocity into his to force him along in the correct direction from impact
 						VectorAdd(hitEnt->client->ps.velocity, pm->ps->velocity, hitEnt->client->ps.velocity);
@@ -532,7 +534,10 @@ void PM_VehicleImpact(bgEntity_t *pEnt, trace_t *trace)
 				{
 					finalD = 1;
 				}
-				G_Damage( hitEnt, attackEnt, attackEnt, NULL, pm->ps->origin, finalD, 0, MOD_MELEE );//FIXME: MOD_IMPACT
+				if ( !noDamage )
+				{
+					G_Damage( hitEnt, attackEnt, attackEnt, NULL, pm->ps->origin, finalD, 0, (hitEnt->s.NPC_class==CLASS_VEHICLE?MOD_COLLISION:MOD_FALLING/*MOD_MELEE*/) );//FIXME: MOD_IMPACT
+				}
 			}
 #else	//this is gonna result in "double effects" for the client doing the prediction.
 		//it doesn't look bad though. could just use predicted events, but I'm too lazy.

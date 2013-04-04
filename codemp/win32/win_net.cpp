@@ -585,7 +585,7 @@ void Sys_ShowIP(void) {
 NET_IPSocket
 ====================
 */
-int NET_IPSocket( char *net_interface, int port ) {
+SOCKET NET_IPSocket( char *net_interface, int port ) {
 	SOCKET				newsocket;
 	struct sockaddr_in	address;
 	qboolean			_true = qtrue;
@@ -925,7 +925,7 @@ void NET_OpenIP( void )
 	// a different net_port for each one
 	for( i = 0 ; i < 10 ; i++ ) {
 		ip_socket = NET_IPSocket( ip->string, port + i );
-		if ( ip_socket ) {
+		if ( ip_socket != INVALID_SOCKET ) {
 			Cvar_SetValue( "net_port", port + i );
 			if ( net_socksEnabled->integer ) {
 				NET_OpenSocks( port + i );

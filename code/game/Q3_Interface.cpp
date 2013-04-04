@@ -803,7 +803,7 @@ static void	Q3_SetMissionFailed(const char *TextEnum)
 {
 	gentity_t	*ent = &g_entities[0];
 
-	if ( ent->health >= 0 )
+	if ( ent->health > 0 )
 	{
 		G_PlayerGuiltDeath();
 	}

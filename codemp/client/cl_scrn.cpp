@@ -344,9 +344,9 @@ void SCR_DrawDebugGraph (void)
 	//
 	// draw the graph
 	//
-	w = cls.glconfig.vidWidth;
+	w = 640;
 	x = 0;
-	y = cls.glconfig.vidHeight;
+	y = 480;
 	re.SetColor( g_color_table[0] );
 	re.DrawStretchPic(x, y - cl_graphheight->integer, 
 		w, cl_graphheight->integer, 0, 0, 0, 0, cls.whiteShader );

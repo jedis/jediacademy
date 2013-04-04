@@ -26,7 +26,7 @@ extern vec3_t gPainPoint;
 //==================================================================
 
 // the "gameversion" client command will print this plus compile date
-#define	GAMEVERSION	"basejk"
+#define	GAMEVERSION	"basejka"
 
 #define BODY_QUEUE_SIZE		8
 
@@ -425,6 +425,9 @@ typedef struct {
 	char		saber2Type[64];
 	int			duelTeam;
 	int			siegeDesiredTeam;
+	int			killCount;
+	int			TKCount;
+	char		IPstring[32];		// yeah, I know, could be 16, but, just in case...
 } clientSession_t;
 
 // playerstate mGameFlags
@@ -737,6 +740,11 @@ struct gclient_s {
 
 	int			lastGenCmd;
 	int			lastGenCmdTime;
+	
+	//can't put these in playerstate, crashes game (need to change exe?)
+	int			otherKillerMOD;
+	int			otherKillerVehWeapon;
+	int			otherKillerWeaponType;
 };
 
 //Interest points
@@ -1095,6 +1103,8 @@ qboolean	trap_G2API_RemoveGhoul2Models(void *ghlInfo);
 void		trap_G2API_CleanGhoul2Models(void **ghoul2Ptr);
 void		trap_G2API_CollisionDetect ( CollisionRecord_t *collRecMap, void* ghoul2, const vec3_t angles, const vec3_t position,
 								int frameNumber, int entNum, vec3_t rayStart, vec3_t rayEnd, vec3_t scale, int traceFlags, int useLod, float fRadius );
+void		trap_G2API_CollisionDetectCache ( CollisionRecord_t *collRecMap, void* ghoul2, const vec3_t angles, const vec3_t position,
+								int frameNumber, int entNum, vec3_t rayStart, vec3_t rayEnd, vec3_t scale, int traceFlags, int useLod, float fRadius );
 
 qboolean	trap_G2API_SetBoneAngles(void *ghoul2, int modelIndex, const char *boneName, const vec3_t angles, const int flags,
 								const int up, const int right, const int forward, qhandle_t *modelList,
@@ -1173,6 +1183,11 @@ extern int gGAvoidDismember;
 #define DAMAGE_HEAVY_WEAP_CLASS		0x00001000	// Heavy damage
 #define DAMAGE_NO_HIT_LOC			0x00002000	// No hit location
 #define DAMAGE_NO_SELF_PROTECTION	0x00004000	// Dont apply half damage to self attacks
+#define DAMAGE_NO_DISMEMBER			0x00008000	// Dont do dismemberment
+#define DAMAGE_SABER_KNOCKBACK1		0x00010000	// Check the attacker's first saber for a knockbackScale
+#define DAMAGE_SABER_KNOCKBACK2		0x00020000	// Check the attacker's second saber for a knockbackScale
+#define DAMAGE_SABER_KNOCKBACK1_B2	0x00040000	// Check the attacker's first saber for a knockbackScale2
+#define DAMAGE_SABER_KNOCKBACK2_B2	0x00080000	// Check the attacker's second saber for a knockbackScale2
 //
 // g_exphysics.c
 //
@@ -1261,7 +1276,7 @@ team_t TeamCount( int ignoreClientNum, int team );
 int TeamLeader( int team );
 team_t PickTeam( int ignoreClientNum );
 void SetClientViewAngle( gentity_t *ent, vec3_t angle );
-gentity_t *SelectSpawnPoint ( vec3_t avoidPoint, vec3_t origin, vec3_t angles );
+gentity_t *SelectSpawnPoint ( vec3_t avoidPoint, vec3_t origin, vec3_t angles, team_t team );
 void MaintainBodyQueue(gentity_t *ent);
 void respawn (gentity_t *ent);
 void BeginIntermission (void);
@@ -1545,6 +1560,8 @@ extern	vmCvar_t	d_projectileGhoul2Collision;
 
 extern	vmCvar_t	g_g2TraceLod;
 
+extern	vmCvar_t	g_optvehtrace;
+
 extern	vmCvar_t	g_locationBasedDamage;
 
 extern	vmCvar_t	g_allowHighPingDuelist;
@@ -1601,6 +1618,7 @@ extern	vmCvar_t	g_warmup;
 extern	vmCvar_t	g_doWarmup;
 extern	vmCvar_t	g_blood;
 extern	vmCvar_t	g_allowVote;
+extern	vmCvar_t	g_allowTeamVote;
 extern	vmCvar_t	g_teamAutoJoin;
 extern	vmCvar_t	g_teamForceBalance;
 extern	vmCvar_t	g_banIPs;
@@ -1608,8 +1626,8 @@ extern	vmCvar_t	g_filterBan;
 extern	vmCvar_t	g_debugForward;
 extern	vmCvar_t	g_debugRight;
 extern	vmCvar_t	g_debugUp;
-extern	vmCvar_t	g_redteam;
-extern	vmCvar_t	g_blueteam;
+//extern	vmCvar_t	g_redteam;
+//extern	vmCvar_t	g_blueteam;
 extern	vmCvar_t	g_smoothClients;
 
 #include "../namespace_begin.h"
@@ -1617,8 +1635,6 @@ extern	vmCvar_t	pmove_fixed;
 extern	vmCvar_t	pmove_msec;
 #include "../namespace_end.h"
 
-extern	vmCvar_t	g_rankings;
-extern	vmCvar_t	g_enableDust;
 extern	vmCvar_t	g_enableBreath;
 extern	vmCvar_t	g_singlePlayer;
 extern	vmCvar_t	g_dismember;

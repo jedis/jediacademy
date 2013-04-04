@@ -744,7 +744,7 @@ static void G_SpewEntList(void)
 					numTempEntST++;
 				}
 
-				str = va("TEMPENT %4i: EV %i\n", ent->s.number, (ent->s.event&~EV_EVENT_BITS));
+				str = va("TEMPENT %4i: EV %i\n", ent->s.number, ent->s.eType-ET_EVENTS);
 				Com_Printf(str);
 #ifndef VM_OR_FINAL_BUILD
 				if (fh)
@@ -1065,6 +1065,10 @@ gentity_t *G_TempEntity( vec3_t origin, int event ) {
 	VectorCopy( origin, snapped );
 	SnapVector( snapped );		// save network bandwidth
 	G_SetOrigin( e, snapped );
+	//WTF?  Why aren't we setting the s.origin? (like below)
+	//cg_events.c code checks origin all over the place!!!
+	//Trying to save bandwidth...?
+	//VectorCopy( snapped, e->s.origin );
 
 	// find cluster for PVS
 	trap_LinkEntity( e );

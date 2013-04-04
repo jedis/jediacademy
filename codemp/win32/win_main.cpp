@@ -1304,10 +1304,10 @@ void Sys_Net_Restart_f( void ) {
 static bool Sys_IsExpired()
 {
 #if 0
-//							  sec min Hr Day Mon Yr
-    struct tm t_valid_start	= { 0, 0, 8, 5, 8, 103 };	//zero based months!
-//							  sec min Hr Day Mon Yr
-    struct tm t_valid_end	= { 0, 0, 20, 13, 8, 103 };
+//								sec min Hr Day Mon Yr
+    struct tm t_valid_start	= { 0, 0, 8, 23, 6, 103 };	//zero based months!
+//								sec min Hr Day Mon Yr
+    struct tm t_valid_end	= { 0, 0, 20, 30, 6, 103 };
 //    struct tm t_valid_end	= t_valid_start;
 //	t_valid_end.tm_mday += 8;
 	time_t startTime  = mktime( &t_valid_start);
