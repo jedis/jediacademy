@@ -5,6 +5,11 @@ Activision and Raven are releasing this code for people to learn from and play w
 This code is copyright Activision 2003. This source is released under GNU GPLv2.
 
 
+Some source code in this release is not covered by the GPL:
+e.g.
+zlib is Copyright (C) 1995-1998 Jean-loup Gailly and Mark Adler
+
+
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
