@@ -24,12 +24,8 @@ stringID_table_t tagsTable [] =
 }
 */
 
-//rwwFIXEFIXME: Put somewhere else
-inline float Q_flrand(float min, float max) {
-	return ((rand() * (max - min)) / 32768.0F) + min;
-}
-
-qboolean COM_ParseString( char **data, char **s ); 
+extern float Q_flrand(float min, float max);
+extern qboolean COM_ParseString( char **data, char **s ); 
 
 //=======================================================================
 

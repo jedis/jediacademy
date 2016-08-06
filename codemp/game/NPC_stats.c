@@ -751,8 +751,7 @@ void NPC_Precache ( gentity_t *spawner )
 			if ( COM_ParseString( &p, &value ) ) {
 				continue;
 			}
-			//if ( !(spawner->svFlags&SVF_NO_BASIC_SOUNDS) )
-			if (1)
+			if ( !(spawner->r.svFlags&SVF_NO_BASIC_SOUNDS) )
 			{
 				//FIXME: store this in some sound field or parse in the soundTable like the animTable...
 				Q_strncpyz( sound, value, sizeof( sound ) );
@@ -771,8 +770,7 @@ void NPC_Precache ( gentity_t *spawner )
 			if ( COM_ParseString( &p, &value ) ) {
 				continue;
 			}
-			//if ( !(spawner->svFlags&SVF_NO_COMBAT_SOUNDS) )
-			if (1)
+			if ( !(spawner->r.svFlags&SVF_NO_COMBAT_SOUNDS) )
 			{
 				//FIXME: store this in some sound field or parse in the soundTable like the animTable...
 				Q_strncpyz( sound, value, sizeof( sound ) );
@@ -791,8 +789,7 @@ void NPC_Precache ( gentity_t *spawner )
 			if ( COM_ParseString( &p, &value ) ) {
 				continue;
 			}
-			//if ( !(spawner->svFlags&SVF_NO_EXTRA_SOUNDS) )
-			if (1)
+			if ( !(spawner->r.svFlags&SVF_NO_EXTRA_SOUNDS) )
 			{
 				//FIXME: store this in some sound field or parse in the soundTable like the animTable...
 				Q_strncpyz( sound, value, sizeof( sound ) );
@@ -811,8 +808,7 @@ void NPC_Precache ( gentity_t *spawner )
 			if ( COM_ParseString( &p, &value ) ) {
 				continue;
 			}
-			//if ( !(spawner->svFlags&SVF_NO_EXTRA_SOUNDS) )
-			if (1)
+			if ( !(spawner->r.svFlags&SVF_NO_EXTRA_SOUNDS) )
 			{
 				//FIXME: store this in some sound field or parse in the soundTable like the animTable...
 				Q_strncpyz( sound, value, sizeof( sound ) );
@@ -837,7 +833,7 @@ void NPC_Precache ( gentity_t *spawner )
 
 			curWeap = GetIDForString( WPTable, value );
 
-			if (curWeap >= 0 && curWeap < WP_NUM_WEAPONS)
+			if (curWeap > WP_NONE && curWeap < WP_NUM_WEAPONS)
 			{
 				RegisterItem(BG_FindItemForWeapon((weapon_t)curWeap));
 			}
@@ -2148,8 +2144,7 @@ qboolean NPC_ParseParms( const char *NPCName, gentity_t *NPC )
 				{
 					continue;
 				}
-				//if ( !(NPC->svFlags&SVF_NO_BASIC_SOUNDS) )
-				if (1)
+				if ( !(NPC->r.svFlags&SVF_NO_BASIC_SOUNDS) )
 				{
 					//FIXME: store this in some sound field or parse in the soundTable like the animTable...
 					Q_strncpyz( sound, value, sizeof( sound ) );
@@ -2171,8 +2166,7 @@ qboolean NPC_ParseParms( const char *NPCName, gentity_t *NPC )
 				{
 					continue;
 				}
-				//if ( !(NPC->svFlags&SVF_NO_COMBAT_SOUNDS) )
-				if (1)
+				if ( !(NPC->r.svFlags&SVF_NO_COMBAT_SOUNDS) )
 				{
 					//FIXME: store this in some sound field or parse in the soundTable like the animTable...
 					Q_strncpyz( sound, value, sizeof( sound ) );
@@ -2193,8 +2187,7 @@ qboolean NPC_ParseParms( const char *NPCName, gentity_t *NPC )
 				{
 					continue;
 				}
-				//if ( !(NPC->svFlags&SVF_NO_EXTRA_SOUNDS) )
-				if (1)
+				if ( !(NPC->r.svFlags&SVF_NO_EXTRA_SOUNDS) )
 				{
 					//FIXME: store this in some sound field or parse in the soundTable like the animTable...
 					Q_strncpyz( sound, value, sizeof( sound ) );
@@ -2215,8 +2208,7 @@ qboolean NPC_ParseParms( const char *NPCName, gentity_t *NPC )
 				{
 					continue;
 				}
-				//if ( !(NPC->svFlags&SVF_NO_EXTRA_SOUNDS) )
-				if (1)
+				if ( !(NPC->r.svFlags&SVF_NO_EXTRA_SOUNDS) )
 				{
 					//FIXME: store this in some sound field or parse in the soundTable like the animTable...
 					Q_strncpyz( sound, value, sizeof( sound ) );
@@ -2375,13 +2367,13 @@ qboolean NPC_ParseParms( const char *NPCName, gentity_t *NPC )
 					continue;
 				}
 
-				if ( !NPC->client->saber[0].twoHanded )
+				if ( !(NPC->client->saber[0].saberFlags&SFL_TWO_HANDED) )
 				{//can't use a second saber if first one is a two-handed saber...?
 					char *saberName = (char *)BG_TempAlloc(4096);//G_NewString( value );
 					strcpy(saberName, value);
 
 					WP_SaberParseParms( saberName, &NPC->client->saber[1] );
-					if ( NPC->client->saber[1].twoHanded )
+					if ( (NPC->client->saber[1].saberFlags&SFL_TWO_HANDED) )
 					{//tsk tsk, can't use a twoHanded saber as second saber
 						WP_RemoveSaber( NPC->client->saber, 1 );
 					}
@@ -3288,8 +3280,11 @@ void NPC_LoadParms( void )
 			trap_FS_Read(npcParseBuffer, len, f);
 			npcParseBuffer[len] = 0;
 
+			len = COM_Compress( npcParseBuffer );
+
 			strcat( marker, npcParseBuffer );
 			strcat(marker, "\n");
+			len++;
 			trap_FS_FCloseFile(f);
 
 			totallen += len;

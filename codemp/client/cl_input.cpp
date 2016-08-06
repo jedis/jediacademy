@@ -16,7 +16,12 @@ float cl_mYawOverride = 0.0f;
 float cl_mSensitivityOverride = 0.0f;
 qboolean cl_bUseFighterPitch = qfalse;
 qboolean cl_crazyShipControls = qfalse;
+
+#ifdef VEH_CONTROL_SCHEME_4
 #define	OVERRIDE_MOUSE_SENSITIVITY 5.0f//20.0f = 180 degree turn in one mouse swipe across keyboard
+#else// VEH_CONTROL_SCHEME_4
+#define	OVERRIDE_MOUSE_SENSITIVITY 10.0f//20.0f = 180 degree turn in one mouse swipe across keyboard
+#endif// VEH_CONTROL_SCHEME_4
 /*
 ===============================================================================
 

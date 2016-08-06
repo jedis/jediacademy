@@ -715,9 +715,9 @@ void Rancor_Bite( void )
 				if ( !Q_irand( 0, 1 ) )
 				{//bite something off
 					int hitLoc = HL_WAIST;
-					if ( g_dismemberment->integer != 113811381138 )
+					if ( g_dismemberment->integer < 3 )
 					{
-						hitLoc = Q_irand( HL_WAIST, HL_HAND_LT );
+						hitLoc = Q_irand( HL_BACK_RT, HL_HAND_LT );
 					}
 					else
 					{
@@ -961,7 +961,7 @@ void Rancor_Attack( float distance, qboolean doCharge, qboolean aimAtBlockedEnti
 				}
 				if ( NPC->activator->health <= 0 )
 				{//killed him
-					if ( g_dismemberment->integer == 113811381138 )
+					if ( g_dismemberment->integer >= 3 )
 					{//make it look like we bit his head off
 						NPC->activator->client->dismembered = false;
 						G_DoDismemberment( NPC->activator, NPC->activator->currentOrigin, MOD_SABER, 1000, HL_HEAD, qtrue );

@@ -1446,7 +1446,14 @@ Ghoul2 Insert End
 
 	if (cent->currentState.iModelScale)
 	{ //if the server says we have a custom scale then set it now.
-		cent->modelScale[0] = cent->modelScale[1] = cent->modelScale[2] = cent->currentState.iModelScale/100.0f;
+		if ( cent->currentState.legsFlip  )
+		{//scalar
+			cent->modelScale[0] = cent->modelScale[1] = cent->modelScale[2] = cent->currentState.iModelScale;
+		}
+		else
+		{//percentage
+			cent->modelScale[0] = cent->modelScale[1] = cent->modelScale[2] = cent->currentState.iModelScale/100.0f;
+		}
 		VectorCopy(cent->modelScale, ent.modelScale);
 		ScaleModelAxis(&ent);
 	}
@@ -2831,7 +2838,11 @@ static void CG_Mover( centity_t *cent ) {
 			&& (cg.time-cg.predictedVehicleState.hyperSpaceTime) < HYPERSPACE_TIME
 			&& (cg.time-cg.predictedVehicleState.hyperSpaceTime) > 1000 )
 		{
-			if ( (cg.predictedVehicleState.eFlags2&EF2_HYPERSPACE) )
+			if ( cg.snap 
+				&& cg.snap->ps.pm_type == PM_INTERMISSION )
+			{//in the intermission, stop drawing hyperspace ent
+			}
+			else if ( (cg.predictedVehicleState.eFlags2&EF2_HYPERSPACE) )
 			{//actually hyperspacing now
 				float timeFrac = ((float)(cg.time-cg.predictedVehicleState.hyperSpaceTime-1000))/(HYPERSPACE_TIME-1000);
 				if ( timeFrac < (HYPERSPACE_TELEPORT_FRAC+0.1f) )
@@ -2899,7 +2910,14 @@ Ghoul2 Insert End
 		ent.hModel = cgs.gameModels[s1->modelindex2];
 		if (s1->iModelScale)
 		{ //custom model2 scale
-			ent.modelScale[0] = ent.modelScale[1] = ent.modelScale[2] = s1->iModelScale/100.0f;
+			if ( s1->legsFlip )
+			{//scalar
+				ent.modelScale[0] = ent.modelScale[1] = ent.modelScale[2] = s1->iModelScale;
+			}
+			else
+			{//percentage
+				ent.modelScale[0] = ent.modelScale[1] = ent.modelScale[2] = s1->iModelScale/100.0f;
+			}
 			ScaleModelAxis(&ent);
 		}
 		trap_R_AddRefEntityToScene(&ent);
@@ -3090,8 +3108,10 @@ void CG_CalcEntityLerpPositions( centity_t *cent ) {
 
 	// first see if we can interpolate between two snaps for
 	// linear extrapolated clients
-	if ( cent->interpolate && cent->currentState.pos.trType == TR_LINEAR_STOP &&
-											cent->currentState.number < MAX_CLIENTS) {
+	if ( cent->interpolate 
+		&& cent->currentState.pos.trType == TR_LINEAR_STOP
+		&& cent->currentState.number < MAX_CLIENTS )
+	{
 		CG_InterpolateEntityPosition( cent );
 		goAway = qtrue;
 	}
@@ -3303,10 +3323,16 @@ static void CG_AddCEntity( centity_t *cent ) {
 	{ //don't render anything then
 		if (cent->currentState.eType == ET_GENERAL ||
 			cent->currentState.eType == ET_PLAYER ||
-			cent->currentState.eType == ET_NPC ||
 			cent->currentState.eType == ET_INVISIBLE)
 		{
 			return;
+		}
+		if ( cent->currentState.eType == ET_NPC )
+		{//NPC in intermission
+			if ( cent->currentState.NPC_class == CLASS_VEHICLE )
+			{//don't render vehicles in intermissions, allow other NPCs for scripts
+				return;
+			}
 		}
 	}
 

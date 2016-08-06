@@ -5838,18 +5838,24 @@ void Item_Model_Paint(itemDef_t *item)
 	memset( &ent, 0, sizeof(ent) );
 
 	// use item storage to track
-	if (modelPtr->rotationSpeed) 
+	if ( (item->flags&ITF_ISANYSABER) && !(item->flags&ITF_ISCHARACTER) )
+	{//hack to put saber on it's side
+		if (modelPtr->rotationSpeed) 
+		{
+			VectorSet( angles, modelPtr->angle+(float)refdef.time/modelPtr->rotationSpeed, 0, 90 );
+		}
+		else
+		{
+			VectorSet( angles, modelPtr->angle, 0, 90 );
+		}
+	}
+	else if (modelPtr->rotationSpeed) 
 	{
 		VectorSet( angles, 0, modelPtr->angle + (float)refdef.time/modelPtr->rotationSpeed, 0 );
 	}
 	else 
 	{
 		VectorSet( angles, 0, modelPtr->angle, 0 );
-	}
-
-	if ( (item->flags&ITF_ISANYSABER) && !(item->flags&ITF_ISCHARACTER) )
-	{//hack to put saber on it's side
-		VectorSet( angles, modelPtr->angle, 0, 90 );
 	}
 
 	AnglesToAxis( angles, ent.axis );

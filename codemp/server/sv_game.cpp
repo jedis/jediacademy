@@ -1452,7 +1452,22 @@ int SV_GameSystemCalls( int *args ) {
 								   args[11],
 								   VMF(12) );
 		return 0;
-	
+
+	case G_G2_COLLISIONDETECTCACHE:
+		G2API_CollisionDetectCache ( (CollisionRecord_t*)VMA(1), *((CGhoul2Info_v *)args[2]), 
+								   (const float*)VMA(3),
+								   (const float*)VMA(4),
+								   args[5],
+								   args[6],
+								   (float*)VMA(7),
+								   (float*)VMA(8),
+								   (float*)VMA(9),
+								   G2VertSpaceServer,
+								   args[10],
+								   args[11],
+								   VMF(12) );
+		return 0;
+
 	case G_G2_SETROOTSURFACE:
 		return G2API_SetRootSurface(*((CGhoul2Info_v *)args[1]), args[2], (const char *)VMA(3));
 

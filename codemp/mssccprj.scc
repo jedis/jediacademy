@@ -1,17 +1,17 @@
 SCC = This is a Source Code Control file
 
 [jk2mp.vcproj]
-SCC_Aux_Path = "\\ravendata1\vss\central_code"
+SCC_Aux_Path = "\\ravendata1\VSS\central_code"
 SCC_Project_Name = "$/jedi/codemp", CAAAAAAA
 
 [JKA_mp.sln]
-SCC_Aux_Path = "\\ravendata1\vss\central_code"
+SCC_Aux_Path = "\\ravendata1\VSS\central_code"
 SCC_Project_Name = "$/jedi/codemp", CAAAAAAA
 
 [WinDed.dsp]
-SCC_Aux_Path = "\\ravendata1\vss\central_code"
+SCC_Aux_Path = "\\ravendata1\VSS\central_code"
 SCC_Project_Name = "$/jedi/codemp", CAAAAAAA
 
 [WinDed.vcproj]
-SCC_Aux_Path = "\\ravendata1\vss\central_code"
+SCC_Aux_Path = "\\ravendata1\VSS\central_code"
 SCC_Project_Name = "$/jedi/codemp", CAAAAAAA

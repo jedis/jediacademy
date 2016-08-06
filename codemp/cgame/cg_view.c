@@ -794,7 +794,10 @@ static void CG_OffsetThirdPersonView( void )
 	cameraLastFrame=cg.time;
 }
 
-
+void CG_GetVehicleCamPos( vec3_t camPos )
+{
+	VectorCopy( cg.refdef.vieworg, camPos );
+}
 
 /*
 ===============
@@ -1488,6 +1491,11 @@ qboolean CG_CheckPassengerTurretView( void )
 				{// valid turret
 					if ( vehCent->m_pVehicle->m_pVehicleInfo->turret[turretNum].passengerNum == cg.predictedPlayerState.generic1 )
 					{//I control this turret
+						//Ah, crap, just look around freely... below method is way too wiggy
+						VectorCopy( cg.predictedPlayerState.origin, cg.refdef.vieworg );
+						VectorCopy( cg.predictedPlayerState.viewangles, cg.refdef.viewangles );
+						return qtrue;
+						/*
 						int boltIndex = -1;
 						qboolean hackPosAndAngle = qfalse;
 						if ( vehCent->m_pVehicle->m_iGunnerViewTag[turretNum] != -1 )
@@ -1537,6 +1545,7 @@ qboolean CG_CheckPassengerTurretView( void )
 							}
 							return qtrue;
 						}
+						*/
 					}
 				}
 			}
@@ -1602,6 +1611,7 @@ static int CG_CalcViewValues( void ) {
 	if ( !manningTurret )
 	{//not manning a turret on a vehicle
 		VectorCopy( ps->origin, cg.refdef.vieworg );
+#ifdef VEH_CONTROL_SCHEME_4
 		if ( cg.predictedPlayerState.m_iVehicleNum )//in a vehicle
 		{
 			Vehicle_t *pVeh = cg_entities[cg.predictedPlayerState.m_iVehicleNum].m_pVehicle;
@@ -1620,13 +1630,14 @@ static int CG_CalcViewValues( void ) {
 			{
 				VectorCopy( ps->viewangles, cg.refdef.viewangles );
 			}
-		/*
+		}
+#else// VEH_CONTROL_SCHEME_4
 		if ( cg.predictedPlayerState.m_iVehicleNum //in a vehicle
 			&& BG_UnrestrainedPitchRoll( &cg.predictedPlayerState, cg_entities[cg.predictedPlayerState.m_iVehicleNum].m_pVehicle ) )//can roll/pitch without restriction
 		{//use the vehicle's viewangles to render view!
 			VectorCopy( cg.predictedVehicleState.viewangles, cg.refdef.viewangles );
-		*/
 		}
+#endif// VEH_CONTROL_SCHEME_4
 		else
 		{
 			VectorCopy( ps->viewangles, cg.refdef.viewangles );
@@ -1660,7 +1671,9 @@ static int CG_CalcViewValues( void ) {
 		CG_EmplacedView(cg_entities[cg.snap->ps.emplacedIndex].currentState.angles);
 	}
 
-	if ( !manningTurret )
+	//FIX: okay, if manning a turret, let view turn freely, 
+	//	   and use the vehicle chase camera info to place vieworg
+	//if ( !manningTurret )
 	{
 		if ( cg.predictedPlayerState.m_iVehicleNum //in a vehicle
 			&& BG_UnrestrainedPitchRoll( &cg.predictedPlayerState, cg_entities[cg.predictedPlayerState.m_iVehicleNum].m_pVehicle ) )//can roll/pitch without restriction
@@ -2113,6 +2126,28 @@ FF_XboxShake(intensity, duration);
 #endif
 }
 
+void CG_DoCameraShake( vec3_t origin, float intensity, int radius, int time )
+{
+	//FIXME: When exactly is the vieworg calculated in relation to the rest of the frame?s
+
+	vec3_t	dir;
+	float	dist, intensityScale;
+	float	realIntensity;
+
+	VectorSubtract( cg.refdef.vieworg, origin, dir );
+	dist = VectorNormalize( dir );
+
+	//Use the dir to add kick to the explosion
+
+	if ( dist > radius )
+		return;
+
+	intensityScale = 1 - ( dist / (float) radius );
+	realIntensity = intensity * intensityScale;
+
+	CGCam_Shake( realIntensity, time );
+}
+
 void CGCam_SetMusicMult( float multiplier, int duration )
 {
 	if (multiplier < 0.1f)
@@ -2415,10 +2450,12 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
 	float mSensitivity = cg.zoomSensitivity;
 	float mPitchOverride = 0.0f;
 	float mYawOverride = 0.0f;
+	static centity_t *veh = NULL;
+#ifdef VEH_CONTROL_SCHEME_4
 	float mSensitivityOverride = 0.0f;
 	qboolean bUseFighterPitch = qfalse;
-	static centity_t *veh = NULL;
 	qboolean	isFighter = qfalse;
+#endif
 
 	if (cgQueueLoad)
 	{ //do this before you start messing around with adding ghoul2 refents and crap
@@ -2514,6 +2551,7 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
 	{ //lower sens for emplaced guns and vehicles
 		mSensitivity = 0.2f;
 	}
+#ifdef VEH_CONTROL_SCHEME_4
 	else if (cg.predictedPlayerState.m_iVehicleNum//in a vehicle
 		&& !cg.predictedPlayerState.generic1 )//not as a passenger
 	{
@@ -2532,6 +2570,7 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
 	} 
 
 	if ( !isFighter )
+#endif //VEH_CONTROL_SCHEME_4
 	{
 		if (cg.predictedPlayerState.m_iVehicleNum)
 		{

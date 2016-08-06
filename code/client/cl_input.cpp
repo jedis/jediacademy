@@ -1079,6 +1079,8 @@ void CL_InitInput( void ) {
 	Cmd_AddCommand ("-altattack", IN_Button7Up);
 	Cmd_AddCommand ("+forcefocus", IN_Button8Down);//special saber attacks
 	Cmd_AddCommand ("-forcefocus", IN_Button8Up);
+	Cmd_AddCommand ("+block", IN_Button8Down);//manual blocking
+	Cmd_AddCommand ("-block", IN_Button8Up);
 	//end buttons
 	Cmd_AddCommand ("+mlook", IN_MLookDown);
 	Cmd_AddCommand ("-mlook", IN_MLookUp);

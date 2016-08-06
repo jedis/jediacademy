@@ -1244,6 +1244,12 @@ void NPC_Begin (gentity_t *ent)
 						//SP way:
 						//droidEnt->s.m_iVehicleNum = ent->s.number;
 						//droidEnt->owner = ent;
+						//set team
+						droidEnt->alliedTeam = ent->alliedTeam;
+						droidEnt->teamnodmg = ent->teamnodmg;
+						droidEnt->client->sess.sessionTeam = ent->client->sess.sessionTeam;
+						droidEnt->client->ps.persistant[PERS_TEAM] = ent->client->ps.persistant[PERS_TEAM];
+						//position
 						VectorCopy( ent->r.currentOrigin, droidEnt->s.origin );
 						VectorCopy( ent->r.currentOrigin, droidEnt->client->ps.origin );
 						G_SetOrigin( droidEnt, droidEnt->s.origin );
@@ -1467,21 +1473,18 @@ gentity_t *NPC_Spawn_Do( gentity_t *ent )
 		ent->NPC_type = Q_strlwr( G_NewString( ent->NPC_type ) );
 	}
 
-	/*
-	if ( ent->svFlags & SVF_NO_BASIC_SOUNDS )
+	if ( ent->r.svFlags & SVF_NO_BASIC_SOUNDS )
 	{
-		newent->svFlags |= SVF_NO_BASIC_SOUNDS;
+		newent->r.svFlags |= SVF_NO_BASIC_SOUNDS;
 	}
-	if ( ent->svFlags & SVF_NO_COMBAT_SOUNDS )
+	if ( ent->r.svFlags & SVF_NO_COMBAT_SOUNDS )
 	{
-		newent->svFlags |= SVF_NO_COMBAT_SOUNDS;
+		newent->r.svFlags |= SVF_NO_COMBAT_SOUNDS;
 	}
-	if ( ent->svFlags & SVF_NO_EXTRA_SOUNDS )
+	if ( ent->r.svFlags & SVF_NO_EXTRA_SOUNDS )
 	{
-		newent->svFlags |= SVF_NO_EXTRA_SOUNDS;
+		newent->r.svFlags |= SVF_NO_EXTRA_SOUNDS;
 	}
-	*/
-	//rwwFIXMEFIXME: Use all these flags?
 	
 	if ( ent->message )
 	{//has a key
@@ -1617,7 +1620,7 @@ gentity_t *NPC_Spawn_Do( gentity_t *ent )
 			}
 			newent->NPC->defaultBehavior = newent->NPC->behaviorState = BS_WAIT;
 			newent->classname = "NPC";
-	//		newent->svFlags |= SVF_NOPUSH;
+	//		newent->r.svFlags |= SVF_NOPUSH;
 		}
 	}
 //=====================================================================
@@ -1947,6 +1950,10 @@ teamnodmg - team that NPC does not take damage from (turrets and other auto-defe
 	0 - none
 	1 - red
 	2 - blue
+
+"noBasicSounds" - set to 1 to prevent loading and usage of basic sounds (pain, death, etc)
+"noCombatSounds" - set to 1 to prevent loading and usage of combat sounds (anger, victory, etc.)
+"noExtraSounds" - set to 1 to prevent loading and usage of "extra" sounds (chasing the enemy - detecting them, flanking them... also jedi combat sounds)
 */
 //void NPC_PrecacheModels ( char *NPCName );
 extern void NPC_PrecacheAnimationCFG( const char *NPC_type );
@@ -1987,25 +1994,22 @@ void SP_NPC_spawner( gentity_t *self)
 		self->count = 1;
 	}
 
-	/*
 	{//Stop loading of certain extra sounds
 		static	int	garbage;
 
 		if ( G_SpawnInt( "noBasicSounds", "0", &garbage ) )
 		{
-			self->svFlags |= SVF_NO_BASIC_SOUNDS;
+			self->r.svFlags |= SVF_NO_BASIC_SOUNDS;
 		}
 		if ( G_SpawnInt( "noCombatSounds", "0", &garbage ) )
 		{
-			self->svFlags |= SVF_NO_COMBAT_SOUNDS;
+			self->r.svFlags |= SVF_NO_COMBAT_SOUNDS;
 		}
 		if ( G_SpawnInt( "noExtraSounds", "0", &garbage ) )
 		{
-			self->svFlags |= SVF_NO_EXTRA_SOUNDS;
+			self->r.svFlags |= SVF_NO_EXTRA_SOUNDS;
 		}
 	}
-	*/
-	//rwwFIXMEFIXME: Use these flags?
 
 	if ( !self->wait )
 	{
@@ -2026,7 +2030,7 @@ void SP_NPC_spawner( gentity_t *self)
 	/*
 	if ( self->delay > 0 )
 	{
-		self->svFlags |= SVF_NPC_PRECACHE;
+		self->r.svFlags |= SVF_NPC_PRECACHE;
 	}
 	*/
 	//rwwFIXMEFIXME: support for this flag?
@@ -2040,7 +2044,7 @@ void SP_NPC_spawner( gentity_t *self)
 	if ( self->targetname )
 	{//Wait for triggering
 		self->use = NPC_Spawn;
-	//	self->svFlags |= SVF_NPC_PRECACHE;//FIXME: precache my weapons somehow?
+	//	self->r.svFlags |= SVF_NPC_PRECACHE;//FIXME: precache my weapons somehow?
 
 		//NPC_PrecacheModels( self->NPC_type );
 	}
@@ -4155,7 +4159,7 @@ void NPC_Kill_f( void )
 			}
 		}
 		/*
-		else if ( player && (player->svFlags&SVF_NPC_PRECACHE) )
+		else if ( player && (player->r.svFlags&SVF_NPC_PRECACHE) )
 		{//a spawner
 			Com_Printf( S_COLOR_GREEN"Removing NPC spawner %s named %s\n", player->NPC_type, player->targetname );
 			G_FreeEntity( player );

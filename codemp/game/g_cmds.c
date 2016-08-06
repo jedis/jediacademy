@@ -521,6 +521,56 @@ void Cmd_TeamTask_f( gentity_t *ent ) {
 	ClientUserinfoChanged(client);
 }
 
+extern void AddIP( char *str );
+extern vmCvar_t	g_autoKickTKSpammers;
+extern vmCvar_t	g_autoBanTKSpammers;
+void G_CheckTKAutoKickBan( gentity_t *ent ) 
+{
+	if ( !ent || !ent->client || ent->s.number >= MAX_CLIENTS )
+	{
+		return;
+	}
+
+	if ( g_autoKickTKSpammers.integer > 0
+		|| g_autoBanTKSpammers.integer > 0 )
+	{
+		ent->client->sess.TKCount++;
+		if ( g_autoBanTKSpammers.integer > 0
+			&& ent->client->sess.TKCount >= g_autoBanTKSpammers.integer )
+		{
+			if ( ent->client->sess.IPstring )
+			{//ban their IP
+				AddIP( ent->client->sess.IPstring );
+			}
+
+			trap_SendServerCommand( -1, va("print \"%s %s\n\"", ent->client->pers.netname, G_GetStringEdString("MP_SVGAME_ADMIN", "TKBAN")) );
+			//Com_sprintf ( level.voteString, sizeof(level.voteString ), "clientkick %d", ent->s.number );
+			//Com_sprintf ( level.voteDisplayString, sizeof(level.voteDisplayString), "kick %s", ent->client->pers.netname );
+			//trap_SendConsoleCommand( EXEC_INSERT, va( "banClient %d\n", ent->s.number ) );
+			trap_SendConsoleCommand( EXEC_INSERT, va( "clientkick %d\n", ent->s.number ) );
+			return;
+		}
+		if ( g_autoKickTKSpammers.integer > 0
+			&& ent->client->sess.TKCount >= g_autoKickTKSpammers.integer )
+		{
+			trap_SendServerCommand( -1, va("print \"%s %s\n\"", ent->client->pers.netname, G_GetStringEdString("MP_SVGAME_ADMIN", "TKKICK")) );
+			//Com_sprintf ( level.voteString, sizeof(level.voteString ), "clientkick %d", ent->s.number );
+			//Com_sprintf ( level.voteDisplayString, sizeof(level.voteDisplayString), "kick \"%s\"\n", ent->client->pers.netname );
+			trap_SendConsoleCommand( EXEC_INSERT, va( "clientkick %d\n", ent->s.number ) );
+			return;
+		}
+		//okay, not gone (yet), but warn them...
+		if ( g_autoBanTKSpammers.integer > 0
+			&& (g_autoKickTKSpammers.integer <= 0 || g_autoBanTKSpammers.integer < g_autoKickTKSpammers.integer) )
+		{//warn about ban
+			trap_SendServerCommand( ent-g_entities, va("print \"%s\n\"", G_GetStringEdString("MP_SVGAME_ADMIN", "WARNINGTKBAN")) );
+		}
+		else if ( g_autoKickTKSpammers.integer > 0 )
+		{//warn about kick
+			trap_SendServerCommand( ent-g_entities, va("print \"%s\n\"", G_GetStringEdString("MP_SVGAME_ADMIN", "WARNINGTKKICK")) );
+		}
+	}
+}
 
 
 /*
@@ -528,6 +578,8 @@ void Cmd_TeamTask_f( gentity_t *ent ) {
 Cmd_Kill_f
 =================
 */
+extern vmCvar_t	g_autoKickKillSpammers;
+extern vmCvar_t	g_autoBanKillSpammers;
 void Cmd_Kill_f( gentity_t *ent ) {
 	if ( ent->client->sess.sessionTeam == TEAM_SPECTATOR ) {
 		return;
@@ -546,6 +598,45 @@ void Cmd_Kill_f( gentity_t *ent ) {
 		}
 	}
 
+	if ( g_autoKickKillSpammers.integer > 0
+		|| g_autoBanKillSpammers.integer > 0 )
+	{
+		ent->client->sess.killCount++;
+		if ( g_autoBanKillSpammers.integer > 0
+			&& ent->client->sess.killCount >= g_autoBanKillSpammers.integer )
+		{
+			if ( ent->client->sess.IPstring )
+			{//ban their IP
+				AddIP( ent->client->sess.IPstring );
+			}
+
+			trap_SendServerCommand( -1, va("print \"%s %s\n\"", ent->client->pers.netname, G_GetStringEdString("MP_SVGAME_ADMIN", "SUICIDEBAN")) );
+			//Com_sprintf ( level.voteString, sizeof(level.voteString ), "clientkick %d", ent->s.number );
+			//Com_sprintf ( level.voteDisplayString, sizeof(level.voteDisplayString), "kick %s", ent->client->pers.netname );
+			//trap_SendConsoleCommand( EXEC_INSERT, va( "banClient %d\n", ent->s.number ) );
+			trap_SendConsoleCommand( EXEC_INSERT, va( "clientkick %d\n", ent->s.number ) );
+			return;
+		}
+		if ( g_autoKickKillSpammers.integer > 0
+			&& ent->client->sess.killCount >= g_autoKickKillSpammers.integer )
+		{
+			trap_SendServerCommand( -1, va("print \"%s %s\n\"", ent->client->pers.netname, G_GetStringEdString("MP_SVGAME_ADMIN", "SUICIDEKICK")) );
+			//Com_sprintf ( level.voteString, sizeof(level.voteString ), "clientkick %d", ent->s.number );
+			//Com_sprintf ( level.voteDisplayString, sizeof(level.voteDisplayString), "kick %s", ent->client->pers.netname );
+			trap_SendConsoleCommand( EXEC_INSERT, va( "clientkick %d\n", ent->s.number ) );
+			return;
+		}
+		//okay, not gone (yet), but warn them...
+		if ( g_autoBanKillSpammers.integer > 0
+			&& (g_autoKickKillSpammers.integer <= 0 || g_autoBanKillSpammers.integer < g_autoKickKillSpammers.integer) )
+		{//warn about ban
+			trap_SendServerCommand( ent-g_entities, va("print \"%s\n\"", G_GetStringEdString("MP_SVGAME_ADMIN", "WARNINGSUICIDEBAN")) );
+		}
+		else if ( g_autoKickKillSpammers.integer > 0 )
+		{//warn about kick
+			trap_SendServerCommand( ent-g_entities, va("print \"%s\n\"", G_GetStringEdString("MP_SVGAME_ADMIN", "WARNINGSUICIDEKICK")) );
+		}
+	}
 	ent->flags &= ~FL_GODMODE;
 	ent->client->ps.stats[STAT_HEALTH] = ent->health = -999;
 	player_die (ent, ent, ent, 100000, MOD_SUICIDE);
@@ -1300,6 +1391,8 @@ argCheck:
 	}
 }
 
+extern qboolean WP_SaberStyleValidForSaber( saberInfo_t *saber1, saberInfo_t *saber2, int saberHolstered, int saberAnimLevel );
+extern qboolean WP_UseFirstValidSaberStyle( saberInfo_t *saber1, saberInfo_t *saber2, int saberHolstered, int *saberAnimLevel );
 qboolean G_SetSaber(gentity_t *ent, int saberNum, char *saberName, qboolean siegeOverride)
 {
 	char truncSaberName[64];
@@ -1350,6 +1443,12 @@ qboolean G_SetSaber(gentity_t *ent, int saberNum, char *saberName, qboolean sieg
 	else
 	{
 		strcpy(ent->client->sess.saber2Type, ent->client->saber[1].name);
+	}
+
+	if ( !WP_SaberStyleValidForSaber( &ent->client->saber[0], &ent->client->saber[1], ent->client->ps.saberHolstered, ent->client->ps.fd.saberAnimLevel ) )
+	{
+		WP_UseFirstValidSaberStyle( &ent->client->saber[0], &ent->client->saber[1], ent->client->ps.saberHolstered, &ent->client->ps.fd.saberAnimLevel );
+		ent->client->ps.fd.saberAnimLevelBase = ent->client->saberCycleQueue = ent->client->ps.fd.saberAnimLevel;
 	}
 
 	return qtrue;
@@ -2105,19 +2204,27 @@ Cmd_CallTeamVote_f
 ==================
 */
 void Cmd_CallTeamVote_f( gentity_t *ent ) {
-	int		i, team, cs_offset;
+	int		i, targetClientNum=ENTITYNUM_NONE, team, cs_offset;
 	char	arg1[MAX_STRING_TOKENS];
 	char	arg2[MAX_STRING_TOKENS];
 
+	if ( g_gametype.integer < GT_TEAM )
+	{
+		trap_SendServerCommand( ent-g_entities, "print \"Cannot call a team vote in a non-team gametype!\n\"" );
+		return;
+	}
 	team = ent->client->sess.sessionTeam;
 	if ( team == TEAM_RED )
 		cs_offset = 0;
 	else if ( team == TEAM_BLUE )
 		cs_offset = 1;
 	else
+	{
+		trap_SendServerCommand( ent-g_entities, "print \"Cannot call a team vote if not on a team!\n\"" );
 		return;
+	}
 
-	if ( !g_allowVote.integer ) {
+	if ( !g_allowTeamVote.integer ) {
 		trap_SendServerCommand( ent-g_entities, va("print \"%s\n\"", G_GetStringEdString("MP_SVGAME", "NOVOTE")) );
 		return;
 	}
@@ -2149,11 +2256,12 @@ void Cmd_CallTeamVote_f( gentity_t *ent ) {
 		return;
 	}
 
-	if ( !Q_stricmp( arg1, "leader" ) ) {
-		char netname[MAX_NETNAME], leader[MAX_NETNAME];
+	if ( !Q_stricmp( arg1, "leader" )
+		|| !Q_stricmp( arg1, "kick" ) ) {
+		char netname[MAX_NETNAME], target[MAX_NETNAME];
 
 		if ( !arg2[0] ) {
-			i = ent->client->ps.clientNum;
+			targetClientNum = ent->client->ps.clientNum;
 		}
 		else {
 			// numeric values are just slot numbers
@@ -2162,20 +2270,20 @@ void Cmd_CallTeamVote_f( gentity_t *ent ) {
 					break;
 			}
 			if ( i >= 3 || !arg2[i]) {
-				i = atoi( arg2 );
-				if ( i < 0 || i >= level.maxclients ) {
-					trap_SendServerCommand( ent-g_entities, va("print \"Bad client slot: %i\n\"", i) );
+				targetClientNum = atoi( arg2 );
+				if ( targetClientNum < 0 || targetClientNum >= level.maxclients ) {
+					trap_SendServerCommand( ent-g_entities, va("print \"Bad client slot: %i\n\"", targetClientNum) );
 					return;
 				}
 
-				if ( !g_entities[i].inuse ) {
-					trap_SendServerCommand( ent-g_entities, va("print \"Client %i is not active\n\"", i) );
+				if ( !g_entities[targetClientNum].inuse ) {
+					trap_SendServerCommand( ent-g_entities, va("print \"Client %i is not active\n\"", targetClientNum) );
 					return;
 				}
 			}
 			else {
-				Q_strncpyz(leader, arg2, sizeof(leader));
-				Q_CleanStr(leader);
+				Q_strncpyz(target, arg2, sizeof(target));
+				Q_CleanStr(target);
 				for ( i = 0 ; i < level.maxclients ; i++ ) {
 					if ( level.clients[i].pers.connected == CON_DISCONNECTED )
 						continue;
@@ -2183,24 +2291,44 @@ void Cmd_CallTeamVote_f( gentity_t *ent ) {
 						continue;
 					Q_strncpyz(netname, level.clients[i].pers.netname, sizeof(netname));
 					Q_CleanStr(netname);
-					if ( !Q_stricmp(netname, leader) ) {
+					if ( !Q_stricmp(netname, target) ) 
+					{
+						targetClientNum = i;
 						break;
 					}
 				}
-				if ( i >= level.maxclients ) {
+				if ( targetClientNum >= level.maxclients ) {
 					trap_SendServerCommand( ent-g_entities, va("print \"%s is not a valid player on your team.\n\"", arg2) );
 					return;
 				}
 			}
 		}
-		Com_sprintf(arg2, sizeof(arg2), "%d", i);
+		if ( targetClientNum >= MAX_CLIENTS )
+		{//wtf?
+			trap_SendServerCommand( ent-g_entities, va("print \"%s is not a valid player on your team.\n\"", arg2) );
+			return;
+		}
+		if ( level.clients[targetClientNum].sess.sessionTeam != ent->client->sess.sessionTeam )
+		{//can't call a team vote on someone not on your team!
+			trap_SendServerCommand( ent-g_entities, va("print \"Cannot call a team vote on someone not on your team (%s).\n\"", level.clients[targetClientNum].pers.netname) );
+			return;
+		}
+		//just use the client number
+		Com_sprintf(arg2, sizeof(arg2), "%d", targetClientNum);
 	} else {
 		trap_SendServerCommand( ent-g_entities, "print \"Invalid vote string.\n\"" );
-		trap_SendServerCommand( ent-g_entities, "print \"Team vote commands are: leader <player>.\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"Team vote commands are: leader <player on your team> OR kick <player on your team>.\n\"" );
 		return;
 	}
 
-	Com_sprintf( level.teamVoteString[cs_offset], sizeof( level.teamVoteString[cs_offset] ), "%s %s", arg1, arg2 );
+	if ( !Q_stricmp( "kick", arg1 ) )
+	{//use clientkick and number (so they can't change their name)
+		Com_sprintf( level.teamVoteString[cs_offset], sizeof( level.teamVoteString[cs_offset] ), "clientkick %s", arg2 );
+	}
+	else
+	{//just a number
+		Com_sprintf( level.teamVoteString[cs_offset], sizeof( level.teamVoteString[cs_offset] ), "%s %s", arg1, arg2 );
+	}
 
 	for ( i = 0 ; i < level.maxclients ; i++ ) {
 		if ( level.clients[i].pers.connected == CON_DISCONNECTED )
@@ -2219,6 +2347,14 @@ void Cmd_CallTeamVote_f( gentity_t *ent ) {
 			level.clients[i].mGameFlags &= ~PSG_TEAMVOTED;
 	}
 	ent->client->mGameFlags |= PSG_TEAMVOTED;
+
+	/*
+	if ( !Q_stricmp( "kick", arg1 ) )
+	{//if you're voting to kick somebody, make them auto-vote yes
+		level.clients[targetClientNum].mGameFlags |= PSG_TEAMVOTED;
+		level.teamVoteYes[cs_offset]++;
+	}
+	*/
 
 	trap_SetConfigstring( CS_TEAMVOTE_TIME + cs_offset, va("%i", level.teamVoteTime[cs_offset] ) );
 	trap_SetConfigstring( CS_TEAMVOTE_STRING + cs_offset, level.teamVoteString[cs_offset] );
@@ -2535,10 +2671,12 @@ void Cmd_ToggleSaber_f(gentity_t *ent)
 
 extern vmCvar_t		d_saberStanceDebug;
 
+extern qboolean WP_SaberCanTurnOffSomeBlades( saberInfo_t *saber );
 void Cmd_SaberAttackCycle_f(gentity_t *ent)
 {
 	int selectLevel = 0;
-
+	qboolean usingSiegeStyle = qfalse;
+	
 	if ( !ent || !ent->client )
 	{
 		return;
@@ -2552,31 +2690,44 @@ void Cmd_SaberAttackCycle_f(gentity_t *ent)
 
 	if (ent->client->saber[0].model[0] && ent->client->saber[1].model[0])
 	{ //no cycling for akimbo
-		if ( ent->client->ps.saberHolstered == 1 )
-		{//have one holstered
-			//unholster it
-			G_Sound(ent, CHAN_AUTO, ent->client->saber[1].soundOn);
-			ent->client->ps.saberHolstered = 0;
-			//g_active should take care of this, but...
-			ent->client->ps.fd.saberAnimLevel = SS_DUAL;
-		}
-		else if ( ent->client->ps.saberHolstered == 0 )
-		{//have none holstered
-			//holster it
-			G_Sound(ent, CHAN_AUTO, ent->client->saber[1].soundOff);
-			ent->client->ps.saberHolstered = 1;
-			//g_active should take care of this, but...
-			ent->client->ps.fd.saberAnimLevel = SS_FAST;
-		}
+		if ( WP_SaberCanTurnOffSomeBlades( &ent->client->saber[1] ) )
+		{//can turn second saber off 
+			if ( ent->client->ps.saberHolstered == 1 )
+			{//have one holstered
+				//unholster it
+				G_Sound(ent, CHAN_AUTO, ent->client->saber[1].soundOn);
+				ent->client->ps.saberHolstered = 0;
+				//g_active should take care of this, but...
+				ent->client->ps.fd.saberAnimLevel = SS_DUAL;
+			}
+			else if ( ent->client->ps.saberHolstered == 0 )
+			{//have none holstered
+				if ( (ent->client->saber[1].saberFlags2&SFL2_NO_MANUAL_DEACTIVATE) )
+				{//can't turn it off manually
+				}
+				else if ( ent->client->saber[1].bladeStyle2Start > 0
+					&& (ent->client->saber[1].saberFlags2&SFL2_NO_MANUAL_DEACTIVATE2) )
+				{//can't turn it off manually
+				}
+				else
+				{
+					//turn it off
+					G_Sound(ent, CHAN_AUTO, ent->client->saber[1].soundOff);
+					ent->client->ps.saberHolstered = 1;
+					//g_active should take care of this, but...
+					ent->client->ps.fd.saberAnimLevel = SS_FAST;
+				}
+			}
 
-		if (d_saberStanceDebug.integer)
-		{
-			trap_SendServerCommand( ent-g_entities, va("print \"SABERSTANCEDEBUG: Attempted to toggle dual saber blade.\n\"") );
+			if (d_saberStanceDebug.integer)
+			{
+				trap_SendServerCommand( ent-g_entities, va("print \"SABERSTANCEDEBUG: Attempted to toggle dual saber blade.\n\"") );
+			}
+			return;
 		}
-		return;
 	}
-
-	if (ent->client->saber[0].numBlades > 1 )
+	else if (ent->client->saber[0].numBlades > 1
+		&& WP_SaberCanTurnOffSomeBlades( &ent->client->saber[0] ) )
 	{ //use staff stance then.
 		if ( ent->client->ps.saberHolstered == 1 )
 		{//second blade off
@@ -2592,33 +2743,44 @@ void Cmd_SaberAttackCycle_f(gentity_t *ent)
 			G_Sound(ent, CHAN_AUTO, ent->client->saber[0].soundOn);
 			ent->client->ps.saberHolstered = 0;
 			//g_active should take care of this, but...
-			if ( ent->client->saber[0].style != SS_NONE )
-			{
+			if ( ent->client->saber[0].stylesForbidden )
+			{//have a style we have to use
+				WP_UseFirstValidSaberStyle( &ent->client->saber[0], &ent->client->saber[1], ent->client->ps.saberHolstered, &selectLevel );
 				if ( ent->client->ps.weaponTime <= 0 )
 				{ //not busy, set it now
-					ent->client->ps.fd.saberAnimLevel = ent->client->saber[0].style;
+					ent->client->ps.fd.saberAnimLevel = selectLevel;
 				}
 				else
 				{ //can't set it now or we might cause unexpected chaining, so queue it
-					ent->client->saberCycleQueue = ent->client->saber[0].style;
+					ent->client->saberCycleQueue = selectLevel;
 				}
 			}
 		}
 		else if ( ent->client->ps.saberHolstered == 0 )
 		{//both blades on
-			//turn second one off
-			G_Sound(ent, CHAN_AUTO, ent->client->saber[0].soundOff);
-			ent->client->ps.saberHolstered = 1;
-			//g_active should take care of this, but...
-			if ( ent->client->saber[0].singleBladeStyle != SS_NONE )
+			if ( (ent->client->saber[0].saberFlags2&SFL2_NO_MANUAL_DEACTIVATE) )
+			{//can't turn it off manually
+			}
+			else if ( ent->client->saber[0].bladeStyle2Start > 0
+				&& (ent->client->saber[0].saberFlags2&SFL2_NO_MANUAL_DEACTIVATE2) )
+			{//can't turn it off manually
+			}
+			else
 			{
-				if ( ent->client->ps.weaponTime <= 0 )
-				{ //not busy, set it now
-					ent->client->ps.fd.saberAnimLevel = ent->client->saber[0].singleBladeStyle;
-				}
-				else
-				{ //can't set it now or we might cause unexpected chaining, so queue it
-					ent->client->saberCycleQueue = ent->client->saber[0].singleBladeStyle;
+				//turn second one off
+				G_Sound(ent, CHAN_AUTO, ent->client->saber[0].soundOff);
+				ent->client->ps.saberHolstered = 1;
+				//g_active should take care of this, but...
+				if ( ent->client->saber[0].singleBladeStyle != SS_NONE )
+				{
+					if ( ent->client->ps.weaponTime <= 0 )
+					{ //not busy, set it now
+						ent->client->ps.fd.saberAnimLevel = ent->client->saber[0].singleBladeStyle;
+					}
+					else
+					{ //can't set it now or we might cause unexpected chaining, so queue it
+						ent->client->saberCycleQueue = ent->client->saber[0].singleBladeStyle;
+					}
 				}
 			}
 		}
@@ -2643,6 +2805,8 @@ void Cmd_SaberAttackCycle_f(gentity_t *ent)
 		bgSiegeClasses[ent->client->siegeClass].saberStance)
 	{ //we have a flag of useable stances so cycle through it instead
 		int i = selectLevel+1;
+
+		usingSiegeStyle = qtrue;
 
 		while (i != selectLevel)
 		{ //cycle around upward til we hit the next style or end up back on this one
@@ -2692,6 +2856,12 @@ void Cmd_SaberAttackCycle_f(gentity_t *ent)
 	}
 #endif
 */
+	if ( !usingSiegeStyle )
+	{
+		//make sure it's valid, change it if not
+		WP_UseFirstValidSaberStyle( &ent->client->saber[0], &ent->client->saber[1], ent->client->ps.saberHolstered, &selectLevel );
+	}
+
 	if (ent->client->ps.weaponTime <= 0)
 	{ //not busy, set it now
 		ent->client->ps.fd.saberAnimLevelBase = ent->client->ps.fd.saberAnimLevel = selectLevel;
@@ -3068,6 +3238,8 @@ void ClientCommand( int clientNum ) {
 		return;
 	}
 
+	//note: these voice_cmds come from the ui/jamp/ingame_voicechat.menu menu file...
+	//		the strings are in strings/English/menus.str and all start with "VC_"
 	if (Q_stricmp(cmd, "voice_cmd") == 0)
 	{
 		Cmd_VoiceCommand_f(ent);

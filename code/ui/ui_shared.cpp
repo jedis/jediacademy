@@ -2739,7 +2739,13 @@ qboolean Script_SetCvar(itemDef_t *item, const char **args)
 	const char *cvar, *val;
 	if (String_Parse(args, &cvar) && String_Parse(args, &val)) 
 	{
-		DC->setCVar(cvar, val);
+		if(!stricmp(val,"(NULL)"))
+		{
+			DC->setCVar(cvar, "");
+		}
+		else {
+			DC->setCVar(cvar, val);
+		}
 	}
 
 	return qtrue;
@@ -5331,13 +5337,21 @@ menuDef_t *Menus_ActivateByName(const char *p)
 	}
 
 
+	const int	com_demo = Cvar_VariableIntegerValue( "com_demo" );
 	if (!m)
 	{	// A hack so we don't have to load all three mission menus before we know what tier we're on
 		if (!Q_stricmp( p, "ingameMissionSelect1" ) )
 		{
-			UI_LoadMenus("ui/tier1.txt",qfalse);
-			Menus_CloseAll();
-			Menus_OpenByName("ingameMissionSelect1");
+			if ( com_demo )
+			{
+				Menus_OpenByName("demo_MissionSelect");
+			}
+			else
+			{
+				UI_LoadMenus("ui/tier1.txt",qfalse);
+				Menus_CloseAll();
+				Menus_OpenByName("ingameMissionSelect1");
+			}
 		}
 		else if (!Q_stricmp( p, "ingameMissionSelect2" ) )
 		{
@@ -5356,26 +5370,53 @@ menuDef_t *Menus_ActivateByName(const char *p)
 			Com_Printf(S_COLOR_YELLOW"WARNING: Menus_ActivateByName: Unable to find menu '%s'\n",p);
 		}
 	}
-
-	// First time, show force select instructions
-	if (!Q_stricmp( p, "ingameForceSelect" ) )
+	
+	if( !com_demo )
 	{
-		int	tier_storyinfo = Cvar_VariableIntegerValue( "tier_storyinfo" );
-
-		if (tier_storyinfo==1)
+		// First time, show force select instructions
+		if (!Q_stricmp( p, "ingameForceSelect" ) )
 		{
-			Menus_OpenByName("ingameForceHelp");
+			int	tier_storyinfo = Cvar_VariableIntegerValue( "tier_storyinfo" );
+
+			if (tier_storyinfo==1)
+			{
+				Menus_OpenByName("ingameForceHelp");
+			}
+		}
+
+		// First time, show weapons select instructions
+		if (!Q_stricmp( p, "ingameWpnSelect" ) )
+		{
+			int	tier_storyinfo = Cvar_VariableIntegerValue( "tier_storyinfo" );
+
+			if (tier_storyinfo==1)
+			{
+				Menus_OpenByName("ingameWpnSelectHelp");
+			}
 		}
 	}
-
-	// First time, show weapons select instructions
-	if (!Q_stricmp( p, "ingameWpnSelect" ) )
+	else // demo
 	{
-		int	tier_storyinfo = Cvar_VariableIntegerValue( "tier_storyinfo" );
-
-		if (tier_storyinfo==1)
+		// First time, show force select instructions
+		if (!Q_stricmp( p, "demo_ForceSelect" ) )
 		{
-			Menus_OpenByName("ingameWpnSelectHelp");
+			int	tier_storyinfo = Cvar_VariableIntegerValue( "tier_storyinfo" );
+
+			if (!tier_storyinfo)
+			{
+				Menus_OpenByName("ingameForceHelp");
+			}
+		}
+
+		// First time, show weapons select instructions
+		if (!Q_stricmp( p, "demo_WpnSelect" ) )
+		{
+			int	tier_storyinfo = Cvar_VariableIntegerValue( "tier_storyinfo" );
+
+			if (!tier_storyinfo)
+			{
+				Menus_OpenByName("ingameWpnSelectHelp");
+			}
 		}
 	}
 

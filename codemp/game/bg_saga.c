@@ -73,6 +73,7 @@ stringID_table_t StanceTable[] =
 stringID_table_t WPTable[] =
 {
 	"NULL",WP_NONE,
+	ENUM2STRING(WP_NONE),
 	// Player weapons
 	ENUM2STRING(WP_STUN_BATON),
 	ENUM2STRING(WP_MELEE),
@@ -933,7 +934,7 @@ void BG_SiegeParseClassFile(const char *filename, siegeClassDesc_t *descBuffer)
 	}
 	else
 	{ //It's alright, just default to 100 then.
-		bgSiegeClasses[bgNumSiegeClasses].starthealth = 100;
+		bgSiegeClasses[bgNumSiegeClasses].starthealth = bgSiegeClasses[bgNumSiegeClasses].maxhealth;
 	}
 
 

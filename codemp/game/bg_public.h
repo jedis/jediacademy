@@ -17,7 +17,7 @@
 #define	MAX_SPAWN_VARS_CHARS	4096
 
 
-#define	GAME_VERSION		"basejk-1"
+#define	GAME_VERSION		"basejka-1"
 
 #define	STEPSIZE		18
 
@@ -252,7 +252,7 @@ extern qboolean			BGPAFtextLoaded;
 extern animation_t		bgHumanoidAnimations[MAX_TOTALANIMATIONS];
 #include "../namespace_end.h"
 
-#define MAX_ANIM_FILES	16
+#define MAX_ANIM_FILES	64
 #define MAX_ANIM_EVENTS 300
 
 typedef enum
@@ -292,6 +292,14 @@ extern stringID_table_t footstepTypeTable[NUM_FOOTSTEP_TYPES+1];
 #define	AED_MOVE_FWD				0
 #define	AED_MOVE_RT					1
 #define	AED_MOVE_UP					2
+//indices for AEV_SABER_SWING data
+#define	AED_SABER_SWING_SABERNUM	0
+#define	AED_SABER_SWING_TYPE		1
+#define	AED_SABER_SWING_PROBABILITY	2
+//indices for AEV_SABER_SPIN data
+#define	AED_SABER_SPIN_SABERNUM		0
+#define	AED_SABER_SPIN_TYPE			1	//0 = saberspinoff, 1 = saberspin, 2-4 = saberspin1-saberspin3
+#define	AED_SABER_SPIN_PROBABILITY	2	
 
 typedef enum
 {//NOTENOTE:  Be sure to update animEventTypeTable and ParseAnimationEvtBlock(...) if you change this enum list!
@@ -302,6 +310,8 @@ typedef enum
 	AEV_FIRE,		//# animID AEV_FIRE framenum altfire chancetofire
 	AEV_MOVE,		//# animID AEV_MOVE framenum forwardpush rightpush uppush
 	AEV_SOUNDCHAN,  //# animID AEV_SOUNDCHAN framenum CHANNEL soundpath randomlow randomhi chancetoplay 
+	AEV_SABER_SWING,  //# animID AEV_SABER_SWING framenum CHANNEL randomlow randomhi chancetoplay 
+	AEV_SABER_SPIN,  //# animID AEV_SABER_SPIN framenum CHANNEL chancetoplay 
 	AEV_NUM_AEV
 } animEventType_t;
 
@@ -1073,6 +1083,8 @@ typedef enum {
 	MOD_CRUSH,
 	MOD_TELEFRAG,
 	MOD_FALLING,
+	MOD_COLLISION,
+	MOD_VEH_EXPLOSION,
 	MOD_SUICIDE,
 	MOD_TARGET_LASER,
 	MOD_TRIGGER_HURT,
@@ -1275,6 +1287,8 @@ typedef struct
 #endif
 
 typedef enum {
+	//totally invalid
+	LS_INVALID	= -1,
 	// Invalid, or saber not armed
 	LS_NONE		= 0,
 
@@ -1593,7 +1607,7 @@ qboolean BG_InDeathAnim( int anim );
 qboolean BG_InSaberLockOld( int anim );
 qboolean BG_InSaberLock( int anim );
 
-void BG_SaberStartTransAnim( int saberAnimLevel, int anim, float *animSpeed, int broken );
+void BG_SaberStartTransAnim( int clientNum, int saberAnimLevel, int weapon, int anim, float *animSpeed, int broken );
 
 void BG_ForcePowerDrain( playerState_t *ps, forcePowers_t forcePower, int overrideAmt );
 

@@ -28,10 +28,6 @@ typedef map<sstring_t, const char *>	ShaderEntryPtrs_t;
 										ShaderEntryPtrs_t ShaderEntryPtrs;
 
 
-
-
-
-
 void ShaderEntryPtrs_Clear(void)
 {
 	ShaderEntryPtrs.clear();
@@ -51,6 +47,10 @@ void ShaderEntryPtrs_Insert(const char  *token, const char  *p)
 	if (it == ShaderEntryPtrs.end())
 	{
 		ShaderEntryPtrs[token] = p;
+	}
+	else
+	{
+		VID_Printf( PRINT_DEVELOPER, "Duplicate shader entry %s!\n",token );
 	}
 }
 

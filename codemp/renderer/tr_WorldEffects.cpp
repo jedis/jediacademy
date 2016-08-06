@@ -9,8 +9,9 @@
 #include "../qcommon/exe_headers.h"
 #pragma warning( disable : 4512 )
 
+// Returns a float min <= x < max (exclusive; will get max - 0.00001; but never max)
 inline float WE_flrand(float min, float max) {
-	return ((rand() * (max - min)) / 32768.0F) + min;
+	return ((rand() * (max - min)) / (RAND_MAX+1)) + min;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -96,12 +97,6 @@ inline void VectorCeil(vec3_t in)
 inline float	FloatRand(void) 
 { 
 	return ((float)rand() / (float)RAND_MAX);
-}
-
-inline float	fast_flrand(float min, float max)
-{
-	//return min + (max - min) * flrand;
-	return WE_flrand(min, max); //fixme?
 }
 
 inline	void	SnapFloatToGrid(float& f, int GridSize)

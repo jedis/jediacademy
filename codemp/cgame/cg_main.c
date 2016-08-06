@@ -153,6 +153,7 @@ extern int cg_autoMapInputTime;
 extern vec3_t cg_autoMapAngle;
 
 void CG_MiscEnt(void);
+void CG_DoCameraShake( vec3_t origin, float intensity, int radius, int time );
 
 //do we have any force powers that we would normally need to cycle to?
 qboolean CG_NoUseableForce(void)
@@ -340,6 +341,14 @@ int vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int a
 
 	case CG_MISC_ENT:
 		CG_MiscEnt();
+		return 0;
+
+	case CG_FX_CAMERASHAKE:
+		{
+			TCGCameraShake	*data = (TCGCameraShake *)cg.sharedBuffer;
+			
+			CG_DoCameraShake( data->mOrigin, data->mIntensity, data->mRadius, data->mTime );
+		}
 		return 0;
 
 	default:
@@ -708,6 +717,7 @@ vmCvar_t	cg_drawAmmoWarning;
 vmCvar_t	cg_drawCrosshair;
 vmCvar_t	cg_drawCrosshairNames;
 vmCvar_t	cg_drawRadar;
+vmCvar_t	cg_drawVehLeadIndicator;
 vmCvar_t	cg_dynamicCrosshair;
 vmCvar_t	cg_dynamicCrosshairPrecision;
 vmCvar_t	cg_drawRewards;
@@ -772,6 +782,8 @@ vmCvar_t	cg_g2TraceLod;
 vmCvar_t	cg_fpls;
 
 vmCvar_t	cg_ghoul2Marks;
+
+vmCvar_t	cg_optvehtrace;
 
 vmCvar_t	cg_saberDynamicMarks;
 vmCvar_t	cg_saberDynamicMarkTime;
@@ -839,7 +851,7 @@ vmCvar_t	cg_timescaleFadeSpeed;
 vmCvar_t	cg_timescale;
 vmCvar_t	cg_noTaunt;
 vmCvar_t	cg_noProjectileTrail;
-vmCvar_t	cg_trueLightning;
+//vmCvar_t	cg_trueLightning;
 /*
 Ghoul2 Insert Start
 */
@@ -847,14 +859,11 @@ vmCvar_t	cg_debugBB;
 /*
 Ghoul2 Insert End
 */
-vmCvar_t 	cg_redTeamName;
-vmCvar_t 	cg_blueTeamName;
+//vmCvar_t 	cg_redTeamName;
+//vmCvar_t 	cg_blueTeamName;
 vmCvar_t	cg_currentSelectedPlayer;
 vmCvar_t	cg_currentSelectedPlayerName;
-vmCvar_t	cg_singlePlayer;
-vmCvar_t	cg_enableDust;
-vmCvar_t	cg_enableBreath;
-vmCvar_t	cg_singlePlayerActive;
+//vmCvar_t	cg_singlePlayerActive;
 vmCvar_t	cg_recordSPDemo;
 vmCvar_t	cg_recordSPDemoName;
 vmCvar_t	cg_showVehBounds;
@@ -892,6 +901,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_drawCrosshair, "cg_drawCrosshair", "1", CVAR_ARCHIVE },
 	{ &cg_drawCrosshairNames, "cg_drawCrosshairNames", "1", CVAR_ARCHIVE },
 	{ &cg_drawRadar, "cg_drawRadar", "1", CVAR_ARCHIVE },
+	{ &cg_drawVehLeadIndicator, "cg_drawVehLeadIndicator", "1", CVAR_ARCHIVE },
 	{ &cg_drawScores,		  "cg_drawScores", "1", CVAR_ARCHIVE },
 	{ &cg_dynamicCrosshair, "cg_dynamicCrosshair", "1", CVAR_ARCHIVE },
 	//Enables ghoul2 traces for crosshair traces.. more precise when pointing at others, but slower.
@@ -957,6 +967,8 @@ static cvarTable_t cvarTable[] = { // bk001129
 
 	{ &cg_ghoul2Marks, "cg_ghoul2Marks", "16", 0 },
 
+	{ &cg_optvehtrace, "com_optvehtrace", "0", 0 },
+
 	{ &cg_saberDynamicMarks, "cg_saberDynamicMarks", "0", 0 },
 	{ &cg_saberDynamicMarkTime, "cg_saberDynamicMarkTime", "60000", 0 },
 
@@ -1002,14 +1014,11 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_blood, "com_blood", "1", CVAR_ARCHIVE },
 	{ &cg_synchronousClients, "g_synchronousClients", "0", 0 },	// communicated by systeminfo
 
-	{ &cg_redTeamName, "g_redteam", DEFAULT_REDTEAM_NAME, CVAR_ARCHIVE | CVAR_SERVERINFO | CVAR_USERINFO },
-	{ &cg_blueTeamName, "g_blueteam", DEFAULT_BLUETEAM_NAME, CVAR_ARCHIVE | CVAR_SERVERINFO | CVAR_USERINFO },
+//	{ &cg_redTeamName, "g_redteam", DEFAULT_REDTEAM_NAME, CVAR_ARCHIVE | CVAR_SERVERINFO | CVAR_USERINFO },
+//	{ &cg_blueTeamName, "g_blueteam", DEFAULT_BLUETEAM_NAME, CVAR_ARCHIVE | CVAR_SERVERINFO | CVAR_USERINFO },
 	{ &cg_currentSelectedPlayer, "cg_currentSelectedPlayer", "0", CVAR_ARCHIVE},
 	{ &cg_currentSelectedPlayerName, "cg_currentSelectedPlayerName", "", CVAR_ARCHIVE},
-	{ &cg_singlePlayer, "ui_singlePlayerActive", "0", CVAR_USERINFO},
-	{ &cg_enableDust, "g_enableDust", "0", 0},
-	{ &cg_enableBreath, "g_enableBreath", "0", 0},
-	{ &cg_singlePlayerActive, "ui_singlePlayerActive", "0", CVAR_USERINFO},
+//	{ &cg_singlePlayerActive, "ui_singlePlayerActive", "0", CVAR_USERINFO},
 	{ &cg_recordSPDemo, "ui_recordSPDemo", "0", CVAR_ARCHIVE},
 	{ &cg_recordSPDemoName, "ui_recordSPDemoName", "", CVAR_ARCHIVE},
 
@@ -1018,16 +1027,16 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_timescaleFadeEnd, "cg_timescaleFadeEnd", "1", 0},
 	{ &cg_timescaleFadeSpeed, "cg_timescaleFadeSpeed", "0", 0},
 	{ &cg_timescale, "timescale", "1", 0},
-	{ &cg_scorePlum, "cg_scorePlums", "1", CVAR_USERINFO | CVAR_ARCHIVE},
-	{ &cg_hudFiles, "cg_hudFiles", "ui/jahud.txt", CVAR_USERINFO | CVAR_ARCHIVE},
-	{ &cg_smoothClients, "cg_smoothClients", "1", CVAR_USERINFO | CVAR_ARCHIVE},
+	{ &cg_scorePlum, "cg_scorePlums", "1",  CVAR_ARCHIVE},
+	{ &cg_hudFiles, "cg_hudFiles", "ui/jahud.txt", CVAR_ARCHIVE},
+	{ &cg_smoothClients, "cg_smoothClients", "1",  CVAR_ARCHIVE},
 	{ &cg_cameraMode, "com_cameraMode", "0", CVAR_CHEAT},
 
 	{ &pmove_fixed, "pmove_fixed", "0", 0},
 	{ &pmove_msec, "pmove_msec", "8", 0},
 	{ &cg_noTaunt, "cg_noTaunt", "0", CVAR_ARCHIVE},
 	{ &cg_noProjectileTrail, "cg_noProjectileTrail", "0", CVAR_ARCHIVE},
-	{ &cg_trueLightning, "cg_trueLightning", "0.0", CVAR_ARCHIVE},
+//	{ &cg_trueLightning, "cg_trueLightning", "0.0", CVAR_ARCHIVE},
 	{ &cg_showVehBounds, "cg_showVehBounds", "0", 0},
 
 	{ &ui_myteam, "ui_myteam", "0", CVAR_ROM|CVAR_INTERNAL},
@@ -1493,6 +1502,7 @@ static void CG_RegisterSounds( void ) {
 	cgs.media.purpleSaberGlowShader		= trap_R_RegisterShader( "gfx/effects/sabers/purple_glow" );
 	cgs.media.purpleSaberCoreShader		= trap_R_RegisterShader( "gfx/effects/sabers/purple_line" );
 	cgs.media.saberBlurShader			= trap_R_RegisterShader( "gfx/effects/sabers/saberBlur" );
+	cgs.media.swordTrailShader			= trap_R_RegisterShader( "gfx/effects/sabers/swordTrail" );
 
 	cgs.media.forceCoronaShader			= trap_R_RegisterShaderNoMip( "gfx/hud/force_swirl" );
 
@@ -3029,10 +3039,10 @@ static int CG_OwnerDrawWidth(int ownerDraw, float scale) {
 			return CG_Text_Width(CG_GetKillerText(), scale, FONT_MEDIUM);
 			break;
 	  case CG_RED_NAME:
-			return CG_Text_Width(cg_redTeamName.string, scale, FONT_MEDIUM);
+			return CG_Text_Width(DEFAULT_REDTEAM_NAME/*cg_redTeamName.string*/, scale, FONT_MEDIUM);
 			break;
 	  case CG_BLUE_NAME:
-			return CG_Text_Width(cg_blueTeamName.string, scale, FONT_MEDIUM);
+			return CG_Text_Width(DEFAULT_BLUETEAM_NAME/*cg_blueTeamName.string*/, scale, FONT_MEDIUM);
 			break;
 
 

@@ -971,6 +971,7 @@ void CL_RequestMotd( void ) {
 
 	Info_SetValueForKey( info, "challenge", cls.updateChallenge );
 	Info_SetValueForKey( info, "renderer", cls.glconfig.renderer_string );
+	Info_SetValueForKey( info, "rvendor", cls.glconfig.vendor_string );
 	Info_SetValueForKey( info, "version", com_version->string );
 
 	Info_SetValueForKey( info, "cputype", Cvar_VariableString("sys_cpustring") );
@@ -2636,15 +2637,16 @@ void CL_Init( void ) {
 	Cvar_Get ("snaps", "20", CVAR_USERINFO | CVAR_ARCHIVE );
 	Cvar_Get ("model", "kyle/default", CVAR_USERINFO | CVAR_ARCHIVE );
 	Cvar_Get ("forcepowers", "7-1-032330000000001333", CVAR_USERINFO | CVAR_ARCHIVE );
-	Cvar_Get ("g_redTeam", "Empire", CVAR_SERVERINFO | CVAR_ARCHIVE);
-	Cvar_Get ("g_blueTeam", "Rebellion", CVAR_SERVERINFO | CVAR_ARCHIVE);
+//	Cvar_Get ("g_redTeam", "Empire", CVAR_SERVERINFO | CVAR_ARCHIVE);
+//	Cvar_Get ("g_blueTeam", "Rebellion", CVAR_SERVERINFO | CVAR_ARCHIVE);
 	Cvar_Get ("color1",  "4", CVAR_USERINFO | CVAR_ARCHIVE );
 	Cvar_Get ("color2", "4", CVAR_USERINFO | CVAR_ARCHIVE );
 	Cvar_Get ("handicap", "100", CVAR_USERINFO | CVAR_ARCHIVE );
 	Cvar_Get ("teamtask", "0", CVAR_USERINFO );
 	Cvar_Get ("sex", "male", CVAR_USERINFO | CVAR_ARCHIVE );
+#ifdef USE_CD_KEY
 	Cvar_Get ("cl_anonymous", "0", CVAR_USERINFO | CVAR_ARCHIVE );
-
+#endif
 	Cvar_Get ("password", "", CVAR_USERINFO);
 	Cvar_Get ("cg_predictItems", "1", CVAR_USERINFO | CVAR_ARCHIVE );
 
@@ -2845,7 +2847,7 @@ void CL_ServerInfoPacket( netadr_t from, msg_t *msg ) {
 	prot = atoi( Info_ValueForKey( infoString, "protocol" ) );
 	if ( prot != PROTOCOL_VERSION ) {
 		Com_DPrintf( "Different protocol info packet: %s\n", infoString );
-//		return;
+		return;
 	}
 
 #ifdef _XBOX
@@ -3085,6 +3087,10 @@ void CL_ServerStatusResponse( netadr_t from, msg_t *msg ) {
 	Com_sprintf(&serverStatus->string[len], sizeof(serverStatus->string)-len, "%s", s);
 
 	if (serverStatus->print) {
+		Com_Printf( "Server (%i.%i.%i.%i:%i)\n", 
+			serverStatus->address.ip[0], serverStatus->address.ip[1],
+			serverStatus->address.ip[2], serverStatus->address.ip[3],
+			BigShort( serverStatus->address.port ) );
 		Com_Printf("Server settings:\n");
 		// print cvars
 		while (*s) {

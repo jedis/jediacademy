@@ -35,6 +35,7 @@ int			imperial_attackers = 0;
 
 qboolean	gSiegeRoundBegun = qfalse;
 qboolean	gSiegeRoundEnded = qfalse;
+qboolean	gSiegeRoundWinningTeam = 0;
 int			gSiegeBeginTime = Q3_INFINITE;
 
 int			g_preroundState = 0; //default to starting as spec (1 is starting ingame)
@@ -684,6 +685,7 @@ void SiegeRoundComplete(int winningteam, int winningclient)
 	trap_SetConfigstring(CS_SIEGE_STATE, va("3|%i", level.time)); //ended
 	gSiegeRoundBegun = qfalse;
 	gSiegeRoundEnded = qtrue;
+	gSiegeRoundWinningTeam = winningteam;
 
 	if (BG_SiegeGetValueGroup(siege_info, teamstr, gParseObjectives))
 	{

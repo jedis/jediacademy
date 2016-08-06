@@ -13,6 +13,7 @@
 #include "../ghoul2/G2.h"
 //==========================================================================
 
+extern qboolean WP_SaberBladeUseSecondBladeStyle( saberInfo_t *saber, int bladeNum );
 extern qboolean CG_VehicleWeaponImpact( centity_t *cent );
 extern qboolean CG_InFighter( void );
 extern qboolean CG_InATST( void );
@@ -106,10 +107,13 @@ static void CG_Obituary( entityState_t *ent ) {
 	const char	*targetInfo;
 	const char	*attackerInfo;
 	char		targetName[32];
+	char		targetVehName[32] = {0};
 	char		attackerName[32];
+	char		attackerVehName[32] = {0};
+	char		attackerVehWeapName[32] = {0};
 	gender_t	gender;
 	clientInfo_t	*ci;
-
+	qboolean	vehMessage = qfalse;
 
 	target = ent->otherEntityNum;
 	attacker = ent->otherEntityNum2;
@@ -121,7 +125,7 @@ static void CG_Obituary( entityState_t *ent ) {
 	ci = &cgs.clientinfo[target];
 
 	if ( attacker < 0 || attacker >= MAX_CLIENTS ) {
-		attacker = ENTITYNUM_WORLD;
+		//attacker = ENTITYNUM_WORLD;
 		attackerInfo = NULL;
 	} else {
 		attackerInfo = CG_ConfigString( CS_PLAYERS + attacker );
@@ -134,30 +138,85 @@ static void CG_Obituary( entityState_t *ent ) {
 	Q_strncpyz( targetName, Info_ValueForKey( targetInfo, "n" ), sizeof(targetName) - 2);
 	strcat( targetName, S_COLOR_WHITE );
 
+	// check for target in a vehicle
+	if ( ent->lookTarget > VEHICLE_BASE && ent->lookTarget < MAX_VEHICLES && g_vehicleInfo[ent->lookTarget].name )
+	{
+		Q_strncpyz( targetVehName, g_vehicleInfo[ent->lookTarget].name, sizeof(targetVehName) - 2 );
+	}
+
+	// check for attacker in a vehicle
+	if ( ent->brokenLimbs >= MAX_CLIENTS )
+	{
+		centity_t *attVehCent = &cg_entities[ent->brokenLimbs];
+		if ( attVehCent && attVehCent->m_pVehicle && attVehCent->m_pVehicle->m_pVehicleInfo )
+		{
+			if ( attVehCent->m_pVehicle->m_pVehicleInfo->name )
+			{
+				Q_strncpyz( attackerVehName, attVehCent->m_pVehicle->m_pVehicleInfo->name, sizeof(attackerVehName) - 2 );
+			}
+		}
+	}
+
+	//check for specific vehicle weapon
+	if ( ent->weapon > 0 )
+	{
+		if ( g_vehWeaponInfo[ent->weapon-1].name )
+		{
+			Q_strncpyz( attackerVehWeapName, g_vehWeaponInfo[ent->weapon-1].name, sizeof(attackerVehWeapName) - 2 );
+		}
+	}
+
 	// check for single client messages
 
-	switch( mod ) {
-	case MOD_SUICIDE:
-	case MOD_FALLING:
-	case MOD_CRUSH:
-	case MOD_WATER:
-	case MOD_SLIME:
-	case MOD_LAVA:
-	case MOD_TRIGGER_HURT:
-		message = "DIED_GENERIC";
-		break;
-	case MOD_TARGET_LASER:
-		message = "DIED_LASER";
-		break;
-	default:
-		message = NULL;
-		break;
+	if ( ent->saberInFlight )
+	{//asteroid->vehicle collision
+		switch ( Q_irand( 0, 2 ) )
+		{
+		default:
+		case 0:
+            message = "DIED_ASTEROID1";
+			break;
+		case 1:
+            message = "DIED_ASTEROID2";
+			break;
+		case 2:
+            message = "DIED_ASTEROID3";
+			break;
+		}
+		vehMessage = qtrue;
+	}
+	else
+	{
+		switch( mod ) {
+		case MOD_VEHICLE:
+		case MOD_SUICIDE:
+		case MOD_FALLING:
+		case MOD_COLLISION:
+		case MOD_VEH_EXPLOSION:
+		case MOD_CRUSH:
+		case MOD_WATER:
+		case MOD_SLIME:
+		case MOD_LAVA:
+		case MOD_TRIGGER_HURT:
+			message = "DIED_GENERIC";
+			break;
+		case MOD_TARGET_LASER:
+			vehMessage = qtrue;
+			message = "DIED_TURBOLASER";
+			break;
+		default:
+			message = NULL;
+			break;
+		}
 	}
 
 	// Attacker killed themselves.  Ridicule them for it.
-	if (attacker == target) {
+	if (attacker == target) 
+	{
+		vehMessage = qfalse;
 		gender = ci->gender;
-		switch (mod) {
+		switch (mod) 
+		{
 		case MOD_BRYAR_PISTOL:
 		case MOD_BRYAR_PISTOL_ALT:
 		case MOD_BLASTER:
@@ -229,11 +288,13 @@ static void CG_Obituary( entityState_t *ent ) {
 		goto clientkilled;
 	}
 
-	if (message) {
+	if (message) 
+	{
 		gender = ci->gender;
 
 		if (!message[0])
 		{
+			vehMessage = qfalse;
 			if ( gender == GENDER_FEMALE )
 				message = "SUICIDE_GENERICDEATH_FEMALE";
 			else if ( gender == GENDER_NEUTER )
@@ -241,7 +302,14 @@ static void CG_Obituary( entityState_t *ent ) {
 			else
 				message = "SUICIDE_GENERICDEATH_MALE";
 		}
-		message = (char *)CG_GetStringEdString("MP_INGAME", message);
+		if ( vehMessage )
+		{
+			message = (char *)CG_GetStringEdString("MP_INGAMEVEH", message);
+		}
+		else
+		{
+			message = (char *)CG_GetStringEdString("MP_INGAME", message);
+		}
 
 		CG_Printf( "%s %s\n", targetName, message);
 		return;
@@ -310,7 +378,7 @@ clientkilled:
 
 	// check for double client messages
 	if ( !attackerInfo ) {
-		attacker = ENTITYNUM_WORLD;
+		//attacker = ENTITYNUM_WORLD;
 		strcpy( attackerName, "noname" );
 	} else {
 		Q_strncpyz( attackerName, Info_ValueForKey( attackerInfo, "n" ), sizeof(attackerName) - 2);
@@ -391,6 +459,48 @@ clientkilled:
 			message = "KILLED_DETPACK";
 			break;
 		case MOD_VEHICLE:
+			vehMessage = qtrue;
+			switch ( ent->generic1 )
+			{
+			case WP_BLASTER://primary blasters
+				switch ( Q_irand( 0, 2 ) )
+				{
+				case 2:
+					message = "KILLED_VEH_BLASTER3";
+					break;
+				case 1:
+					message = "KILLED_VEH_BLASTER2";
+					break;
+				default:
+					message = "KILLED_VEH_BLASTER1";
+					break;
+				}
+				break;
+			case WP_ROCKET_LAUNCHER://missile
+				if ( Q_irand( 0, 1 ) )
+				{
+					message = "KILLED_VEH_MISSILE2";
+				}
+				else
+				{
+					message = "KILLED_VEH_MISSILE1";
+				}
+				break;
+			case WP_THERMAL://bomb
+				message = "KILLED_VEH_BOMB";
+				break;
+			case WP_DEMP2://ion cannon
+				message = "KILLED_VEH_ION";
+				break;
+			case WP_TURRET://turret
+				message = "KILLED_VEH_TURRET";
+				break;
+			default:
+				vehMessage = qfalse;
+				message = "KILLED_GENERIC";
+				break;
+			}
+			break;
 		case MOD_CONC:
 		case MOD_CONC_ALT:
 			message = "KILLED_GENERIC";
@@ -410,19 +520,84 @@ clientkilled:
 		case MOD_FALLING:
 			message = "KILLED_FORCETOSS";
 			break;
+		case MOD_COLLISION:
+		case MOD_VEH_EXPLOSION:
+			switch ( Q_irand( 0, 2 ) )
+			{
+			default:
+			case 0:
+				message = "KILLED_VEH_COLLISION1";
+				break;
+			case 1:
+				message = "KILLED_VEH_COLLISION2";
+				break;
+			case 2:
+				message = "KILLED_VEH_COLLISION3";
+				break;
+			}
+			vehMessage = qtrue;
+			break;
 		case MOD_TRIGGER_HURT:
 			message = "KILLED_GENERIC";//"KILLED_FORCETOSS";
+			break;
+		case MOD_TARGET_LASER:
+			if ( Q_irand(0,1) )
+			{
+				message = "KILLED_TURRET1";
+			}
+			else
+			{
+				message = "KILLED_TURRET2";
+			}
+			vehMessage = qtrue;
 			break;
 		default:
 			message = "KILLED_GENERIC";
 			break;
 		}
 
-		if (message) {
-			message = (char *)CG_GetStringEdString("MP_INGAME", message);
+		if (message) 
+		{
+			if ( vehMessage )
+			{
+				message = (char *)CG_GetStringEdString("MP_INGAMEVEH", message);
+			}
+			else
+			{
+				message = (char *)CG_GetStringEdString("MP_INGAME", message);
+			}
 
-			CG_Printf( "%s %s %s\n", 
-				targetName, message, attackerName);
+			CG_Printf( "%s ", targetName);
+			if ( targetVehName[0] )
+			{
+				CG_Printf( "(%s) ", targetVehName);
+			}
+			if ( mod == MOD_TARGET_LASER )
+			{//no attacker name, just a turbolaser or other kind of turret...
+				CG_Printf( "%s", message);
+			}
+			else
+			{
+				CG_Printf( "%s %s", message, attackerName);
+
+				if ( attackerVehName[0]
+					&& attackerVehWeapName[0] )
+				{
+					CG_Printf( " (%s %s)", attackerVehName, attackerVehWeapName );
+				}
+				else
+				{
+					if ( attackerVehName[0] )
+					{
+						CG_Printf( " (%s)", attackerVehName );
+					}
+					else if ( attackerVehWeapName[0] )
+					{
+						CG_Printf(" (%s)", attackerVehWeapName );
+					}
+				}
+			}
+			CG_Printf( "\n" );
 			return;
 		}
 	}
@@ -2147,146 +2322,270 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 
 	case EV_SABER_ATTACK:
 		DEBUGNAME("EV_SABER_ATTACK");
-		trap_S_StartSound(es->pos.trBase, es->number, CHAN_WEAPON, trap_S_RegisterSound(va("sound/weapons/saber/saberhup%i.wav", Q_irand(1, 8))));
+		{
+			qhandle_t swingSound = trap_S_RegisterSound(va("sound/weapons/saber/saberhup%i.wav", Q_irand(1, 8)));
+			clientInfo_t *client = NULL;
+			if ( cg_entities[es->number].currentState.eType == ET_NPC )
+			{
+				client = cg_entities[es->number].npcClient;
+			}
+			else if ( es->number < MAX_CLIENTS )
+			{
+				client = &cgs.clientinfo[es->number];
+			}
+			if ( client && client->infoValid && client->saber[0].swingSound[0] )
+			{//custom swing sound
+				swingSound = client->saber[0].swingSound[Q_irand(0,2)];
+			}
+            trap_S_StartSound(es->pos.trBase, es->number, CHAN_WEAPON, swingSound );
+		}
 		break;
 
 	case EV_SABER_HIT:
 		DEBUGNAME("EV_SABER_HIT");
-		if (es->eventParm == 16)
-		{ //Make lots of sparks, something special happened
-			vec3_t fxDir;
-			VectorCopy(es->angles, fxDir);
-			if (!fxDir[0] && !fxDir[1] && !fxDir[2])
-			{
-				fxDir[1] = 1;
-			}
-			trap_S_StartSound(es->origin, es->number, CHAN_AUTO, trap_S_RegisterSound(va("sound/weapons/saber/saberhit%i.wav", Q_irand(1, 3))));
-			trap_FX_PlayEffectID( cgs.effects.mSaberBloodSparks, es->origin, fxDir, -1, -1 );
-			trap_FX_PlayEffectID( cgs.effects.mSaberBloodSparks, es->origin, fxDir, -1, -1 );
-			trap_FX_PlayEffectID( cgs.effects.mSaberBloodSparks, es->origin, fxDir, -1, -1 );
-			trap_FX_PlayEffectID( cgs.effects.mSaberBloodSparks, es->origin, fxDir, -1, -1 );
-			trap_FX_PlayEffectID( cgs.effects.mSaberBloodSparks, es->origin, fxDir, -1, -1 );
-			trap_FX_PlayEffectID( cgs.effects.mSaberBloodSparks, es->origin, fxDir, -1, -1 );
-		}
-		else if (es->eventParm)
-		{ //hit a person
-			vec3_t fxDir;
-			VectorCopy(es->angles, fxDir);
-			if (!fxDir[0] && !fxDir[1] && !fxDir[2])
-			{
-				fxDir[1] = 1;
-			}
-			trap_S_StartSound(es->origin, es->number, CHAN_AUTO, trap_S_RegisterSound(va("sound/weapons/saber/saberhit%i.wav", Q_irand(1, 3))));
-			if ( es->eventParm == 3 )
-			{	// moderate or big hits.
-				trap_FX_PlayEffectID( cgs.effects.mSaberBloodSparksSmall, es->origin, fxDir, -1, -1 );
-			}
-			else if ( es->eventParm == 2 )
-			{	// this is for really big hits.
-				trap_FX_PlayEffectID( cgs.effects.mSaberBloodSparksMid, es->origin, fxDir, -1, -1 );
-			}
-			else
-			{	// this should really just be done in the effect itself, no?
-				trap_FX_PlayEffectID( cgs.effects.mSaberBloodSparks, es->origin, fxDir, -1, -1 );
-				trap_FX_PlayEffectID( cgs.effects.mSaberBloodSparks, es->origin, fxDir, -1, -1 );
-				trap_FX_PlayEffectID( cgs.effects.mSaberBloodSparks, es->origin, fxDir, -1, -1 );
-			}
-		}
-		else
-		{ //hit something else
-			vec3_t fxDir;
-			VectorCopy(es->angles, fxDir);
-			if (!fxDir[0] && !fxDir[1] && !fxDir[2])
-			{
-				fxDir[1] = 1;
-			}
-			//old jk2mp method
-			/*
-			trap_S_StartSound(es->origin, es->number, CHAN_AUTO, trap_S_RegisterSound("sound/weapons/saber/saberhit.wav"));
-			trap_FX_PlayEffectID( trap_FX_RegisterEffect("saber/spark.efx"), es->origin, fxDir, -1, -1 );
-			*/
-
-			trap_FX_PlayEffectID( cgs.effects.mSaberCut, es->origin, fxDir, -1, -1 );
-		}
-
-		//rww - this means we have the number of the ent being hit and the ent that owns the saber doing
-		//the hit. This being the case, we can store these indecies and the current time in order to do
-		//some visual tricks on the client between frames to make it look like we're actually continuing
-		//to hit between server frames.
-		if (es->otherEntityNum != ENTITYNUM_NONE && es->otherEntityNum2 != ENTITYNUM_NONE)
 		{
-			centity_t *saberOwner;
+			int hitPersonFxID = cgs.effects.mSaberBloodSparks;
+			int hitPersonSmallFxID = cgs.effects.mSaberBloodSparksSmall;
+			int hitPersonMidFxID = cgs.effects.mSaberBloodSparksMid;
+			int hitOtherFxID = cgs.effects.mSaberCut;
+			int hitSound = trap_S_RegisterSound(va("sound/weapons/saber/saberhit%i.wav", Q_irand(1, 3)));
+			
+			if ( es->otherEntityNum2 >= 0
+				&& es->otherEntityNum2 < ENTITYNUM_NONE )
+			{//we have a specific person who is causing this effect, see if we should override it with any custom saber effects/sounds
+				clientInfo_t *client = NULL;
+				if ( cg_entities[es->otherEntityNum2].currentState.eType == ET_NPC )
+				{
+					client = cg_entities[es->otherEntityNum2].npcClient;
+				}
+				else if ( es->otherEntityNum2 < MAX_CLIENTS )
+				{
+					client = &cgs.clientinfo[es->otherEntityNum2];
+				}
+				if ( client && client->infoValid )
+				{
+					int saberNum = es->weapon;
+					int bladeNum = es->legsAnim;
+					if ( WP_SaberBladeUseSecondBladeStyle( &client->saber[saberNum], bladeNum ) )
+					{//use second blade style values
+						if ( client->saber[saberNum].hitPersonEffect2 )
+						{//custom hit person effect
+							hitPersonFxID = hitPersonSmallFxID = hitPersonMidFxID = client->saber[saberNum].hitPersonEffect2;
+						}
+						if ( client->saber[saberNum].hitOtherEffect2 )
+						{//custom hit other effect
+							hitOtherFxID = client->saber[saberNum].hitOtherEffect2;
+						}
+						if ( client->saber[saberNum].hit2Sound[0] )
+						{//custom hit sound
+							hitSound = client->saber[saberNum].hit2Sound[Q_irand(0,2)];
+						}
+					}
+					else
+					{//use first blade style values
+						if ( client->saber[saberNum].hitPersonEffect )
+						{//custom hit person effect
+							hitPersonFxID = hitPersonSmallFxID = hitPersonMidFxID = client->saber[saberNum].hitPersonEffect;
+						}
+						if ( client->saber[saberNum].hitOtherEffect )
+						{//custom hit other effect
+							hitOtherFxID = client->saber[0].hitOtherEffect;
+						}
+						if ( client->saber[saberNum].hitSound[0] )
+						{//custom hit sound
+							hitSound = client->saber[saberNum].hitSound[Q_irand(0,2)];
+						}
+					}
+				}
+			}
 
-			saberOwner = &cg_entities[es->otherEntityNum2];
-
-			saberOwner->serverSaberHitIndex = es->otherEntityNum;
-			saberOwner->serverSaberHitTime = cg.time;
-
-			if (es->eventParm)
-			{
-				saberOwner->serverSaberFleshImpact = qtrue;
+			if (es->eventParm == 16)
+			{ //Make lots of sparks, something special happened
+				vec3_t fxDir;
+				VectorCopy(es->angles, fxDir);
+				if (!fxDir[0] && !fxDir[1] && !fxDir[2])
+				{
+					fxDir[1] = 1;
+				}
+				trap_S_StartSound(es->origin, es->number, CHAN_AUTO, hitSound );
+				trap_FX_PlayEffectID( hitPersonFxID, es->origin, fxDir, -1, -1 );
+				trap_FX_PlayEffectID( hitPersonFxID, es->origin, fxDir, -1, -1 );
+				trap_FX_PlayEffectID( hitPersonFxID, es->origin, fxDir, -1, -1 );
+				trap_FX_PlayEffectID( hitPersonFxID, es->origin, fxDir, -1, -1 );
+				trap_FX_PlayEffectID( hitPersonFxID, es->origin, fxDir, -1, -1 );
+				trap_FX_PlayEffectID( hitPersonFxID, es->origin, fxDir, -1, -1 );
+			}
+			else if (es->eventParm)
+			{ //hit a person
+				vec3_t fxDir;
+				VectorCopy(es->angles, fxDir);
+				if (!fxDir[0] && !fxDir[1] && !fxDir[2])
+				{
+					fxDir[1] = 1;
+				}
+				trap_S_StartSound(es->origin, es->number, CHAN_AUTO, hitSound );
+				if ( es->eventParm == 3 )
+				{	// moderate or big hits.
+					trap_FX_PlayEffectID( hitPersonSmallFxID, es->origin, fxDir, -1, -1 );
+				}
+				else if ( es->eventParm == 2 )
+				{	// this is for really big hits.
+					trap_FX_PlayEffectID( hitPersonMidFxID, es->origin, fxDir, -1, -1 );
+				}
+				else
+				{	// this should really just be done in the effect itself, no?
+					trap_FX_PlayEffectID( hitPersonFxID, es->origin, fxDir, -1, -1 );
+					trap_FX_PlayEffectID( hitPersonFxID, es->origin, fxDir, -1, -1 );
+					trap_FX_PlayEffectID( hitPersonFxID, es->origin, fxDir, -1, -1 );
+				}
 			}
 			else
+			{ //hit something else
+				vec3_t fxDir;
+				VectorCopy(es->angles, fxDir);
+				if (!fxDir[0] && !fxDir[1] && !fxDir[2])
+				{
+					fxDir[1] = 1;
+				}
+				//old jk2mp method
+				/*
+				trap_S_StartSound(es->origin, es->number, CHAN_AUTO, trap_S_RegisterSound("sound/weapons/saber/saberhit.wav"));
+				trap_FX_PlayEffectID( trap_FX_RegisterEffect("saber/spark.efx"), es->origin, fxDir, -1, -1 );
+				*/
+
+				trap_FX_PlayEffectID( hitOtherFxID, es->origin, fxDir, -1, -1 );
+			}
+
+			//rww - this means we have the number of the ent being hit and the ent that owns the saber doing
+			//the hit. This being the case, we can store these indecies and the current time in order to do
+			//some visual tricks on the client between frames to make it look like we're actually continuing
+			//to hit between server frames.
+			if (es->otherEntityNum != ENTITYNUM_NONE && es->otherEntityNum2 != ENTITYNUM_NONE)
 			{
-				saberOwner->serverSaberFleshImpact = qfalse;
+				centity_t *saberOwner;
+
+				saberOwner = &cg_entities[es->otherEntityNum2];
+
+				saberOwner->serverSaberHitIndex = es->otherEntityNum;
+				saberOwner->serverSaberHitTime = cg.time;
+
+				if (es->eventParm)
+				{
+					saberOwner->serverSaberFleshImpact = qtrue;
+				}
+				else
+				{
+					saberOwner->serverSaberFleshImpact = qfalse;
+				}
 			}
 		}
 		break;
 
 	case EV_SABER_BLOCK:
 		DEBUGNAME("EV_SABER_BLOCK");
+		{
+			if (es->eventParm)
+			{ //saber block
+				qboolean cullPass = qfalse;
+				int			blockFXID = cgs.effects.mSaberBlock;
+				qhandle_t	blockSound = trap_S_RegisterSound(va( "sound/weapons/saber/saberblock%d.wav", Q_irand(1, 9) ));
+				qboolean	noFlare = qfalse;
 
-		if (es->eventParm)
-		{ //saber block
-			qboolean cullPass = qfalse;
-
-			if (cg.mInRMG)
-			{
-				trace_t tr;
-				vec3_t vecSub;
-
-				VectorSubtract(cg.refdef.vieworg, es->origin, vecSub);
-
-				if (VectorLength(vecSub) < 5000)
-				{
-					CG_Trace(&tr, cg.refdef.vieworg, NULL, NULL, es->origin, ENTITYNUM_NONE, CONTENTS_TERRAIN|CONTENTS_SOLID);
-
-					if (tr.fraction == 1.0 || tr.entityNum < MAX_CLIENTS)
+				if ( es->otherEntityNum2 >= 0
+					&& es->otherEntityNum2 < ENTITYNUM_NONE )
+				{//we have a specific person who is causing this effect, see if we should override it with any custom saber effects/sounds
+					clientInfo_t *client = NULL;
+					if ( cg_entities[es->otherEntityNum2].currentState.eType == ET_NPC )
 					{
-						cullPass = qtrue;
+						client = cg_entities[es->otherEntityNum2].npcClient;
+					}
+					else if ( es->otherEntityNum2 < MAX_CLIENTS )
+					{
+						client = &cgs.clientinfo[es->otherEntityNum2];
+					}
+					if ( client && client->infoValid )
+					{
+						int saberNum = es->weapon;
+						int bladeNum = es->legsAnim;
+						if ( WP_SaberBladeUseSecondBladeStyle( &client->saber[saberNum], bladeNum ) )
+						{//use second blade style values
+							if ( client->saber[saberNum].blockEffect2 )
+							{//custom saber block effect
+								blockFXID = client->saber[saberNum].blockEffect2;
+							}
+							if ( client->saber[saberNum].block2Sound[0] )
+							{//custom hit sound
+								blockSound = client->saber[saberNum].block2Sound[Q_irand(0,2)];
+							}
+						}
+						else
+						{
+							if ( client->saber[saberNum].blockEffect )
+							{//custom saber block effect
+								blockFXID = client->saber[saberNum].blockEffect;
+							}
+							if ( client->saber[saberNum].blockSound[0] )
+							{//custom hit sound
+								blockSound = client->saber[saberNum].blockSound[Q_irand(0,2)];
+							}
+						}
+						if ( (client->saber[saberNum].saberFlags2&SFL2_NO_CLASH_FLARE) )
+						{
+							noFlare = qtrue;
+						}
+					}
+				}
+				if (cg.mInRMG)
+				{
+					trace_t tr;
+					vec3_t vecSub;
+
+					VectorSubtract(cg.refdef.vieworg, es->origin, vecSub);
+
+					if (VectorLength(vecSub) < 5000)
+					{
+						CG_Trace(&tr, cg.refdef.vieworg, NULL, NULL, es->origin, ENTITYNUM_NONE, CONTENTS_TERRAIN|CONTENTS_SOLID);
+
+						if (tr.fraction == 1.0 || tr.entityNum < MAX_CLIENTS)
+						{
+							cullPass = qtrue;
+						}
+					}
+				}
+				else
+				{
+					cullPass = qtrue;
+				}
+
+				if (cullPass)
+				{
+					vec3_t fxDir;
+
+					VectorCopy(es->angles, fxDir);
+					if (!fxDir[0] && !fxDir[1] && !fxDir[2])
+					{
+						fxDir[1] = 1;
+					}
+					trap_S_StartSound(es->origin, es->number, CHAN_AUTO, blockSound );
+					trap_FX_PlayEffectID( blockFXID, es->origin, fxDir, -1, -1 );
+
+					if ( !noFlare )
+					{
+						cg_saberFlashTime = cg.time-50;
+						VectorCopy( es->origin, cg_saberFlashPos );
 					}
 				}
 			}
 			else
-			{
-				cullPass = qtrue;
-			}
-
-			if (cullPass)
-			{
+			{ //projectile block
 				vec3_t fxDir;
-
 				VectorCopy(es->angles, fxDir);
 				if (!fxDir[0] && !fxDir[1] && !fxDir[2])
 				{
 					fxDir[1] = 1;
 				}
-				trap_S_StartSound(es->origin, es->number, CHAN_AUTO, trap_S_RegisterSound(va( "sound/weapons/saber/saberblock%d.wav", Q_irand(1, 9) )));
-				trap_FX_PlayEffectID( cgs.effects.mSaberBlock, es->origin, fxDir, -1, -1 );
-
-				cg_saberFlashTime = cg.time-50;
-				VectorCopy( es->origin, cg_saberFlashPos );
+				trap_FX_PlayEffectID(cgs.effects.mBlasterDeflect, es->origin, fxDir, -1, -1);
 			}
-		}
-		else
-		{ //projectile block
-			vec3_t fxDir;
-			VectorCopy(es->angles, fxDir);
-			if (!fxDir[0] && !fxDir[1] && !fxDir[2])
-			{
-				fxDir[1] = 1;
-			}
-			trap_FX_PlayEffectID(cgs.effects.mBlasterDeflect, es->origin, fxDir, -1, -1);
 		}
 		break;
 

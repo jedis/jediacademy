@@ -1442,13 +1442,15 @@ float flrand(float min, float max)
 {
 	float	result;
 
-	assert((max - min) < 32768);
-
 	holdrand = (holdrand * 214013L) + 2531011L;
 	result = (float)(holdrand >> 17);						// 0 - 32767 range
 	result = ((result * (max - min)) / 32768.0F) + min;
 
 	return(result);
+}
+float Q_flrand(float min, float max)
+{
+	return flrand(min,max);
 }
 
 // Returns an integer min <= x <= max (ie inclusive)
@@ -1464,6 +1466,11 @@ int irand(int min, int max)
 	result = holdrand >> 17;
 	result = ((result * (max - min)) >> 15) + min;
 	return(result);
+}
+
+int Q_irand(int value1, int value2)
+{
+	return irand(value1, value2);
 }
 
 float powf ( float x, int y )

@@ -349,7 +349,7 @@ static cvarTable_t cvarTable[] = {
 //	{ &cg_dynamicCrosshair, "cg_dynamicCrosshair", "1", CVAR_ARCHIVE },
 	// NOTE : I also create this in UI_Init()
 	{ &cg_crosshairIdentifyTarget, "cg_crosshairIdentifyTarget", "1", CVAR_ARCHIVE },
-	{ &cg_crosshairForceHint, "cg_crosshairForceHint", "1", CVAR_ARCHIVE },
+	{ &cg_crosshairForceHint, "cg_crosshairForceHint", "1", CVAR_ARCHIVE|CVAR_SAVEGAME|CVAR_NORESTART },
 	{ &cg_endcredits, "cg_endcredits", "0", 0},
 	{ &cg_updatedDataPadForcePower1, "cg_updatedDataPadForcePower1", "0", 0},
 	{ &cg_updatedDataPadForcePower2, "cg_updatedDataPadForcePower2", "0", 0},
@@ -1389,7 +1389,7 @@ HUDMenuItem_t otherHUDBits[] =
 	"gfx/mp/f_icon_saber_throw"		//FP_SABERTHROW
 };
 */
-extern void NPC_Precache ( gentity_t *spawner );
+extern void CG_NPC_Precache ( gentity_t *spawner );
 qboolean NPCsPrecached = qfalse;
 /*
 =================
@@ -1750,6 +1750,38 @@ Ghoul2 Insert End
 					if ( i != 0 )
 					{//Client weapons already precached
 						CG_RegisterWeapon( g_entities[i].client->ps.weapon );
+						if ( g_entities[i].client->ps.saber[0].g2MarksShader[0] )
+						{
+							cgi_R_RegisterShader( g_entities[i].client->ps.saber[0].g2MarksShader );
+						}
+						if ( g_entities[i].client->ps.saber[0].g2MarksShader2[0] )
+						{
+							cgi_R_RegisterShader( g_entities[i].client->ps.saber[0].g2MarksShader2 );
+						}
+						if ( g_entities[i].client->ps.saber[0].g2WeaponMarkShader[0] )
+						{
+							cgi_R_RegisterShader( g_entities[i].client->ps.saber[0].g2WeaponMarkShader );
+						}
+						if ( g_entities[i].client->ps.saber[0].g2WeaponMarkShader2[0] )
+						{
+							cgi_R_RegisterShader( g_entities[i].client->ps.saber[0].g2WeaponMarkShader2 );
+						}
+						if ( g_entities[i].client->ps.saber[1].g2MarksShader[0] )
+						{
+							cgi_R_RegisterShader( g_entities[i].client->ps.saber[1].g2MarksShader );
+						}
+						if ( g_entities[i].client->ps.saber[1].g2MarksShader2[0] )
+						{
+							cgi_R_RegisterShader( g_entities[i].client->ps.saber[1].g2MarksShader2 );
+						}
+						if ( g_entities[i].client->ps.saber[1].g2WeaponMarkShader[0] )
+						{
+							cgi_R_RegisterShader( g_entities[i].client->ps.saber[1].g2WeaponMarkShader );
+						}
+						if ( g_entities[i].client->ps.saber[1].g2WeaponMarkShader2[0] )
+						{
+							cgi_R_RegisterShader( g_entities[i].client->ps.saber[1].g2WeaponMarkShader2 );
+						}
 						CG_RegisterNPCCustomSounds( &g_entities[i].client->clientInfo );
 						//CG_RegisterNPCEffects( g_entities[i].client->playerTeam );
 					}
@@ -1768,7 +1800,7 @@ Ghoul2 Insert End
 				else
 				*/
 				{
-					NPC_Precache( &g_entities[i] );
+					CG_NPC_Precache( &g_entities[i] );
 				}
 			}
 		}

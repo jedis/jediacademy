@@ -1802,9 +1802,15 @@ qboolean CG_CheckTargetVehicle( centity_t **pTargetVeh, float *alpha )
 
 	*alpha = 1.0f;
 
+	//FIXME: need to clear all of these when you die?
 	if ( cg.predictedPlayerState.rocketLockIndex < ENTITYNUM_WORLD )
 	{
 		targetNum = cg.predictedPlayerState.rocketLockIndex;
+	}
+	else if ( cg.crosshairVehNum < ENTITYNUM_WORLD 
+		&& cg.time - cg.crosshairVehTime < 3000 )
+	{//crosshair was on a vehicle in the last 3 seconds
+		targetNum = cg.crosshairVehNum;
 	}
     else if ( cg.crosshairClientNum < ENTITYNUM_WORLD )
 	{
@@ -2984,12 +2990,12 @@ static float CG_DrawEnemyInfo ( float y )
 		clientNum = cgs.duelWinner;
 	}
 
-	ci = &cgs.clientinfo[ clientNum ];
-
-	if ( !ci )
+	if ( clientNum >= MAX_CLIENTS || !(&cgs.clientinfo[ clientNum ]) )
 	{
 		return y;
 	}
+
+	ci = &cgs.clientinfo[ clientNum ];
 
 	size = ICON_SIZE * 1.25;
 	y += 5;
@@ -4369,7 +4375,7 @@ void CG_DrawSiegeMessageNonMenu( const char *str )
 		trap_SP_GetStringTextString(str+1, text, sizeof(text));
 		str = text;
 	}
-	CG_CenterPrint(str, SCREEN_HEIGHT * 0.30, BIGCHAR_WIDTH);
+	CG_CenterPrint(str, SCREEN_HEIGHT * 0.20, BIGCHAR_WIDTH);
 }
 
 /*
@@ -4873,6 +4879,14 @@ static void CG_DrawCrosshair( vec3_t worldPoint, int chEntValid ) {
 		return;
 	}
 
+	/*
+	if ( cg_drawingRocketLockThisFrame
+		&& cg.snap->ps.m_iVehicleNum )
+	{//in vehicle, rocket lock-on replaces crosshair
+		return;
+	}
+	*/
+
 	if ( cg_crosshairHealth.integer )
 	{
 		vec4_t		hcolor;
@@ -5371,6 +5385,31 @@ void CG_SaberClashFlare( void )
 				trap_R_RegisterShader( "gfx/effects/saberFlare" ));
 }
 
+void CG_DottedLine( float x1, float y1, float x2, float y2, float dotSize, int numDots, vec4_t color, float alpha )
+{
+	float x, y, xDiff, yDiff, xStep, yStep;
+	vec4_t colorRGBA;
+	int dotNum = 0;
+
+	VectorCopy4( color, colorRGBA );
+	colorRGBA[3] = alpha;
+
+	trap_R_SetColor( colorRGBA );
+
+	xDiff = x2-x1;
+	yDiff = y2-y1;
+	xStep = xDiff/(float)numDots;
+	yStep = yDiff/(float)numDots;
+
+	for ( dotNum = 0; dotNum < numDots; dotNum++ )
+	{
+		x = x1 + (xStep*dotNum) - (dotSize*0.5f);
+		y = y1 + (yStep*dotNum) - (dotSize*0.5f);
+
+		CG_DrawPic( x, y, dotSize, dotSize, cgs.media.whiteShader );
+	}
+}
+
 void CG_BracketEntity( centity_t *cent, float radius )
 {
 	trace_t tr;
@@ -5378,6 +5417,7 @@ void CG_BracketEntity( centity_t *cent, float radius )
 	float	len, size, lineLength, lineWidth;
 	float	x,	y;
 	clientInfo_t *local;
+	qboolean isEnemy = qfalse;
 
 	VectorSubtract( cent->lerpOrigin, cg.refdef.vieworg, dif );
 	len = VectorNormalize( dif );
@@ -5412,19 +5452,31 @@ void CG_BracketEntity( centity_t *cent, float radius )
 	if ( cent->currentState.m_iVehicleNum //vehicle has a driver
 		&& cgs.clientinfo[ cent->currentState.m_iVehicleNum-1 ].infoValid )
 	{
-		if ( cgs.clientinfo[ cent->currentState.m_iVehicleNum-1 ].team == local->team )
+		if ( cgs.gametype < GT_TEAM )
+		{//ffa?
+			isEnemy = qtrue;
+			trap_R_SetColor ( g_color_table[ColorIndex(COLOR_RED)] );
+		}
+		else if ( cgs.clientinfo[ cent->currentState.m_iVehicleNum-1 ].team == local->team )
 		{
 			trap_R_SetColor ( g_color_table[ColorIndex(COLOR_GREEN)] );
 		}
 		else
 		{
+			isEnemy = qtrue;
 			trap_R_SetColor ( g_color_table[ColorIndex(COLOR_RED)] );
 		}
 	}
 	else if ( cent->currentState.teamowner )
 	{
-		if ( cent->currentState.teamowner != cg.predictedPlayerState.persistant[PERS_TEAM] )
+		if ( cgs.gametype < GT_TEAM )
+		{//ffa?
+			isEnemy = qtrue;
+			trap_R_SetColor ( g_color_table[ColorIndex(COLOR_RED)] );
+		}
+		else if ( cent->currentState.teamowner != cg.predictedPlayerState.persistant[PERS_TEAM] )
 		{// on enemy team
+			isEnemy = qtrue;
 			trap_R_SetColor ( g_color_table[ColorIndex(COLOR_RED)] );
 		}
 		else
@@ -5488,6 +5540,62 @@ void CG_BracketEntity( centity_t *cent, float radius )
         CG_DrawPic( x+size-lineLength, y+size-lineWidth, lineLength, lineWidth, cgs.media.whiteShader );
 		//vert
         CG_DrawPic( x+size-lineWidth, y+size-lineLength, lineWidth, lineLength, cgs.media.whiteShader );
+	}
+	//Lead Indicator...
+	if ( cg_drawVehLeadIndicator.integer )
+	{//draw the lead indicator
+		if ( isEnemy )
+		{//an enemy object
+			if ( cent->currentState.NPC_class == CLASS_VEHICLE )
+			{//enemy vehicle
+				if ( !VectorCompare( cent->currentState.pos.trDelta, vec3_origin ) )
+				{//enemy vehicle is moving
+					if ( cg.predictedPlayerState.m_iVehicleNum )
+					{//I'm in a vehicle
+						centity_t		*veh = &cg_entities[cg.predictedPlayerState.m_iVehicleNum];
+						if ( veh //vehicle cent
+							&& veh->m_pVehicle//vehicle
+							&& veh->m_pVehicle->m_pVehicleInfo//vehicle stats
+							&& veh->m_pVehicle->m_pVehicleInfo->weapon[0].ID > VEH_WEAPON_BASE )//valid vehicle weapon
+						{
+							vehWeaponInfo_t *vehWeapon = &g_vehWeaponInfo[veh->m_pVehicle->m_pVehicleInfo->weapon[0].ID];
+							if ( vehWeapon 
+								&& vehWeapon->bIsProjectile//primary weapon's shot is a projectile
+								&& !vehWeapon->bHasGravity//primary weapon's shot is not affected by gravity
+								&& !vehWeapon->fHoming//primary weapon's shot is not homing
+								&& vehWeapon->fSpeed )//primary weapon's shot has speed
+							{//our primary weapon's projectile has a speed
+								vec3_t vehDiff, vehLeadPos;
+								float vehDist, eta;
+								float leadX, leadY;
+								
+								VectorSubtract( cent->lerpOrigin, cg.predictedVehicleState.origin, vehDiff );
+								vehDist = VectorNormalize( vehDiff );
+								eta = (vehDist/vehWeapon->fSpeed);//how many seconds it would take for my primary weapon's projectile to get from my ship to theirs
+								//now extrapolate their position that number of seconds into the future based on their velocity
+								VectorMA( cent->lerpOrigin, eta, cent->currentState.pos.trDelta, vehLeadPos );
+								//now we have where we should be aiming at, project that onto the screen at a 2D co-ord
+								if ( !CG_WorldCoordToScreenCoordFloat(cent->lerpOrigin, &x, &y) )
+								{//off-screen, don't draw it
+									return;
+								}
+								if ( !CG_WorldCoordToScreenCoordFloat(vehLeadPos, &leadX, &leadY) )
+								{//off-screen, don't draw it
+									//just draw the line
+									CG_DottedLine( x, y, leadX, leadY, 1, 10, g_color_table[ColorIndex(COLOR_RED)], 0.5f );
+									return;
+								}
+								//draw a line from the ship's cur pos to the lead pos
+								CG_DottedLine( x, y, leadX, leadY, 1, 10, g_color_table[ColorIndex(COLOR_RED)], 0.5f );
+								//now draw the lead indicator
+								trap_R_SetColor ( g_color_table[ColorIndex(COLOR_RED)] );
+								CG_DrawPic( leadX-8, leadY-8, 16, 16, trap_R_RegisterShader( "gfx/menus/radar/lead" ) );
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -5634,6 +5742,7 @@ static void CG_DrawActivePowers(void)
 	}
 }
 
+//static qboolean	cg_drawingRocketLockThisFrame = qfalse;
 //--------------------------------------------------------------
 static void CG_DrawRocketLocking( int lockEntNum, int lockTime )
 //--------------------------------------------------------------
@@ -5647,6 +5756,8 @@ static void CG_DrawRocketLocking( int lockEntNum, int lockTime )
 	//FIXME: if in a vehicle, use the vehicle's lockOnTime...
 	int dif = (cg.time - cg.snap->ps.rocketLockTime)/lockTimeInterval;
 	int i;
+
+//	cg_drawingRocketLockThisFrame = qfalse;
 
 	if (!cg.snap->ps.rocketLockTime)
 	{
@@ -5775,6 +5886,11 @@ static void CG_DrawRocketLocking( int lockEntNum, int lockTime )
 
 		sz = (1.0f - sz) * (1.0f - sz) * 32 + 6;
 
+		if ( cg.snap->ps.m_iVehicleNum )
+		{
+			sz *= 2.0f;
+		}
+
 		cy += sz * 0.5f;
 		
 		if ( dif < 0 )
@@ -5839,6 +5955,7 @@ static void CG_DrawRocketLocking( int lockEntNum, int lockTime )
 
 			CG_DrawPic( cx - sz, cy - sz * 2, sz * 2, sz * 2, trap_R_RegisterShaderNoMip( "gfx/2d/lock" ));
 		}
+//		cg_drawingRocketLockThisFrame = qtrue;
 	}
 }
 

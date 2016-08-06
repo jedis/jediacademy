@@ -807,6 +807,7 @@ void SV_Init (void) {
 	Cvar_Get ("dmflags", "0", CVAR_SERVERINFO);
 	Cvar_Get ("fraglimit", "20", CVAR_SERVERINFO);
 	Cvar_Get ("timelimit", "0", CVAR_SERVERINFO);
+	Cvar_Get ("capturelimit", "0", CVAR_SERVERINFO);
 	
 	// Get these to establish them and to make sure they have a default before the menus decide to stomp them.
 	Cvar_Get ("g_maxHolocronCarry", "3", CVAR_SERVERINFO);
@@ -829,8 +830,9 @@ void SV_Init (void) {
 	sv_minPing = Cvar_Get ("sv_minPing", "0", CVAR_ARCHIVE | CVAR_SERVERINFO );
 	sv_maxPing = Cvar_Get ("sv_maxPing", "0", CVAR_ARCHIVE | CVAR_SERVERINFO );
 	sv_floodProtect = Cvar_Get ("sv_floodProtect", "1", CVAR_ARCHIVE | CVAR_SERVERINFO );
+#ifdef USE_CD_KEY
 	sv_allowAnonymous = Cvar_Get ("sv_allowAnonymous", "0", CVAR_SERVERINFO);
-
+#endif
 	// systeminfo
 	Cvar_Get ("sv_cheats", "0", CVAR_SYSTEMINFO | CVAR_ROM );
 	sv_serverid = Cvar_Get ("sv_serverid", "0", CVAR_SYSTEMINFO | CVAR_ROM );

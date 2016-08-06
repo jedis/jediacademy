@@ -318,7 +318,7 @@ void CG_DrawInformation( void ) {
 		valueNOFP = atoi( Info_ValueForKey( info, "g_forcePowerDisable" ) );
 
 		value = atoi( Info_ValueForKey( info, "g_maxForceRank" ) );
-		if ( value && !valueNOFP ) {
+		if ( value && !valueNOFP && (value < NUM_FORCE_MASTERY_LEVELS) ) {
 			char fmStr[1024]; 
 
 			trap_SP_GetStringTextString("MP_INGAME_MAXFORCERANK",fmStr, sizeof(fmStr));

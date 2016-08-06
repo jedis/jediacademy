@@ -519,6 +519,24 @@ void trap_G2API_CollisionDetect (
 	syscall ( UI_G2_COLLISIONDETECT, collRecMap, ghoul2, angles, position, frameNumber, entNum, rayStart, rayEnd, scale, traceFlags, useLod, PASSFLOAT(fRadius) );
 }
 
+void trap_G2API_CollisionDetectCache ( 
+	CollisionRecord_t *collRecMap, 
+	void* ghoul2, 
+	const vec3_t angles, 
+	const vec3_t position,
+	int frameNumber, 
+	int entNum, 
+	const vec3_t rayStart, 
+	const vec3_t rayEnd, 
+	const vec3_t scale, 
+	int traceFlags, 
+	int useLod,
+	float fRadius
+	)
+{
+	syscall ( UI_G2_COLLISIONDETECTCACHE, collRecMap, ghoul2, angles, position, frameNumber, entNum, rayStart, rayEnd, scale, traceFlags, useLod, PASSFLOAT(fRadius) );
+}
+
 void trap_G2API_CleanGhoul2Models(void **ghoul2Ptr)
 {
 	syscall(UI_G2_CLEANMODELS, ghoul2Ptr);

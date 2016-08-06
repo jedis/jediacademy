@@ -202,7 +202,7 @@ PROTOCOL
 ==============================================================
 */
 
-#define	PROTOCOL_VERSION	25
+#define	PROTOCOL_VERSION	26
 
 #ifndef _XBOX	// No gethostbyname(), and can't really use this stuff
 #define	UPDATE_SERVER_NAME		"updatejk3.ravensoft.com"
@@ -698,6 +698,8 @@ extern	cvar_t	*com_blood;
 extern	cvar_t	*com_buildScript;		// for building release pak files
 extern	cvar_t	*com_journal;
 extern	cvar_t	*com_cameraMode;
+
+extern	cvar_t	*com_optvehtrace;
 
 #ifdef G2_PERFORMANCE_ANALYSIS
 extern	cvar_t	*com_G2Report;

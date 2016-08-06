@@ -89,8 +89,7 @@ void SFxHelper::CameraShake( vec3_t origin, float intensity, int radius, int tim
 	data->mRadius = radius;
 	data->mTime = time;
 
-//	VM_Call( cgvm, CG_FX_CAMERASHAKE ); 
-	//FIXME
+	VM_Call( cgvm, CG_FX_CAMERASHAKE ); 
 }
 
 //------------------------------------------------------

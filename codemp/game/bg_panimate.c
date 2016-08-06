@@ -17,6 +17,7 @@ extern int trap_FX_RegisterEffect( const char *file);
 #include "../namespace_end.h"
 #endif
 
+extern saberInfo_t *BG_MySaber( int clientNum, int saberNum );
 /*
 ==============================================================================
 BEGIN: Animation utility functions (sequence checking)
@@ -215,6 +216,14 @@ qboolean BG_DirectFlippingAnim( int anim )
 	return qfalse;
 }
 
+qboolean BG_SaberInAttackPure( int move )
+{
+	if ( move >= LS_A_TL2BR && move <= LS_A_T2B )
+	{
+		return qtrue;
+	}
+	return qfalse;
+}
 qboolean BG_SaberInAttack( int move )
 {
 	if ( move >= LS_A_TL2BR && move <= LS_A_T2B )
@@ -1754,6 +1763,8 @@ stringID_table_t animEventTypeTable[MAX_ANIM_EVENTS+1] =
 	ENUM2STRING(AEV_FIRE),			//# animID AEV_FIRE framenum altfire chancetofire
 	ENUM2STRING(AEV_MOVE),			//# animID AEV_MOVE framenum forwardpush rightpush uppush
 	ENUM2STRING(AEV_SOUNDCHAN),		//# animID AEV_SOUNDCHAN framenum CHANNEL soundpath randomlow randomhi chancetoplay 
+	ENUM2STRING(AEV_SABER_SWING),	//# animID AEV_SABER_SWING framenum CHANNEL randomlow randomhi chancetoplay 
+	ENUM2STRING(AEV_SABER_SPIN),	//# animID AEV_SABER_SPIN framenum CHANNEL chancetoplay 
 	//must be terminated
 	NULL,-1
 };
@@ -1990,6 +2001,56 @@ void ParseAnimationEvtBlock(const char *aeb_filename, animevent_t *animEvents, a
 				break;
 			}
 			animEvents[curAnimEvent].eventData[AED_SOUND_PROBABILITY] = atoi( token );
+
+			//last part - cheat and check and see if it's a special overridable saber sound we know of...
+			if ( !Q_stricmpn( "sound/weapons/saber/saberhup", stringData, 28 ) )
+			{//a saber swing
+				animEvents[curAnimEvent].eventType = AEV_SABER_SWING;
+				animEvents[curAnimEvent].eventData[AED_SABER_SWING_SABERNUM] = 0;//since we don't know which one they meant if we're hacking this, always use first saber
+				animEvents[curAnimEvent].eventData[AED_SABER_SWING_PROBABILITY] = animEvents[curAnimEvent].eventData[AED_SOUND_PROBABILITY];
+				if ( lowestVal < 4 )
+				{//fast swing
+					animEvents[curAnimEvent].eventData[AED_SABER_SWING_TYPE] = 0;//SWING_FAST;
+				}
+				else if ( lowestVal < 7 )
+				{//medium swing
+					animEvents[curAnimEvent].eventData[AED_SABER_SWING_TYPE] = 1;//SWING_MEDIUM;
+				}
+				else
+				{//strong swing
+					animEvents[curAnimEvent].eventData[AED_SABER_SWING_TYPE] = 2;//SWING_STRONG;
+				}
+			}
+			else if ( !Q_stricmpn( "sound/weapons/saber/saberspin", stringData, 29 ) )
+			{//a saber spin
+				animEvents[curAnimEvent].eventType = AEV_SABER_SPIN;
+				animEvents[curAnimEvent].eventData[AED_SABER_SPIN_SABERNUM] = 0;//since we don't know which one they meant if we're hacking this, always use first saber
+				animEvents[curAnimEvent].eventData[AED_SABER_SPIN_PROBABILITY] = animEvents[curAnimEvent].eventData[AED_SOUND_PROBABILITY];
+				if ( stringData[29] == 'o' )
+				{//saberspinoff
+					animEvents[curAnimEvent].eventData[AED_SABER_SPIN_TYPE] = 0;
+				}
+				else if ( stringData[29] == '1' )
+				{//saberspin1
+					animEvents[curAnimEvent].eventData[AED_SABER_SPIN_TYPE] = 2;
+				}
+				else if ( stringData[29] == '2' )
+				{//saberspin2
+					animEvents[curAnimEvent].eventData[AED_SABER_SPIN_TYPE] = 3;
+				}
+				else if ( stringData[29] == '3' )
+				{//saberspin3
+					animEvents[curAnimEvent].eventData[AED_SABER_SPIN_TYPE] = 4;
+				}
+				else if ( stringData[29] == '%' )
+				{//saberspin%d
+					animEvents[curAnimEvent].eventData[AED_SABER_SPIN_TYPE] = 5;
+				}
+				else
+				{//just plain saberspin
+					animEvents[curAnimEvent].eventData[AED_SABER_SPIN_TYPE] = 1;
+				}
+			}
 			break;
 		case AEV_FOOTSTEP:		//# animID AEV_FOOTSTEP framenum footstepType
 			//get footstep type
@@ -2123,8 +2184,13 @@ int BG_ParseAnimationEvtFile( const char *as_filename, int animFileIndex, int ev
 	assert(animFileIndex < MAX_ANIM_FILES);
 	assert(eventFileIndex < MAX_ANIM_FILES);
 
-	if (eventFileIndex == -1)
-	{
+	if ( animFileIndex < 0 || animFileIndex >= MAX_ANIM_FILES )
+	{//WTF??!!
+		return 0;
+	}
+
+	if ( eventFileIndex < 0 || eventFileIndex >= MAX_ANIM_FILES )
+	{//WTF??!!
 		forcedIndex = 0;
 	}
 	else
@@ -2664,8 +2730,27 @@ void PM_SetTorsoAnimTimer(int time )
 	BG_SetTorsoAnimTimer(pm->ps, time);
 }
 
-void BG_SaberStartTransAnim( int saberAnimLevel, int anim, float *animSpeed, int broken )
+void BG_SaberStartTransAnim( int clientNum, int saberAnimLevel, int weapon, int anim, float *animSpeed, int broken )
 {
+	if ( anim >= BOTH_A1_T__B_ && anim <= BOTH_ROLL_STAB )
+	{
+		if ( weapon == WP_SABER )
+		{
+			saberInfo_t *saber = BG_MySaber( clientNum, 0 );
+			if ( saber 
+				&& saber->animSpeedScale != 1.0f )
+			{
+				*animSpeed *= saber->animSpeedScale;
+			}
+			saber = BG_MySaber( clientNum, 1 );
+			if ( saber
+				&& saber->animSpeedScale != 1.0f )
+			{
+				*animSpeed *= saber->animSpeedScale;
+			}
+		}
+	}
+
 	if ( ( (anim) >= BOTH_T1_BR__R && 
 		(anim) <= BOTH_T1_BL_TL ) ||
 		( (anim) >= BOTH_T2_BR__R && 
@@ -2729,7 +2814,7 @@ void BG_SetAnimFinal(playerState_t *ps, animation_t *animations,
 	//NOTE: Setting blendTime here breaks actual blending..
 	blendTime = 0;
 
-	BG_SaberStartTransAnim(ps->fd.saberAnimLevel, anim, &editAnimSpeed, ps->brokenLimbs);
+	BG_SaberStartTransAnim(ps->clientNum, ps->fd.saberAnimLevel, ps->weapon, anim, &editAnimSpeed, ps->brokenLimbs);
 
 	// Set torso anim
 	if (setAnimParts & SETANIM_TORSO)

@@ -229,6 +229,13 @@ void G_PlayEffect( const char *name, const vec3_t origin )
 	G_PlayEffect( G_EffectIndex( name ), origin, up );
 }
 
+void G_PlayEffect( int fxID, const vec3_t origin )
+{
+	vec3_t	up = {0, 0, 1};
+
+	G_PlayEffect( fxID, origin, up );
+}
+
 //-----------------------------
 void G_PlayEffect( const char *name, const vec3_t origin, const vec3_t fwd )
 {
@@ -1795,6 +1802,13 @@ qboolean CanUseInfrontOf(gentity_t *ent)
 	if (ValidUseTarget( target )) {
 		if ( target->s.eType == ET_ITEM )
 		{//item, see if we could actually pick it up
+			if ( (target->spawnflags&128/*ITMSF_USEPICKUP*/) )
+			{//player has to be touching me and hit use to pick it up, so don't allow this
+				if ( !G_BoundsOverlap( target->absmin, target->absmax, ent->absmin, ent->absmax ) )
+				{//not touching
+					return qfalse;
+				}
+			}
 			if ( !BG_CanItemBeGrabbed( &target->s, &ent->client->ps ) ) 
 			{//nope, so don't indicate that we can use it
 				return qfalse;

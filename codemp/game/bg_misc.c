@@ -2743,7 +2743,11 @@ int BG_EmplacedView(vec3_t baseAngles, vec3_t angles, float *newYaw, float const
 //I don't much care for hardcoded strings, but this seems the best way to go.
 qboolean BG_IsValidCharacterModel(const char *modelName, const char *skinName)
 {
-	if (!Q_stricmp(modelName, "kyle"))
+	if (!Q_stricmp(skinName, "menu"))
+	{
+		return qfalse;
+	}
+	else if (!Q_stricmp(modelName, "kyle"))
 	{
 		if (!Q_stricmp(skinName, "fpls"))
 		{
@@ -2763,16 +2767,7 @@ qboolean BG_IsValidCharacterModel(const char *modelName, const char *skinName)
 
 qboolean BG_ValidateSkinForTeam( const char *modelName, char *skinName, int team, float *colors )
 {
-	char trunc[6];
-	int i = 0;
-	while (i < 5)
-	{
-		trunc[i] = modelName[i];
-		i++;
-	}
-	trunc[i] = 0;
-
-	if (!Q_stricmp(trunc, "jedi_"))
+	if (!Q_stricmpn(modelName, "jedi_",5))
 	{ //argh, it's a custom player skin!
 		if (team == TEAM_RED && colors)
 		{

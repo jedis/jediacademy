@@ -2000,10 +2000,139 @@ static int QDECL QsortDistance( const void *a, const void *b ) {
 	return 1;
 }
 
+static inline bool G2_NeedRetransform(CGhoul2Info *g2, int frameNum)
+{ //see if we need to do another transform
+	int i = 0;
+	bool needTrans = false;
+	while (i < g2->mBlist.size())
+	{
+		float	time;
+		boneInfo_t &bone = g2->mBlist[i];
+
+		if (bone.pauseTime)
+		{
+			time = (bone.pauseTime - bone.startTime) / 50.0f;
+		}
+		else
+		{			
+			time = (frameNum - bone.startTime) / 50.0f;
+		}
+		int newFrame = bone.startFrame + (time * bone.animSpeed);
+
+		if (newFrame < bone.endFrame ||
+			(bone.flags & BONE_ANIM_OVERRIDE_LOOP) ||
+			(bone.flags & BONE_NEED_TRANSFORM))
+		{ //ok, we're gonna have to do it. bone is apparently animating.
+			bone.flags &= ~BONE_NEED_TRANSFORM;
+			needTrans = true;
+		}
+		i++;
+	}
+
+	return needTrans;
+}
+
+void G2API_CollisionDetectCache(CollisionRecord_t *collRecMap, CGhoul2Info_v &ghoul2, const vec3_t angles, const vec3_t position,
+										  int frameNumber, int entNum, vec3_t rayStart, vec3_t rayEnd, vec3_t scale, CMiniHeap *G2VertSpace, int traceFlags, int useLod, float fRadius)
+{ //this will store off the transformed verts for the next trace - this is slower, but for models that do not animate
+	//frequently it is much much faster. -rww
+	int *test = ghoul2[0].mTransformedVertsArray;
+	if (G2_SetupModelPointers(ghoul2))
+	{
+		vec3_t	transRayStart, transRayEnd;
+
+		int tframeNum=G2API_GetTime(frameNumber);
+		// make sure we have transformed the whole skeletons for each model
+		if (G2_NeedRetransform(&ghoul2[0], tframeNum) || !ghoul2[0].mTransformedVertsArray)
+		{ //optimization, only create new transform space if we need to, otherwise
+			//store it off!
+			int i = 0;
+			while (i < ghoul2.size())
+			{
+				CGhoul2Info &g2 = ghoul2[i];
+
+				/*
+				if ((g2.mFlags & GHOUL2_ZONETRANSALLOC) && g2.mTransformedVertsArray)
+				{ //clear it out, yo.
+					Z_Free(g2.mTransformedVertsArray);
+					g2.mTransformedVertsArray = 0;
+				}
+				*/
+				if (!g2.mTransformedVertsArray || !(g2.mFlags & GHOUL2_ZONETRANSALLOC))
+				{ //reworked so we only alloc once!
+					//if we have a pointer, but not a ghoul2_zonetransalloc flag, then that means
+					//it is a miniheap pointer. Just stomp over it.
+					int iSize = g2.currentModel->mdxm->numSurfaces * 4;
+					g2.mTransformedVertsArray = (int *)Z_Malloc(iSize, TAG_GHOUL2, qtrue);
+				}
+
+				g2.mFlags |= GHOUL2_ZONETRANSALLOC;
+
+				i++;
+			}
+			G2_ConstructGhoulSkeleton(ghoul2, frameNumber, true, scale);
+			G2VertSpace->ResetHeap();
+
+			// now having done that, time to build the model
+#ifdef _G2_GORE
+			G2_TransformModel(ghoul2, frameNumber, scale, G2VertSpace, useLod, false);
+#else
+			G2_TransformModel(ghoul2, frameNumber, scale, G2VertSpace, useLod);
+#endif
+
+			//don't need to do this anymore now that I am using a flag for zone alloc.
+			/*
+			i = 0;
+			while (i < ghoul2.size())
+			{
+				CGhoul2Info &g2 = ghoul2[i];
+				int iSize = g2.currentModel->mdxm->numSurfaces * 4;
+
+				int *zoneMem = (int *)Z_Malloc(iSize, TAG_GHOUL2, qtrue);
+				memcpy(zoneMem, g2.mTransformedVertsArray, iSize);
+				g2.mTransformedVertsArray = zoneMem;
+				g2.mFlags |= GHOUL2_ZONETRANSALLOC;
+				i++;
+			}
+			*/
+		}
+
+		// pre generate the world matrix - used to transform the incoming ray
+		G2_GenerateWorldMatrix(angles, position);
+
+		// model is built. Lets check to see if any triangles are actually hit.
+		// first up, translate the ray to model space
+		TransformAndTranslatePoint(rayStart, transRayStart, &worldMatrixInv);
+		TransformAndTranslatePoint(rayEnd, transRayEnd, &worldMatrixInv);
+
+		// now walk each model and check the ray against each poly - sigh, this is SO expensive. I wish there was a better way to do this.
+#ifdef _G2_GORE
+		G2_TraceModels(ghoul2, transRayStart, transRayEnd, collRecMap, entNum, traceFlags, useLod, fRadius,0,0,0,0,0,qfalse);
+#else
+		G2_TraceModels(ghoul2, transRayStart, transRayEnd, collRecMap, entNum, traceFlags, useLod, fRadius);
+#endif
+		int i;
+		for ( i = 0; i < MAX_G2_COLLISIONS && collRecMap[i].mEntityNum != -1; i ++ );
+
+		// now sort the resulting array of collision records so they are distance ordered
+		qsort( collRecMap, i, 
+			sizeof( CollisionRecord_t ), QsortDistance );
+	}
+}
+
 
 void G2API_CollisionDetect(CollisionRecord_t *collRecMap, CGhoul2Info_v &ghoul2, const vec3_t angles, const vec3_t position,
 										  int frameNumber, int entNum, vec3_t rayStart, vec3_t rayEnd, vec3_t scale, CMiniHeap *G2VertSpace, int traceFlags, int useLod, float fRadius)
 {
+	/*
+	if (1)
+	{
+		G2API_CollisionDetectCache(collRecMap, ghoul2, angles, position, frameNumber, entNum,
+			rayStart, rayEnd, scale, G2VertSpace, traceFlags, useLod, fRadius);
+		return;
+	}
+	*/
+
 	if (G2_SetupModelPointers(ghoul2))
 	{
 		vec3_t	transRayStart, transRayEnd;
@@ -2030,7 +2159,7 @@ void G2API_CollisionDetect(CollisionRecord_t *collRecMap, CGhoul2Info_v &ghoul2,
 
 		// now walk each model and check the ray against each poly - sigh, this is SO expensive. I wish there was a better way to do this.
 #ifdef _G2_GORE
-		G2_TraceModels(ghoul2, transRayStart, transRayEnd, collRecMap, entNum, traceFlags, useLod, fRadius,0,0,0,0,0);
+		G2_TraceModels(ghoul2, transRayStart, transRayEnd, collRecMap, entNum, traceFlags, useLod, fRadius,0,0,0,0,0,qfalse);
 #else
 		G2_TraceModels(ghoul2, transRayStart, transRayEnd, collRecMap, entNum, traceFlags, useLod, fRadius);
 #endif
@@ -2469,7 +2598,7 @@ void G2API_AddSkinGore(CGhoul2Info_v &ghoul2,SSkinGoreData &gore)
 		G2_TransformModel(ghoul2, gore.currentTime, gore.scale,G2VertSpaceServer,lod,true);
 
 		// now walk each model and compute new texture coordinates
-		G2_TraceModels(ghoul2, transHitLocation, transRayDirection, 0, gore.entNum, 0,lod,0.0f,gore.SSize,gore.TSize,gore.theta,gore.shader,&gore);
+		G2_TraceModels(ghoul2, transHitLocation, transRayDirection, 0, gore.entNum, 0,lod,0.0f,gore.SSize,gore.TSize,gore.theta,gore.shader,&gore,qtrue);
 	}
 }
 #endif

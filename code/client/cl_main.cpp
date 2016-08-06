@@ -1269,9 +1269,9 @@ void CL_Init( void ) {
 	Cvar_Get ("name", "Jaden", CVAR_USERINFO | CVAR_ARCHIVE );
 	Cvar_Get ("snaps", "20", CVAR_USERINFO | CVAR_ARCHIVE );
 	
-	Cvar_Get ("sex", "f", CVAR_USERINFO | CVAR_ARCHIVE | CVAR_SAVEGAME );
+	Cvar_Get ("sex", "f", CVAR_USERINFO | CVAR_ARCHIVE | CVAR_SAVEGAME | CVAR_NORESTART );
 	Cvar_Get ("snd", "jaden_fmle", CVAR_USERINFO | CVAR_ARCHIVE | CVAR_SAVEGAME | CVAR_NORESTART );//UI_SetSexandSoundForModel changes to match sounds.cfg for model
-	Cvar_Get ("handicap", "100", CVAR_USERINFO | CVAR_ARCHIVE | CVAR_SAVEGAME );
+	Cvar_Get ("handicap", "100", CVAR_USERINFO | CVAR_SAVEGAME | CVAR_NORESTART);
 
 	//
 	// register our commands

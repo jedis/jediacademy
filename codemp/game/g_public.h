@@ -36,6 +36,10 @@
 
 #define SVF_GLASS_BRUSH			0x08000000	// Ent is a glass brush
 
+#define SVF_NO_BASIC_SOUNDS		0x10000000	// No basic sounds
+#define SVF_NO_COMBAT_SOUNDS	0x20000000	// No combat sounds
+#define SVF_NO_EXTRA_SOUNDS		0x40000000	// No extra or jedi sounds
+
 //rww - ghoul2 trace flags
 #define G2TRFLAG_DOGHOULTRACE	0x00000001 //do the ghoul2 trace
 #define G2TRFLAG_HITCORPSES		0x00000002 //will try g2 collision on the ent even if it's EF_DEAD
@@ -524,6 +528,7 @@ Ghoul2 Insert Start
 	G_G2_REMOVEGHOUL2MODELS,
 	G_G2_CLEANMODELS,
 	G_G2_COLLISIONDETECT,
+	G_G2_COLLISIONDETECTCACHE,
 
 	G_G2_SETROOTSURFACE,
 	G_G2_SETSURFACEONOFF,

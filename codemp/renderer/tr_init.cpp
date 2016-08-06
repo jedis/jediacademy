@@ -870,6 +870,8 @@ void GL_SetDefaultState( void )
 GfxInfo_f
 ================
 */
+extern bool g_bTextureRectangleHack;
+
 void GfxInfo_f( void ) 
 {
 	cvar_t *sys_cpustring = Cvar_Get( "sys_cpustring", "", CVAR_ROM );
@@ -955,6 +957,7 @@ void GfxInfo_f( void )
 	Com_Printf ("anisotropic filtering: %s  ", enablestrings[(r_ext_texture_filter_anisotropic->integer != 0) && glConfig.maxTextureFilterAnisotropy] );
 		Com_Printf ("(%f of %f)\n", r_ext_texture_filter_anisotropic->value, glConfig.maxTextureFilterAnisotropy );
 	Com_Printf ("Dynamic Glow: %s\n", enablestrings[r_DynamicGlow->integer] );
+	if (g_bTextureRectangleHack) Com_Printf ("Dynamic Glow ATI BAD DRIVER HACK %s\n", enablestrings[g_bTextureRectangleHack] );
 
 	if ( r_finish->integer ) {
 		Com_Printf ("Forcing glFinish\n" );
@@ -966,6 +969,11 @@ void GfxInfo_f( void )
 	{
 		Com_Printf ("Light Grid size set to (%.2f %.2f %.2f)\n", tr.world->lightGridSize[0], tr.world->lightGridSize[1], tr.world->lightGridSize[2] );
 	}
+}
+
+void R_AtiHackToggle_f(void)
+{
+	g_bTextureRectangleHack = !g_bTextureRectangleHack;
 }
 
 #endif // !DEDICATED
@@ -993,7 +1001,7 @@ void R_Register( void )
 #endif
 	r_ext_texture_filter_anisotropic = Cvar_Get( "r_ext_texture_filter_anisotropic", "16", CVAR_ARCHIVE );
 
-	r_DynamicGlow = Cvar_Get( "r_DynamicGlow", "1", CVAR_ARCHIVE );
+	r_DynamicGlow = Cvar_Get( "r_DynamicGlow", "0", CVAR_ARCHIVE );
 	r_DynamicGlowPasses = Cvar_Get( "r_DynamicGlowPasses", "5", CVAR_CHEAT );
 	r_DynamicGlowDelta  = Cvar_Get( "r_DynamicGlowDelta", "0.8f", CVAR_CHEAT );
 	r_DynamicGlowIntensity = Cvar_Get( "r_DynamicGlowIntensity", "1.13f", CVAR_CHEAT );
@@ -1184,6 +1192,7 @@ extern qboolean Sys_LowPhysicalMemory();
 	Cmd_AddCommand( "screenshot", R_ScreenShot_f );
 	Cmd_AddCommand( "screenshot_tga", R_ScreenShotTGA_f );
 	Cmd_AddCommand( "gfxinfo", GfxInfo_f );
+	Cmd_AddCommand( "r_atihack", R_AtiHackToggle_f );
 	Cmd_AddCommand( "r_we", R_WorldEffect_f);
 	Cmd_AddCommand( "imagecacheinfo", RE_RegisterImages_Info_f);
 #endif
@@ -1331,6 +1340,7 @@ void RE_Shutdown( qboolean destroyWindow ) {
 	Cmd_RemoveCommand ("screenshot");
 	Cmd_RemoveCommand ("screenshot_tga");
 	Cmd_RemoveCommand ("gfxinfo");
+	Cmd_RemoveCommand ("r_atihack");
 	Cmd_RemoveCommand ("r_we");
 	Cmd_RemoveCommand ("imagecacheinfo");
 	Cmd_RemoveCommand ("modellist");

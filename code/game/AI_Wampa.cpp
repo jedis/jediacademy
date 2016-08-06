@@ -224,9 +224,9 @@ void Wampa_Slash( int boltIndex, qboolean backhand )
 				if ( !Q_irand( 0, 1 ) )
 				{//bite something off
 					int hitLoc = HL_WAIST;
-					if ( g_dismemberment->integer != 113811381138 )
+					if ( g_dismemberment->integer < 4 )
 					{
-						hitLoc = Q_irand( HL_WAIST, HL_HAND_LT );
+						hitLoc = Q_irand( HL_BACK_RT, HL_HAND_LT );
 					}
 					else
 					{
@@ -763,9 +763,9 @@ void NPC_BSWampa_Default( void )
 								if ( NPC->activator->health <= 0 )
 								{//killed them, chance of dismembering
 									int hitLoc = HL_WAIST;
-									if ( g_dismemberment->integer != 113811381138 )
+									if ( g_dismemberment->integer < 4 )
 									{
-										hitLoc = Q_irand( HL_WAIST, HL_HAND_LT );
+										hitLoc = Q_irand( HL_BACK_RT, HL_HAND_LT );
 									}
 									else
 									{
