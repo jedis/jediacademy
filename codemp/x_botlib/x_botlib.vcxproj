@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ClCompile Include="..\botlib\be_aas_bspq3.cpp" />
+    <ClCompile Include="..\botlib\be_aas_cluster.cpp" />
+    <ClCompile Include="..\botlib\be_aas_debug.cpp" />
+    <ClCompile Include="..\botlib\be_aas_entity.cpp" />
+    <ClCompile Include="..\botlib\be_aas_file.cpp" />
+    <ClCompile Include="..\botlib\be_aas_main.cpp" />
+    <ClCompile Include="..\botlib\be_aas_move.cpp" />
+    <ClCompile Include="..\botlib\be_aas_optimize.cpp" />
+    <ClCompile Include="..\botlib\be_aas_reach.cpp" />
+    <ClCompile Include="..\botlib\be_aas_route.cpp" />
+    <ClCompile Include="..\botlib\be_aas_routealt.cpp" />
+    <ClCompile Include="..\botlib\be_aas_sample.cpp" />
+    <ClCompile Include="..\botlib\be_ai_char.cpp" />
+    <ClCompile Include="..\botlib\be_ai_chat.cpp" />
+    <ClCompile Include="..\botlib\be_ai_gen.cpp" />
+    <ClCompile Include="..\botlib\be_ai_goal.cpp" />
+    <ClCompile Include="..\botlib\be_ai_move.cpp" />
+    <ClCompile Include="..\botlib\be_ai_weap.cpp" />
+    <ClCompile Include="..\botlib\be_ai_weight.cpp" />
+    <ClCompile Include="..\botlib\be_ea.cpp" />
+    <ClCompile Include="..\botlib\be_interface.cpp" />
+    <ClCompile Include="..\botlib\l_crc.cpp" />
+    <ClCompile Include="..\botlib\l_libvar.cpp" />
+    <ClCompile Include="..\botlib\l_log.cpp" />
+    <ClCompile Include="..\botlib\l_memory.cpp" />
+    <ClCompile Include="..\botlib\l_precomp.cpp" />
+    <ClCompile Include="..\botlib\l_script.cpp" />
+    <ClCompile Include="..\botlib\l_struct.cpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{ACB93D0D-F6CB-480B-9B20-CE6C5EDC13BD}</ProjectGuid>
+    <Keyword>XboxProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>14.0.24730.2</_ProjectFileVersion>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\botlib\aasfile.h" />
+    <ClInclude Include="..\botlib\be_aas_bsp.h" />
+    <ClInclude Include="..\botlib\be_aas_cluster.h" />
+    <ClInclude Include="..\botlib\be_aas_debug.h" />
+    <ClInclude Include="..\botlib\be_aas_def.h" />
+    <ClInclude Include="..\botlib\be_aas_entity.h" />
+    <ClInclude Include="..\botlib\be_aas_file.h" />
+    <ClInclude Include="..\botlib\be_aas_funcs.h" />
+    <ClInclude Include="..\botlib\be_aas_main.h" />
+    <ClInclude Include="..\botlib\be_aas_move.h" />
+    <ClInclude Include="..\botlib\be_aas_optimize.h" />
+    <ClInclude Include="..\botlib\be_aas_reach.h" />
+    <ClInclude Include="..\botlib\be_aas_route.h" />
+    <ClInclude Include="..\botlib\be_aas_routealt.h" />
+    <ClInclude Include="..\botlib\be_aas_sample.h" />
+    <ClInclude Include="..\botlib\be_ai_weight.h" />
+    <ClInclude Include="..\botlib\be_interface.h" />
+    <ClInclude Include="..\botlib\l_crc.h" />
+    <ClInclude Include="..\botlib\l_libvar.h" />
+    <ClInclude Include="..\botlib\l_log.h" />
+    <ClInclude Include="..\botlib\l_memory.h" />
+    <ClInclude Include="..\botlib\l_precomp.h" />
+    <ClInclude Include="..\botlib\l_script.h" />
+    <ClInclude Include="..\botlib\l_struct.h" />
+    <ClInclude Include="..\botlib\l_utils.h" />
+    <ClInclude Include="..\game\be_aas.h" />
+    <ClInclude Include="..\game\be_ai_char.h" />
+    <ClInclude Include="..\game\be_ai_chat.h" />
+    <ClInclude Include="..\game\be_ai_gen.h" />
+    <ClInclude Include="..\game\be_ai_goal.h" />
+    <ClInclude Include="..\game\be_ai_move.h" />
+    <ClInclude Include="..\game\be_ai_weap.h" />
+    <ClInclude Include="..\game\be_ea.h" />
+    <ClInclude Include="..\game\botlib.h" />
+    <ClInclude Include="..\game\q_shared.h" />
+    <ClInclude Include="..\game\surfaceflags.h" />
+    <ClInclude Include="..\qcommon\cm_public.h" />
+    <ClInclude Include="..\qcommon\disablewarnings.h" />
+    <ClInclude Include="..\qcommon\qcommon.h" />
+    <ClInclude Include="..\qcommon\qfiles.h" />
+    <ClInclude Include="..\qcommon\tags.h" />
+    <ClInclude Include="..\server\server.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

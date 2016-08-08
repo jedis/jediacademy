@@ -1,0 +1,16 @@
+﻿  q_math.c
+c:\users\smoo\source\repos\jediacademy\codemp\game\teams.h(13): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\game\q_shared.h(587): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\game\q_shared.h(612): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\game\q_shared.h(722): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\game\q_shared.h(861): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\game\q_shared.h(1114): warning C4028: formal parameter 2 different from declaration
+c:\users\smoo\source\repos\jediacademy\codemp\game\q_shared.h(1829): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\game\q_shared.h(2909): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\game\q_shared.h(2918): warning C4091: 'typedef ': ignored on left of '_flag_status' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\game\q_shared.h(2964): warning C4091: 'typedef ': ignored on left of 'Eorientations' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\game\q_shared.h(2975): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(1189,5): warning MSB8012: TargetPath(C:\Users\Smoo\Source\Repos\jediacademy\codemp\cgame\.\../Release\JK2cgame.dll) does not match the Linker's OutputFile property value (C:\Users\Smoo\Source\Repos\jediacademy\codemp\Release\cgamex86.dll). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
+C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(1191,5): warning MSB8012: TargetName(JK2cgame) does not match the Linker's OutputFile property value (cgamex86). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
+     Creating library .\../Release/cgamex86.lib and object .\../Release/cgamex86.exp
+  JK2_cgame.vcxproj -> C:\Users\Smoo\Source\Repos\jediacademy\codemp\cgame\.\../Release\JK2cgame.dll

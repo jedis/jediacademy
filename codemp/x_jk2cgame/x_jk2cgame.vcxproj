@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ClCompile Include="..\cgame\cg_consolecmds.c" />
+    <ClCompile Include="..\cgame\cg_draw.c" />
+    <ClCompile Include="..\cgame\cg_drawtools.c" />
+    <ClCompile Include="..\cgame\cg_effects.c" />
+    <ClCompile Include="..\cgame\cg_ents.c" />
+    <ClCompile Include="..\cgame\cg_event.c" />
+    <ClCompile Include="..\cgame\cg_info.c" />
+    <ClCompile Include="..\cgame\cg_light.c" />
+    <ClCompile Include="..\cgame\cg_localents.c" />
+    <ClCompile Include="..\cgame\cg_main.c" />
+    <ClCompile Include="..\cgame\cg_marks.c" />
+    <ClCompile Include="..\cgame\cg_newDraw.c" />
+    <ClCompile Include="..\cgame\cg_players.c" />
+    <ClCompile Include="..\cgame\cg_playerstate.c" />
+    <ClCompile Include="..\cgame\cg_predict.c" />
+    <ClCompile Include="..\cgame\cg_saga.c" />
+    <ClCompile Include="..\cgame\cg_scoreboard.c" />
+    <ClCompile Include="..\cgame\cg_servercmds.c" />
+    <ClCompile Include="..\cgame\cg_snapshot.c" />
+    <ClCompile Include="..\cgame\cg_strap.c" />
+    <ClCompile Include="..\cgame\cg_syscalls.c" />
+    <ClCompile Include="..\cgame\cg_turret.c" />
+    <ClCompile Include="..\cgame\cg_view.c" />
+    <ClCompile Include="..\cgame\cg_weaponinit.c" />
+    <ClCompile Include="..\cgame\cg_weapons.c" />
+    <ClCompile Include="..\cgame\fx_blaster.c" />
+    <ClCompile Include="..\cgame\fx_bowcaster.c" />
+    <ClCompile Include="..\cgame\fx_bryarpistol.c" />
+    <ClCompile Include="..\cgame\fx_demp2.c" />
+    <ClCompile Include="..\cgame\fx_disruptor.c" />
+    <ClCompile Include="..\cgame\fx_flechette.c" />
+    <ClCompile Include="..\cgame\fx_force.c" />
+    <ClCompile Include="..\cgame\fx_heavyrepeater.c" />
+    <ClCompile Include="..\cgame\fx_rocketlauncher.c" />
+    <ClCompile Include="..\game\AnimalNPC.c" />
+    <ClCompile Include="..\game\bg_g2_utils.c" />
+    <ClCompile Include="..\game\bg_misc.c" />
+    <ClCompile Include="..\game\bg_panimate.c" />
+    <ClCompile Include="..\game\bg_pmove.c" />
+    <ClCompile Include="..\game\bg_saber.c" />
+    <ClCompile Include="..\game\bg_saberLoad.c" />
+    <ClCompile Include="..\game\bg_saga.c" />
+    <ClCompile Include="..\game\bg_slidemove.c" />
+    <ClCompile Include="..\game\bg_vehicleLoad.c" />
+    <ClCompile Include="..\game\bg_weapons.c" />
+    <ClCompile Include="..\game\FighterNPC.c" />
+    <ClCompile Include="..\game\q_math.c" />
+    <ClCompile Include="..\game\q_shared.c" />
+    <ClCompile Include="..\game\SpeederNPC.c" />
+    <ClCompile Include="..\game\WalkerNPC.c" />
+    <ClCompile Include="..\ui\ui_shared.c" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C79C9037-8F32-4833-A276-96B2FB96CCA5}</ProjectGuid>
+    <Keyword>XboxProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>14.0.24730.2</_ProjectFileVersion>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\ui\menudef.h" />
+    <ClInclude Include="..\cgame\animtable.h" />
+    <ClInclude Include="..\cgame\cg_lights.h" />
+    <ClInclude Include="..\cgame\cg_local.h" />
+    <ClInclude Include="..\cgame\cg_public.h" />
+    <ClInclude Include="..\cgame\fx_local.h" />
+    <ClInclude Include="..\cgame\tr_types.h" />
+    <ClInclude Include="..\game\anims.h" />
+    <ClInclude Include="..\game\bg_local.h" />
+    <ClInclude Include="..\game\bg_public.h" />
+    <ClInclude Include="..\game\bg_saga.h" />
+    <ClInclude Include="..\game\bg_strap.h" />
+    <ClInclude Include="..\game\bg_weapons.h" />
+    <ClInclude Include="..\game\q_shared.h" />
+    <ClInclude Include="..\game\surfaceflags.h" />
+    <ClInclude Include="..\ghoul2\g2.h" />
+    <ClInclude Include="..\namespace_begin.h" />
+    <ClInclude Include="..\namespace_end.h" />
+    <ClInclude Include="..\qcommon\disablewarnings.h" />
+    <ClInclude Include="..\qcommon\qfiles.h" />
+    <ClInclude Include="..\qcommon\tags.h" />
+    <ClInclude Include="..\ui\keycodes.h" />
+    <ClInclude Include="..\ui\ui_shared.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

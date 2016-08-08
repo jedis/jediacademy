@@ -1466,7 +1466,7 @@ int irand(int min, int max)
 	return(result);
 }
 
-float powf ( float x, int y )
+float Q_powf ( float x, int y )
 {
 	float r = x;
 	for ( y--; y>0; y-- )

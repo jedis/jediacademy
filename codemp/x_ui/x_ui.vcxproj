@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ClCompile Include="..\game\bg_misc.c" />
+    <ClCompile Include="..\game\bg_saga.c" />
+    <ClCompile Include="..\game\bg_vehicleLoad.c" />
+    <ClCompile Include="..\game\bg_weapons.c" />
+    <ClCompile Include="..\game\q_math.c" />
+    <ClCompile Include="..\game\q_shared.c" />
+    <ClCompile Include="..\ui\ui_atoms.c" />
+    <ClCompile Include="..\ui\ui_force.c" />
+    <ClCompile Include="..\ui\ui_gameinfo.c" />
+    <ClCompile Include="..\ui\ui_main.c" />
+    <ClCompile Include="..\ui\ui_saber.c" />
+    <ClCompile Include="..\ui\ui_shared.c" />
+    <ClCompile Include="..\ui\ui_syscalls.c" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{613EA919-780E-416D-90A9-67D3EB27F899}</ProjectGuid>
+    <Keyword>XboxProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>14.0.24730.2</_ProjectFileVersion>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\ui\menudef.h" />
+    <ClInclude Include="..\cgame\tr_types.h" />
+    <ClInclude Include="..\game\anims.h" />
+    <ClInclude Include="..\game\bg_local.h" />
+    <ClInclude Include="..\game\bg_public.h" />
+    <ClInclude Include="..\game\bg_saga.h" />
+    <ClInclude Include="..\game\bg_strap.h" />
+    <ClInclude Include="..\game\bg_weapons.h" />
+    <ClInclude Include="..\game\q_shared.h" />
+    <ClInclude Include="..\game\surfaceflags.h" />
+    <ClInclude Include="..\namespace_begin.h" />
+    <ClInclude Include="..\namespace_end.h" />
+    <ClInclude Include="..\qcommon\disablewarnings.h" />
+    <ClInclude Include="..\qcommon\game_version.h" />
+    <ClInclude Include="..\qcommon\qfiles.h" />
+    <ClInclude Include="..\qcommon\tags.h" />
+    <ClInclude Include="..\ui\keycodes.h" />
+    <ClInclude Include="..\ui\ui_force.h" />
+    <ClInclude Include="..\ui\ui_local.h" />
+    <ClInclude Include="..\ui\ui_public.h" />
+    <ClInclude Include="..\ui\ui_shared.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,170 @@
+﻿  files_pc.cpp
+c:\users\smoo\source\repos\jediacademy\codemp\game\teams.h(13): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\qcommon\../game/q_shared.h(587): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\qcommon\../game/q_shared.h(612): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\qcommon\../game/q_shared.h(722): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\qcommon\../game/q_shared.h(861): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\qcommon\../game/q_shared.h(1829): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\qcommon\../game/q_shared.h(2909): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\qcommon\../game/q_shared.h(2918): warning C4091: 'typedef ': ignored on left of '_flag_status' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\qcommon\../game/q_shared.h(2964): warning C4091: 'typedef ': ignored on left of 'Eorientations' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\qcommon\../game/q_shared.h(2975): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\renderer\../cgame/tr_types.h(282): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\client\../ui/ui_public.h(206): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\game\bg_weapons.h(39): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\game\bg_vehicles.h(413): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\client\../game/bg_public.h(198): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\client\../game/bg_public.h(218): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\client\../game/bg_public.h(226): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\client\../game/bg_public.h(383): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\client\../game/bg_public.h(673): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\client\../game/bg_public.h(693): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\client\../game/bg_public.h(1006): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\client\../game/bg_public.h(1105): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\client\../game/bg_public.h(1467): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+qcommon\files_pc.cpp(178): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
+qcommon\files_pc.cpp(197): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
+qcommon\files_pc.cpp(234): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
+qcommon\files_pc.cpp(257): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
+qcommon\files_pc.cpp(295): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
+qcommon\files_pc.cpp(338): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
+qcommon\files_pc.cpp(354): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
+qcommon\files_pc.cpp(374): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
+qcommon\files_pc.cpp(515): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
+qcommon\files_pc.cpp(558): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
+qcommon\files_pc.cpp(880): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
+qcommon\files_pc.cpp(1498): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(119): note: see declaration of 'strcpy'
+qcommon\files_pc.cpp(1545): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(119): note: see declaration of 'strcpy'
+qcommon\files_pc.cpp(1770): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(119): note: see declaration of 'strcpy'
+qcommon\files_pc.cpp(1938): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(119): note: see declaration of 'strcpy'
+qcommon\files_pc.cpp(1939): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(90): note: see declaration of 'strcat'
+qcommon\files_pc.cpp(1951): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(119): note: see declaration of 'strcpy'
+qcommon\files_pc.cpp(1956): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(119): note: see declaration of 'strcpy'
+qcommon\files_pc.cpp(1958): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(119): note: see declaration of 'strcpy'
+qcommon\files_pc.cpp(2263): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(119): note: see declaration of 'strcpy'
+  stringed_ingame.cpp
+c:\users\smoo\source\repos\jediacademy\codemp\game\teams.h(13): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\server\../game/q_shared.h(587): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\server\../game/q_shared.h(612): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\server\../game/q_shared.h(722): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\server\../game/q_shared.h(861): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\server\../game/q_shared.h(1829): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\server\../game/q_shared.h(2909): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\server\../game/q_shared.h(2918): warning C4091: 'typedef ': ignored on left of '_flag_status' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\server\../game/q_shared.h(2964): warning C4091: 'typedef ': ignored on left of 'Eorientations' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\server\../game/q_shared.h(2975): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\game\bg_weapons.h(39): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\game\bg_vehicles.h(413): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\server\../game/bg_public.h(198): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\server\../game/bg_public.h(218): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\server\../game/bg_public.h(226): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\server\../game/bg_public.h(383): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\server\../game/bg_public.h(673): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\server\../game/bg_public.h(693): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\server\../game/bg_public.h(1006): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\server\../game/bg_public.h(1105): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\server\../game/bg_public.h(1467): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+qcommon\stringed_ingame.cpp(166): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(119): note: see declaration of 'strcpy'
+qcommon\stringed_ingame.cpp(188): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(119): note: see declaration of 'strcpy'
+qcommon\stringed_ingame.cpp(224): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(119): note: see declaration of 'strcpy'
+qcommon\stringed_ingame.cpp(240): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(119): note: see declaration of 'strcpy'
+qcommon\stringed_ingame.cpp(245): warning C4996: 'stricmp': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _stricmp. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(568): note: see declaration of 'stricmp'
+qcommon\stringed_ingame.cpp(364): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(119): note: see declaration of 'strcpy'
+qcommon\stringed_ingame.cpp(352): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(346): note: see declaration of 'strncpy'
+qcommon\stringed_ingame.cpp(496): warning C4996: 'stricmp': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _stricmp. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(568): note: see declaration of 'stricmp'
+qcommon\stringed_ingame.cpp(497): warning C4996: 'stricmp': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _stricmp. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(568): note: see declaration of 'stricmp'
+qcommon\stringed_ingame.cpp(498): warning C4996: 'stricmp': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _stricmp. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(568): note: see declaration of 'stricmp'
+qcommon\stringed_ingame.cpp(499): warning C4996: 'stricmp': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _stricmp. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(568): note: see declaration of 'stricmp'
+qcommon\stringed_ingame.cpp(500): warning C4996: 'stricmp': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _stricmp. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(568): note: see declaration of 'stricmp'
+qcommon\stringed_ingame.cpp(501): warning C4996: 'stricmp': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _stricmp. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(568): note: see declaration of 'stricmp'
+qcommon\stringed_ingame.cpp(502): warning C4996: 'stricmp': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _stricmp. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(568): note: see declaration of 'stricmp'
+qcommon\stringed_ingame.cpp(622): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(346): note: see declaration of 'strncpy'
+qcommon\stringed_ingame.cpp(623): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(453): note: see declaration of 'strtok'
+qcommon\stringed_ingame.cpp(633): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(453): note: see declaration of 'strtok'
+qcommon\stringed_ingame.cpp(671): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(346): note: see declaration of 'strncpy'
+qcommon\stringed_ingame.cpp(693): warning C4996: 'stricmp': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _stricmp. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(568): note: see declaration of 'stricmp'
+qcommon\stringed_ingame.cpp(701): warning C4996: 'stricmp': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _stricmp. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(568): note: see declaration of 'stricmp'
+qcommon\stringed_ingame.cpp(766): error C2440: '=': cannot convert from 'const char *' to 'char *'
+  qcommon\stringed_ingame.cpp(766): note: Conversion loses qualifiers
+qcommon\stringed_ingame.cpp(800): warning C4996: 'stricmp': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _stricmp. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(568): note: see declaration of 'stricmp'
+qcommon\stringed_ingame.cpp(882): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(346): note: see declaration of 'strncpy'
+qcommon\stringed_ingame.cpp(919): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(119): note: see declaration of 'strcpy'
+qcommon\stringed_ingame.cpp(920): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(90): note: see declaration of 'strcat'
+qcommon\stringed_ingame.cpp(923): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(90): note: see declaration of 'strcat'
+qcommon\stringed_ingame.cpp(924): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(90): note: see declaration of 'strcat'
+qcommon\stringed_ingame.cpp(927): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(90): note: see declaration of 'strcat'
+qcommon\stringed_ingame.cpp(946): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(119): note: see declaration of 'strcpy'
+qcommon\stringed_ingame.cpp(941): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(346): note: see declaration of 'strncpy'
+qcommon\stringed_ingame.cpp(975): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
+qcommon\stringed_ingame.cpp(1016): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
+qcommon\stringed_ingame.cpp(1103): warning C4996: 'stricmp': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _stricmp. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(568): note: see declaration of 'stricmp'
+qcommon\stringed_ingame.cpp(1231): warning C4996: 'stricmp': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _stricmp. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(568): note: see declaration of 'stricmp'
+  win_shared.cpp
+c:\users\smoo\source\repos\jediacademy\codemp\game\teams.h(13): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\qcommon\../game/q_shared.h(587): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\qcommon\../game/q_shared.h(612): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\qcommon\../game/q_shared.h(722): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\qcommon\../game/q_shared.h(861): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\qcommon\../game/q_shared.h(1829): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\qcommon\../game/q_shared.h(2909): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\qcommon\../game/q_shared.h(2918): warning C4091: 'typedef ': ignored on left of '_flag_status' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\qcommon\../game/q_shared.h(2964): warning C4091: 'typedef ': ignored on left of 'Eorientations' when no variable is declared
+c:\users\smoo\source\repos\jediacademy\codemp\qcommon\../game/q_shared.h(2975): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+win32\win_shared.cpp(303): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(119): note: see declaration of 'strcpy'
+win32\win_shared.cpp(307): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(119): note: see declaration of 'strcpy'
+  Generating Code...

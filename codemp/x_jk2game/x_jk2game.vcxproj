@@ -1,0 +1,161 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ClCompile Include="..\game\ai_main.c" />
+    <ClCompile Include="..\game\ai_util.c" />
+    <ClCompile Include="..\game\ai_wpnav.c" />
+    <ClCompile Include="..\game\AnimalNPC.c" />
+    <ClCompile Include="..\game\bg_g2_utils.c" />
+    <ClCompile Include="..\game\bg_misc.c" />
+    <ClCompile Include="..\game\bg_panimate.c" />
+    <ClCompile Include="..\game\bg_pmove.c" />
+    <ClCompile Include="..\game\bg_saber.c" />
+    <ClCompile Include="..\game\bg_saberLoad.c" />
+    <ClCompile Include="..\game\bg_saga.c" />
+    <ClCompile Include="..\game\bg_slidemove.c" />
+    <ClCompile Include="..\game\bg_vehicleLoad.c" />
+    <ClCompile Include="..\game\bg_weapons.c" />
+    <ClCompile Include="..\game\FighterNPC.c" />
+    <ClCompile Include="..\game\g_active.c" />
+    <ClCompile Include="..\game\g_arenas.c" />
+    <ClCompile Include="..\game\g_bot.c" />
+    <ClCompile Include="..\game\g_client.c" />
+    <ClCompile Include="..\game\g_cmds.c" />
+    <ClCompile Include="..\game\g_combat.c" />
+    <ClCompile Include="..\game\g_exphysics.c" />
+    <ClCompile Include="..\game\g_ICARUScb.c" />
+    <ClCompile Include="..\game\g_items.c" />
+    <ClCompile Include="..\game\g_log.c" />
+    <ClCompile Include="..\game\g_main.c" />
+    <ClCompile Include="..\game\g_mem.c" />
+    <ClCompile Include="..\game\g_misc.c" />
+    <ClCompile Include="..\game\g_missile.c" />
+    <ClCompile Include="..\game\g_mover.c" />
+    <ClCompile Include="..\game\g_nav.c" />
+    <ClCompile Include="..\game\g_navnew.c" />
+    <ClCompile Include="..\game\g_object.c" />
+    <ClCompile Include="..\game\g_saga.c" />
+    <ClCompile Include="..\game\g_session.c" />
+    <ClCompile Include="..\game\g_spawn.c" />
+    <ClCompile Include="..\game\g_strap.c" />
+    <ClCompile Include="..\game\g_svcmds.c" />
+    <ClCompile Include="..\game\g_syscalls.c" />
+    <ClCompile Include="..\game\g_target.c" />
+    <ClCompile Include="..\game\g_team.c" />
+    <ClCompile Include="..\game\g_timer.c" />
+    <ClCompile Include="..\game\g_trigger.c" />
+    <ClCompile Include="..\game\g_turret.c" />
+    <ClCompile Include="..\game\g_turret_G2.c" />
+    <ClCompile Include="..\game\g_utils.c" />
+    <ClCompile Include="..\game\g_vehicles.c" />
+    <ClCompile Include="..\game\g_vehicleTurret.c" />
+    <ClCompile Include="..\game\g_weapon.c" />
+    <ClCompile Include="..\game\NPC.c" />
+    <ClCompile Include="..\game\NPC_AI_Atst.c" />
+    <ClCompile Include="..\game\NPC_AI_Default.c" />
+    <ClCompile Include="..\game\NPC_AI_Droid.c" />
+    <ClCompile Include="..\game\NPC_AI_GalakMech.c" />
+    <ClCompile Include="..\game\NPC_AI_Grenadier.c" />
+    <ClCompile Include="..\game\NPC_AI_Howler.c" />
+    <ClCompile Include="..\game\NPC_AI_ImperialProbe.c" />
+    <ClCompile Include="..\game\NPC_AI_Interrogator.c" />
+    <ClCompile Include="..\game\NPC_AI_Jedi.c" />
+    <ClCompile Include="..\game\NPC_AI_Mark1.c" />
+    <ClCompile Include="..\game\NPC_AI_Mark2.c" />
+    <ClCompile Include="..\game\NPC_AI_MineMonster.c" />
+    <ClCompile Include="..\game\NPC_AI_Rancor.c" />
+    <ClCompile Include="..\game\NPC_AI_Remote.c" />
+    <ClCompile Include="..\game\NPC_AI_Seeker.c" />
+    <ClCompile Include="..\game\NPC_AI_Sentry.c" />
+    <ClCompile Include="..\game\NPC_AI_Sniper.c" />
+    <ClCompile Include="..\game\NPC_AI_Stormtrooper.c" />
+    <ClCompile Include="..\game\NPC_AI_Utils.c" />
+    <ClCompile Include="..\game\NPC_AI_Wampa.c" />
+    <ClCompile Include="..\game\NPC_behavior.c" />
+    <ClCompile Include="..\game\NPC_combat.c" />
+    <ClCompile Include="..\game\NPC_goal.c" />
+    <ClCompile Include="..\game\NPC_misc.c" />
+    <ClCompile Include="..\game\NPC_move.c" />
+    <ClCompile Include="..\game\NPC_reactions.c" />
+    <ClCompile Include="..\game\NPC_senses.c" />
+    <ClCompile Include="..\game\NPC_sounds.c" />
+    <ClCompile Include="..\game\NPC_spawn.c" />
+    <ClCompile Include="..\game\NPC_stats.c" />
+    <ClCompile Include="..\game\NPC_utils.c" />
+    <ClCompile Include="..\game\q_math.c" />
+    <ClCompile Include="..\game\q_shared.c" />
+    <ClCompile Include="..\game\SpeederNPC.c" />
+    <ClCompile Include="..\game\tri_coll_test.c" />
+    <ClCompile Include="..\game\WalkerNPC.c" />
+    <ClCompile Include="..\game\w_force.c" />
+    <ClCompile Include="..\game\w_saber.c" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A0451C0A-0B2F-400A-BBB1-98F517FAB30B}</ProjectGuid>
+    <Keyword>XboxProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>14.0.24730.2</_ProjectFileVersion>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\ui\menudef.h" />
+    <ClInclude Include="..\cgame\animtable.h" />
+    <ClInclude Include="..\cgame\cg_local.h" />
+    <ClInclude Include="..\cgame\cg_public.h" />
+    <ClInclude Include="..\cgame\tr_types.h" />
+    <ClInclude Include="..\game\ai.h" />
+    <ClInclude Include="..\game\ai_main.h" />
+    <ClInclude Include="..\game\anims.h" />
+    <ClInclude Include="..\game\be_aas.h" />
+    <ClInclude Include="..\game\be_ai_char.h" />
+    <ClInclude Include="..\game\be_ai_chat.h" />
+    <ClInclude Include="..\game\be_ai_gen.h" />
+    <ClInclude Include="..\game\be_ai_goal.h" />
+    <ClInclude Include="..\game\be_ai_move.h" />
+    <ClInclude Include="..\game\be_ai_weap.h" />
+    <ClInclude Include="..\game\be_ea.h" />
+    <ClInclude Include="..\game\bg_lib.h" />
+    <ClInclude Include="..\game\bg_local.h" />
+    <ClInclude Include="..\game\bg_public.h" />
+    <ClInclude Include="..\game\bg_saga.h" />
+    <ClInclude Include="..\game\bg_strap.h" />
+    <ClInclude Include="..\game\bg_vehicles.h" />
+    <ClInclude Include="..\game\bg_weapons.h" />
+    <ClInclude Include="..\game\botlib.h" />
+    <ClInclude Include="..\game\b_local.h" />
+    <ClInclude Include="..\game\b_public.h" />
+    <ClInclude Include="..\game\chars.h" />
+    <ClInclude Include="..\game\g_headers.h" />
+    <ClInclude Include="..\game\g_ICARUScb.h" />
+    <ClInclude Include="..\game\g_local.h" />
+    <ClInclude Include="..\game\g_nav.h" />
+    <ClInclude Include="..\game\g_public.h" />
+    <ClInclude Include="..\game\g_team.h" />
+    <ClInclude Include="..\game\inv.h" />
+    <ClInclude Include="..\game\match.h" />
+    <ClInclude Include="..\game\npc_headers.h" />
+    <ClInclude Include="..\game\q_shared.h" />
+    <ClInclude Include="..\game\say.h" />
+    <ClInclude Include="..\game\surfaceflags.h" />
+    <ClInclude Include="..\game\syn.h" />
+    <ClInclude Include="..\game\teams.h" />
+    <ClInclude Include="..\game\w_saber.h" />
+    <ClInclude Include="..\ghoul2\g2.h" />
+    <ClInclude Include="..\icarus\interpreter.h" />
+    <ClInclude Include="..\icarus\q3_interface.h" />
+    <ClInclude Include="..\namespace_begin.h" />
+    <ClInclude Include="..\namespace_end.h" />
+    <ClInclude Include="..\qcommon\disablewarnings.h" />
+    <ClInclude Include="..\qcommon\tags.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

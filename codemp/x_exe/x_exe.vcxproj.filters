@@ -1,0 +1,936 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{f3eb40e5-48f8-410d-b149-10b2add979b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client">
+      <UniqueIdentifier>{14ce3a59-9e6b-49f9-8fb3-dfa1a3bdce9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{f06e9f52-7869-4487-9db6-3be75dcf1795}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Win32">
+      <UniqueIdentifier>{b606d04c-d6df-47e2-bc46-e45f16808eb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server">
+      <UniqueIdentifier>{bfe3b678-d266-4074-a264-2ee59125c148}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\NPCNav">
+      <UniqueIdentifier>{2aea0ee2-a62c-4ebf-b2c7-98f6070e89f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sound">
+      <UniqueIdentifier>{e9a68a0e-695d-407b-b120-4d5747c6d1b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sound\EAX">
+      <UniqueIdentifier>{32dcd8b5-0ade-4f55-a28e-323e867fff0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sound\OpenAL">
+      <UniqueIdentifier>{3c027cb1-6d39-4368-ae19-1fa082b686a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Renderer">
+      <UniqueIdentifier>{05e3f669-338c-4b76-b7eb-4619f08e361d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Renderer\png">
+      <UniqueIdentifier>{f7b0b842-43bc-47df-bd28-aa27e22c3179}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ghoul2">
+      <UniqueIdentifier>{0de06382-2ad1-4982-ad61-5b654a7aa4cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="zlib32">
+      <UniqueIdentifier>{28b01a5c-b18c-4db0-b576-7fe9a0b6d72b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="encryption">
+      <UniqueIdentifier>{37ad44e5-4089-4600-8488-c781e87a8997}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RMG">
+      <UniqueIdentifier>{f21087b6-51dc-431c-ae57-373b7961394b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ICARUS">
+      <UniqueIdentifier>{01558faa-ff65-440b-800b-8c10d9b3ff17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ff">
+      <UniqueIdentifier>{514ada61-06e3-42ff-b31a-2766289384e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="XboxLive">
+      <UniqueIdentifier>{224c2198-41a3-4c48-8b9c-ee20294ce392}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ravl">
+      <UniqueIdentifier>{8173bd83-8cb4-4bba-b9d5-c1b145d69ee7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ratl">
+      <UniqueIdentifier>{731a6113-3798-4f9e-bafd-12ccf65546d4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\game\anims.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\game\bg_weapons.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\game\botlib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\disablewarnings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\client\fffx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\fixedmap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\platform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\win32\resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ui\ui_public.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\client\BinkVideo.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\client\client.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\client\fxexport.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\client\fxprimitives.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\client\fxscheduler.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\client\fxsystem.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\client\fxutil.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\game\bg_public.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cgame\cg_public.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\chash.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\cm_draw.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\cm_landscape.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\cm_local.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\cm_patch.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\cm_polylib.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\cm_public.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\cm_randomterrain.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\cm_terrainmap.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\exe_headers.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\files.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\game\g_public.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\game_version.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\genericparser2.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\hstring.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\inetprofile.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ui\keycodes.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\client\keys.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\miniheap.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\game\q_shared.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\qcommon.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\qfiles.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\renderer\qgl_console.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\roffsystem.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\sstring.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\stringed_ingame.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\stringed_interface.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\game\surfaceflags.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\tags.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\timing.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\unzip.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qcommon\vm_local.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\win32\dbg_console_xbox.h">
+      <Filter>Win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\win32\glw_win_dx8.h">
+      <Filter>Win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\win32\win_file.h">
+      <Filter>Win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\win32\win_input.h">
+      <Filter>Win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\win32\win_local.h">
+      <Filter>Win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\server\server.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\server\NPCNav\navigator.h">
+      <Filter>Server\NPCNav</Filter>
+    </ClInclude>
+    <ClInclude Include="..\client\snd_ambient.h">
+      <Filter>Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\client\snd_local_console.h">
+      <Filter>Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\client\snd_music.h">
+      <Filter>Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\client\snd_public.h">
+      <Filter>Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\client\eax\eax.h">
+      <Filter>Sound\EAX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\client\eax\eaxman.h">
+      <Filter>Sound\EAX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\client\openal\al.h">
+      <Filter>Sound\OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\client\openal\alc.h">
+      <Filter>Sound\OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\client\openal\alctypes.h">
+      <Filter>Sound\OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\client\openal\altypes.h">
+      <Filter>Sound\OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\client\openal\alu.h">
+      <Filter>Sound\OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\client\openal\alut.h">
+      <Filter>Sound\OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\renderer\glext_console.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\renderer\matcomp.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\renderer\tr_font.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\renderer\tr_landscape.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\renderer\tr_lightmanager.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\renderer\tr_local.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\renderer\tr_public.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\renderer\tr_quicksprite.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cgame\tr_types.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\renderer\tr_worldeffects.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\win32\win_highdynamicrange.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\win32\win_lighteffects.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\png\png.h">
+      <Filter>Renderer\png</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ghoul2\g2.h">
+      <Filter>Ghoul2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ghoul2\g2_gore.h">
+      <Filter>Ghoul2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ghoul2\g2_local.h">
+      <Filter>Ghoul2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ghoul2\ghoul2_shared.h">
+      <Filter>Ghoul2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\renderer\mdx_format.h">
+      <Filter>Ghoul2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zlib32\deflate.h">
+      <Filter>zlib32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zlib32\inflate.h">
+      <Filter>zlib32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zlib32\zip.h">
+      <Filter>zlib32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\encryption\buffer.h">
+      <Filter>encryption</Filter>
+    </ClInclude>
+    <ClInclude Include="..\encryption\cpp_interface.h">
+      <Filter>encryption</Filter>
+    </ClInclude>
+    <ClInclude Include="..\encryption\encryption.h">
+      <Filter>encryption</Filter>
+    </ClInclude>
+    <ClInclude Include="..\encryption\sockets.h">
+      <Filter>encryption</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rmg\rm_area.h">
+      <Filter>RMG</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rmg\rm_headers.h">
+      <Filter>RMG</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rmg\rm_instance.h">
+      <Filter>RMG</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rmg\rm_instance_bsp.h">
+      <Filter>RMG</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rmg\rm_instance_group.h">
+      <Filter>RMG</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rmg\rm_instance_random.h">
+      <Filter>RMG</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rmg\rm_instance_void.h">
+      <Filter>RMG</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rmg\rm_instancefile.h">
+      <Filter>RMG</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rmg\rm_manager.h">
+      <Filter>RMG</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rmg\rm_mission.h">
+      <Filter>RMG</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rmg\rm_objective.h">
+      <Filter>RMG</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rmg\rm_path.h">
+      <Filter>RMG</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rmg\rm_terrain.h">
+      <Filter>RMG</Filter>
+    </ClInclude>
+    <ClInclude Include="..\icarus\blockstream.h">
+      <Filter>ICARUS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\icarus\gameinterface.h">
+      <Filter>ICARUS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\icarus\icarus.h">
+      <Filter>ICARUS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\icarus\instance.h">
+      <Filter>ICARUS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\icarus\interface.h">
+      <Filter>ICARUS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\icarus\interpreter.h">
+      <Filter>ICARUS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\icarus\module.h">
+      <Filter>ICARUS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\icarus\q3_interface.h">
+      <Filter>ICARUS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\icarus\q3_registers.h">
+      <Filter>ICARUS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\icarus\sequence.h">
+      <Filter>ICARUS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\icarus\sequencer.h">
+      <Filter>ICARUS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\icarus\taskmanager.h">
+      <Filter>ICARUS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\icarus\tokenizer.h">
+      <Filter>ICARUS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xbox\XBLive.h">
+      <Filter>XboxLive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xbox\XBVoice.h">
+      <Filter>XboxLive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xbox\XBoxCommon.h">
+      <Filter>XboxLive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xbox\XHVVoiceManager.h">
+      <Filter>XboxLive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xbox\match.h">
+      <Filter>XboxLive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xbox\xbSockAddr.h">
+      <Filter>XboxLive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xbox\xbsocket.h">
+      <Filter>XboxLive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ravl\CVec.h">
+      <Filter>Ravl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ratl\bits_vs.h">
+      <Filter>Ratl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ratl\ratl_common.h">
+      <Filter>Ratl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ratl\vector_vs.h">
+      <Filter>Ratl</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\client\BinkVideo.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\client\cl_cgame.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\client\cl_cin_console.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\client\cl_console.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\client\cl_input.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\client\cl_input_hotswap.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\client\cl_keys.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\client\cl_main.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\client\cl_net_chan.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\client\cl_parse.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\client\cl_scrn.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\client\cl_ui.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\client\fxexport.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\client\fxprimitives.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\client\fxscheduler.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\client\fxsystem.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\client\fxtemplate.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\client\fxutil.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\cm_draw.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\cm_load_xbox.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\cm_patch_xbox.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\cm_polylib.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\cm_randomterrain.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\cm_shader.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\cm_terrain.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\cm_terrainmap.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\cm_test.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\cm_trace.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\cmd_common.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\cmd_console.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\cnetprofile.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\common.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\cvar.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\exe_headers.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\files_common.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\files_console.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\genericparser2.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\hstring.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\huffman.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\md4.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\msg.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\net_chan.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\game\q_math.c">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\q_math.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\game\q_shared.c">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\roffsystem.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\stringed_ingame.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\stringed_interface.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\unzip.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\vm_console.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qcommon\z_memman_console.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\win32\dbg_console_xbox.cpp">
+      <Filter>Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\win32\win_file_xbox.cpp">
+      <Filter>Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\win32\win_filecode.cpp">
+      <Filter>Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\win32\win_input_console.cpp">
+      <Filter>Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\win32\win_input_rumble.cpp">
+      <Filter>Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\win32\win_input_xbox.cpp">
+      <Filter>Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\win32\win_main_common.cpp">
+      <Filter>Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\win32\win_main_console.cpp">
+      <Filter>Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\win32\win_net.cpp">
+      <Filter>Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\win32\win_qal_xbox.cpp">
+      <Filter>Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\win32\win_shared.cpp">
+      <Filter>Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\win32\win_stream_dx8.cpp">
+      <Filter>Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\server\sv_bot.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\server\sv_ccmds.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\server\sv_client.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\server\sv_game.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\server\sv_init.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\server\sv_main.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\server\sv_net_chan.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\server\sv_snapshot.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\server\sv_world.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\server\NPCNav\gameCallbacks.cpp">
+      <Filter>Server\NPCNav</Filter>
+    </ClCompile>
+    <ClCompile Include="..\server\NPCNav\navigator.cpp">
+      <Filter>Server\NPCNav</Filter>
+    </ClCompile>
+    <ClCompile Include="..\client\snd_ambient.cpp">
+      <Filter>Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\client\snd_dma_console.cpp">
+      <Filter>Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\client\snd_mem_console.cpp">
+      <Filter>Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\client\snd_music.cpp">
+      <Filter>Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\matcomp.c">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_animation.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_arioche.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_backend.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_bsp_xbox.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_cmds.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_curve_xbox.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_font.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_ghoul2.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_image_xbox.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_init.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_light.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_lightmanager.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_main.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_marks.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_mesh.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_model.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_noise.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_quicksprite.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_scene.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_shade.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_shade_calc.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_shader.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_shadows.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_sky.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_surface.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_surfacesprites.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_terrain.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_world.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderer\tr_worldeffects.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\win32\win_gamma_console.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\win32\win_glimp_console.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\win32\win_highdynamicrange.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\win32\win_lighteffects.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\win32\win_qgl_dx8.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\png\png.cpp">
+      <Filter>Renderer\png</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ghoul2\g2_api.cpp">
+      <Filter>Ghoul2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ghoul2\g2_bolts.cpp">
+      <Filter>Ghoul2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ghoul2\g2_bones.cpp">
+      <Filter>Ghoul2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ghoul2\g2_misc.cpp">
+      <Filter>Ghoul2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ghoul2\g2_surfaces.cpp">
+      <Filter>Ghoul2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zlib32\deflate.cpp">
+      <Filter>zlib32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zlib32\inflate.cpp">
+      <Filter>zlib32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zlib32\zipcommon.cpp">
+      <Filter>zlib32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\encryption\buffer.cpp">
+      <Filter>encryption</Filter>
+    </ClCompile>
+    <ClCompile Include="..\encryption\cpp_interface.cpp">
+      <Filter>encryption</Filter>
+    </ClCompile>
+    <ClCompile Include="..\encryption\sockets.cpp">
+      <Filter>encryption</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rmg\rm_area.cpp">
+      <Filter>RMG</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rmg\rm_instance.cpp">
+      <Filter>RMG</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rmg\rm_instance_bsp.cpp">
+      <Filter>RMG</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rmg\rm_instance_group.cpp">
+      <Filter>RMG</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rmg\rm_instance_random.cpp">
+      <Filter>RMG</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rmg\rm_instance_void.cpp">
+      <Filter>RMG</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rmg\rm_instancefile.cpp">
+      <Filter>RMG</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rmg\rm_manager.cpp">
+      <Filter>RMG</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rmg\rm_mission.cpp">
+      <Filter>RMG</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rmg\rm_objective.cpp">
+      <Filter>RMG</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rmg\rm_path.cpp">
+      <Filter>RMG</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rmg\rm_terrain.cpp">
+      <Filter>RMG</Filter>
+    </ClCompile>
+    <ClCompile Include="..\icarus\blockstream.cpp">
+      <Filter>ICARUS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\icarus\gameinterface.cpp">
+      <Filter>ICARUS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\icarus\instance.cpp">
+      <Filter>ICARUS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\icarus\interface.cpp">
+      <Filter>ICARUS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\icarus\memory.cpp">
+      <Filter>ICARUS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\icarus\q3_interface.cpp">
+      <Filter>ICARUS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\icarus\q3_registers.cpp">
+      <Filter>ICARUS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\icarus\sequence.cpp">
+      <Filter>ICARUS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\icarus\sequencer.cpp">
+      <Filter>ICARUS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\icarus\taskmanager.cpp">
+      <Filter>ICARUS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ff\ff_console.cpp">
+      <Filter>ff</Filter>
+    </ClCompile>
+    <ClCompile Include="..\xbox\XBLive.cpp">
+      <Filter>XboxLive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\xbox\XBLive_Friends.cpp">
+      <Filter>XboxLive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\xbox\XBLive_MM.cpp">
+      <Filter>XboxLive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\xbox\XBLive_PL.cpp">
+      <Filter>XboxLive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\xbox\XBVoice.cpp">
+      <Filter>XboxLive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\xbox\XHVVoiceManager.cpp">
+      <Filter>XboxLive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\xbox\match.cpp">
+      <Filter>XboxLive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\xbox\xbSockAddr.cpp">
+      <Filter>XboxLive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\xbox\xbsocket.cpp">
+      <Filter>XboxLive</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\CommandLine.txt" />
+  </ItemGroup>
+</Project>
