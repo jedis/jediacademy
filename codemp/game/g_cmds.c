@@ -1707,6 +1707,11 @@ static void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	{
 		p = ConcatArgs( 1 );
 	}
+	if (strlen(p) >= MAX_SAY_TEXT) {
+ +		p[MAX_SAY_TEXT - 1] = '\0';
+ +		G_LogPrintf("Cmd_Say_f from %d (%s) has been truncated: %s\n", ent->s.number, ent->client->pers.netname, p);
+ +		return;
+ +	}
 
 	G_Say( ent, NULL, mode, p );
 }
@@ -1738,6 +1743,12 @@ static void Cmd_Tell_f( gentity_t *ent ) {
 	}
 
 	p = ConcatArgs( 2 );
+	
+	if (strlen(p) >= MAX_SAY_TEXT) {
+ +		p[MAX_SAY_TEXT - 1] = '\0';
+ +		G_LogPrintf("Cmd_Say_f from %d (%s) has been truncated: %s\n", ent->s.number, ent->client->pers.netname, p);
+ +		return;
+ +	}
 
 	G_LogPrintf( "tell: %s to %s: %s\n", ent->client->pers.netname, target->client->pers.netname, p );
 	G_Say( ent, target, SAY_TELL, p );
